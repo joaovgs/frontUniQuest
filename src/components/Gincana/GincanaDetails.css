@@ -1,0 +1,100 @@
+.gincana-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.gincana-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.gincana-logo {
+  height: 50px;
+}
+
+.gincana-user-icon {
+  font-size: 24px;
+  color: #000;
+}
+
+.gincana-main {
+  margin-top: 20px;
+}
+
+.gincana-info {
+  display: flex;
+  align-items: center;
+}
+
+.gincana-image {
+  width: 300px;
+  margin-right: 20px;
+}
+
+.gincana-details {
+  max-width: 700px;
+}
+
+.gincana-regulamento-button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: white;
+  color: #007bff;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gincana-provas {
+  margin-top: 40px;
+}
+
+.provas-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.prova-item {
+  flex: 1 1 30%;
+  padding: 10px;
+  background-color: #f8f9fa; /* Cor de fundo visível */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+  cursor: pointer;
+  color: #000; /* Cor do texto */
+  transition: background-color 0.3s ease; /* Transição suave ao passar o mouse */
+}
+
+.prova-item:hover {
+  background-color: #007bff; /* Cor de fundo ao passar o mouse */
+  color: white; /* Cor do texto ao passar o mouse */
+}
+
+.gincana-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.ranking-button, .inscrever-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ranking-button:hover, .inscrever-button:hover {
+  background-color: #0056b3;
+}

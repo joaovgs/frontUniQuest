@@ -1,0 +1,65 @@
+/* src/components/Home/Home.css */
+
+.home-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .home-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .home-logo {
+    height: 50px;
+  }
+  
+  .home-user-icon {
+    font-size: 24px;
+    color: #000;
+  }
+  
+  .current-event, .previous-events {
+    margin-top: 40px;
+  }
+  
+  .current-event-image {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .previous-events-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .event-images {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .event-images img {
+    width: 150px;
+    height: auto;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .prev-button, .next-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  .prev-button:hover, .next-button:hover {
+    color: #007bff;
+  }
+  

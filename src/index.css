@@ -1,0 +1,73 @@
+/* src/index.css */
+
+/* Define a fonte padrão para todo o aplicativo */
+body {
+    font-family: Arial, sans-serif; /* Altere conforme necessário */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Adiciona uma cor de fundo padrão */
+  html {
+    background-color: #f0f0f0; /* Altere conforme necessário */
+  }
+  
+  /* Estiliza os links */
+  a {
+    color: #007bff; /* Altere conforme necessário */
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Define o estilo dos botões */
+  button {
+    background-color: #007bff; /* Altere conforme necessário */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3; /* Altere conforme necessário */
+  }
+  
+  /* Adiciona um estilo básico para cabeçalhos */
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 10px 0;
+    color: #333; /* Altere conforme necessário */
+  }
+  
+  /* Define o estilo das seções principais */
+  main {
+    padding: 20px;
+  }
+  
+  /* Adiciona um estilo básico para containers */
+  .container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Estiliza formulários */
+  input, textarea {
+    border: 1px solid #ccc;
+    padding: 8px;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  input:focus, textarea:focus {
+    border-color: #007bff; /* Altere conforme necessário */
+    outline: none;
+  }
+  
+  
