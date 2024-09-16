@@ -1,65 +1,45 @@
-/* src/components/Home/Home.css */
+/* Layout principal */
+.home-layout {
+  position: relative;
+  height: 100vh; /* Ocupar a altura total da tela */
+}
 
-.home-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    text-align: center;
-  }
-  
-  .home-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .home-logo {
-    height: 50px;
-  }
-  
-  .home-user-icon {
-    font-size: 24px;
-    color: #000;
-  }
-  
-  .current-event, .previous-events {
-    margin-top: 40px;
-  }
-  
-  .current-event-image {
-    max-width: 100%;
-    height: auto;
-  }
-  
-  .previous-events-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
-  }
-  
-  .event-images {
-    display: flex;
-    gap: 20px;
-  }
-  
-  .event-images img {
-    width: 150px;
-    height: auto;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .prev-button, .next-button {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-  }
-  
-  .prev-button:hover, .next-button:hover {
-    color: #007bff;
-  }
-  
+/* Conteúdo da página */
+.home-content {
+  padding: 20px;
+}
+
+.home-header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 0;
+  margin-right: 100px; /* Adiciona uma margem à direita para afastar o ícone do menu */
+}
+
+.home-user-icon {
+  font-size: 24px;
+  color: #333;
+}
+
+.current-event, .previous-events {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.previous-events-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.event-images {
+  display: flex;
+  gap: 10px;
+}
+
+.prev-button, .next-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
