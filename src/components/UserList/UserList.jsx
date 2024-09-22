@@ -101,7 +101,6 @@ function UserList() {
   return (
     <div className="userlist-container">
       <div className="userlist-header">
-        <h2>Usuários</h2>
         <img
           src="/images/logo.png" // Usando o caminho relativo ao "public"
           alt="Logo"
@@ -109,6 +108,7 @@ function UserList() {
           onClick={handleLogoClick}
           style={{ cursor: 'pointer' }} // Cursor de ponteiro para indicar clique
         />
+        <h2>Usuários</h2>
       </div>
 
       <input

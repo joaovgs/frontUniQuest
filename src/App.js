@@ -5,6 +5,7 @@ import Register from './components/Register/Register';
 import Home from './components/Home/Home';
 import UserList from './components/UserList/UserList';
 import CreateUser from './components/CreateUser/CreateUser'; // Importar a tela de criação de usuários
+import GincanaDetails from './components/Gincana/GincanaDetails'; // Importar GincanaDetails
 import SidebarLayout from './components/SidebarLayout/SidebarLayout'; // Importar o layout com o menu lateral
 
 function App() {
@@ -37,6 +38,14 @@ function App() {
           element={
             <SidebarLayout>
               <CreateUser onClose={() => console.log('Fechar modal')} />
+            </SidebarLayout>
+          }
+        />
+        <Route
+          path="/gincana/details" // Rota para GincanaDetails
+          element={
+            <SidebarLayout>
+              <GincanaDetails />
             </SidebarLayout>
           }
         />

@@ -1,13 +1,27 @@
 import React from 'react';
 import './GincanaDetails.css';
 import { FaUserCircle } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 function GincanaDetails() {
+
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    navigate('/home');
+  };
+
   return (
     <div className="gincana-details-container">
       <header className="gincana-header">
-        <img src="/images/logo.png" alt="Logo" className="gincana-logo" />
-        <FaUserCircle className="gincana-user-icon" />
+        <img
+          src="/images/logo.png" // Usando o caminho relativo ao "public"
+          alt="Logo"
+          className="logo-icon"
+          onClick={handleLogoClick}
+          style={{ cursor: 'pointer' }} // Cursor de ponteiro para indicar clique
+        />
+        <FaUserCircle className="home-user-icon" />
       </header>
 
       <main className="gincana-main">
