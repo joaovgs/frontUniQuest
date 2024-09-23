@@ -6,7 +6,7 @@ function UserList() {
   const [users, setUsers] = useState([]); // Lista de usuários
   const [newUser, setNewUser] = useState({
     nome: '',
-    usuario: '',
+    email: '',
     senha: '',
   }); // Estado para armazenar os dados do novo usuário
   const [searchTerm, setSearchTerm] = useState(''); // Estado da barra de pesquisa
@@ -17,16 +17,16 @@ function UserList() {
 
   // Criar novo usuário
   const handleCreateUser = () => {
-    if (newUser.nome.trim() !== '' && newUser.usuario.trim() !== '' && newUser.senha.trim() !== '') {
+    if (newUser.nome.trim() !== '' && newUser.email.trim() !== '' && newUser.senha.trim() !== '') {
       setUsers([...users, newUser]); // Adiciona o novo usuário à lista
-      setNewUser({ nome: '', usuario: '', senha: '' }); // Limpa o formulário
+      setNewUser({ nome: '', email: '', senha: '' }); // Limpa o formulário
       setIsCreating(false); // Fecha o modal de criação
     }
   };
 
   // Abrir modal de criação
   const handleOpenCreateModal = () => {
-    setNewUser({ nome: '', usuario: '', senha: '' });
+    setNewUser({ nome: '', email: '', senha: '' });
     setIsCreating(true);
     setIsEditing(false);
   };
@@ -43,11 +43,11 @@ function UserList() {
 
   // Salvar usuário editado
   const handleSaveEditUser = () => {
-    if (newUser.nome.trim() !== '' && newUser.usuario.trim() !== '' && newUser.senha.trim() !== '') {
+    if (newUser.nome.trim() !== '' && newUser.email.trim() !== '' && newUser.senha.trim() !== '') {
       const updatedUsers = [...users];
       updatedUsers[selectedUserIndex] = newUser; // Atualiza o usuário na lista
       setUsers(updatedUsers);
-      setNewUser({ nome: '', usuario: '', senha: '' });
+      setNewUser({ nome: '', email: '', senha: '' });
       setIsCreating(false);
       setIsEditing(false);
     }
@@ -67,7 +67,7 @@ function UserList() {
 
   // Cancelar a ação
   const handleCancel = () => {
-    setNewUser({ nome: '', usuario: '', senha: '' });
+    setNewUser({ nome: '', email: '', senha: '' });
     setIsCreating(false); // Fecha o modal sem salvar
     setIsEditing(false); // Define que não estamos mais editando
   };
@@ -166,10 +166,10 @@ function UserList() {
           />
           <input
             type="text"
-            name="usuario"
-            value={newUser.usuario}
+            name="email"
+            value={newUser.email}
             onChange={handleInputChange}
-            placeholder="Usuário"
+            placeholder="Email"
           />
           <input
             type="password"

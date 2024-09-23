@@ -34,8 +34,8 @@ function Home() {
           <div className="previous-events-container">
             <button className="prev-button">&lt;</button>
             <div className="event-images">
-              <h4>Gincana Anterior 2023</h4>
-              <h4>Gincana Anterior 2022</h4>
+            <img src="/images/gincana-anterior1.png" alt="Gincana Anterior 1" />
+              <img src="/images/gincana-anterior2.png" alt="Gincana Anterior 2" />
               <img src="/images/gincana-anterior3.png" alt="Gincana Anterior 3" />
             </div>
             <button className="next-button">&gt;</button>
