@@ -1,15 +1,14 @@
-import React from 'react';
-import './GincanaDetails.css';
-import { FaUserCircle } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import React from 'react'
+import './GincanaDetails.css'
+import { FaUserCircle } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 
-function GincanaDetails() {
-
-  const navigate = useNavigate();
+const GincanaDetails: React.FC = () => {
+  const navigate = useNavigate()
 
   const handleLogoClick = () => {
-    navigate('/home');
-  };
+    navigate('/home')
+  }
 
   return (
     <div className="gincana-details-container">
@@ -27,14 +26,31 @@ function GincanaDetails() {
       <main className="gincana-main">
         <h1>GINCANA 2024</h1>
         <div className="gincana-info">
-          <img src="/images/gincanaatual.png" alt="Gincana Atual" className="gincana-image" />
+          <img
+            src="/images/gincanaatual.png"
+            alt="Gincana Atual"
+            className="gincana-image"
+          />
           <div className="gincana-details">
-            <p><strong>Data:</strong> 25/05/2024</p>
-            <p><strong>Inscrições:</strong> 01/05/2024 - 20/05/2024</p>
-            <p><strong>Horário:</strong> 19:00</p>
-            <p><strong>Local:</strong> Centro de Convenções UNIRV</p>
-            <p><strong>Detalhes:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque volutpat ac neque non euismod...</p>
-            <button className="gincana-regulamento-button">Baixar Regulamento</button>
+            <p>
+              <strong>Data:</strong> 25/05/2024
+            </p>
+            <p>
+              <strong>Inscrições:</strong> 01/05/2024 - 20/05/2024
+            </p>
+            <p>
+              <strong>Horário:</strong> 19:00
+            </p>
+            <p>
+              <strong>Local:</strong> Centro de Convenções UNIRV
+            </p>
+            <p>
+              <strong>Detalhes:</strong> Lorem ipsum dolor sit amet, consectetur
+              adipiscing elit. Pellentesque volutpat ac neque non euismod...
+            </p>
+            <button className="gincana-regulamento-button">
+              Baixar Regulamento
+            </button>
           </div>
         </div>
 
@@ -56,7 +72,7 @@ function GincanaDetails() {
         </div>
       </main>
     </div>
-  );
+  )
 }
 
-export default GincanaDetails;
+export default GincanaDetails
