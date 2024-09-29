@@ -1,15 +1,15 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import Home from './components/Home/Home';
 import UserList from './components/UserList/UserList';
-import GincanaDetails from './components/Gincana/GincanaDetails'; // Importar GincanaDetails
-import SidebarLayout from './components/SidebarLayout/SidebarLayout'; // Importar o layout com o menu lateral
+import GincanaDetails from './components/Gincana/GincanaDetails';
+import SidebarLayout from './components/SidebarLayout/SidebarLayout';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
         {/* Rotas sem o menu lateral */}
         <Route path="/" element={<Login />} />
@@ -33,7 +33,7 @@ function App() {
           }
         />
         <Route
-          path="/gincana/details" // Rota para GincanaDetails
+          path="/gincana/details"
           element={
             <SidebarLayout>
               <GincanaDetails />
@@ -41,8 +41,8 @@ function App() {
           }
         />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;

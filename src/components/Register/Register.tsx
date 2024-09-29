@@ -1,13 +1,13 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Register.css';
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
+import './Register.css'
 
-function Register() {
-  const navigate = useNavigate(); // Hook para navegação
+const Register: React.FC = () => {
+  const navigate = useNavigate() // Hook para navegação
 
   const handleCancel = () => {
-    navigate('/'); // Redireciona para a tela de login
-  };
+    navigate('/') // Redireciona para a tela de login
+  }
 
   return (
     <div className="register-modal">
@@ -27,13 +27,17 @@ function Register() {
             <input type="password" id="password" name="password" />
           </div>
           <div className="register-actions">
-            <button type="button" className="cancel-button" onClick={handleCancel}>Cancelar</button>
-            <button type="submit" className="save-button">Salvar</button>
+            <button type="button" className="cancel-button" onClick={handleCancel}>
+              Cancelar
+            </button>
+            <button type="submit" className="save-button">
+              Salvar
+            </button>
           </div>
         </form>
       </div>
     </div>
-  );
+  )
 }
 
-export default Register;
+export default Register

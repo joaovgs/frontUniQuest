@@ -1,15 +1,15 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Importando useNavigate
-import './Login.css'; 
+import React from 'react'
+import { useNavigate } from 'react-router-dom' // Importando useNavigate
+import './Login.css'
 
-function Login() {
-  const navigate = useNavigate(); // Inicializa o hook useNavigate
+const Login: React.FC = () => {
+  const navigate = useNavigate() // Inicializa o hook useNavigate
 
-  const handleLogin = (e) => {
-    e.preventDefault(); // Impede o comportamento padrão do formulário
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault() // Impede o comportamento padrão do formulário
     // Aqui você pode adicionar a lógica de autenticação, se necessário
-    navigate('/home'); // Redireciona para a tela de Home
-  };
+    navigate('/home') // Redireciona para a tela de Home
+  }
 
   return (
     <div className="login-modal">
@@ -31,7 +31,7 @@ function Login() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Login;
+export default Login
