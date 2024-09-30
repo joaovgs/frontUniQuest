@@ -45,6 +45,7 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
           <ul>
             <li><a href="/home">Home</a></li>
             <li><a href="/users">Cadastro de Organizadores</a></li>
+            <li><a href="/create-game">Cadastro de Provas</a></li>
             <li><a href="/outra-rota">Outra opção</a></li>
           </ul>
         </nav>
