@@ -1,45 +1,78 @@
-/* Layout principal */
-.home-layout {
-  position: relative;
-  height: 100vh; /* Ocupar a altura total da tela */
-}
-
-/* Conteúdo da página */
 .home-content {
   padding: 20px;
-}
-
-.home-header {
   display: flex;
-  justify-content: flex-end;
-  padding: 10px 0;
-  margin-right: 100px; /* Adiciona uma margem à direita para afastar o ícone do menu */
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
-.home-user-icon {
-  font-size: 24px;
-  color: #333;
+img {
+  border: 1px solid black;
+}
+
+img:hover {
+  transform: scale(1.02);
 }
 
 .current-event, .previous-events {
-  margin-top: 40px;
+  margin-top: 50px;
   text-align: center;
+}
+
+.current-event-image {
+  width: 40vw;
+  height: auto;
 }
 
 .previous-events-container {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 80vw; 
+  margin: 20px auto;
+  gap: 2vw;
 }
 
-.event-images {
+.previous-event-images {
   display: flex;
-  gap: 10px;
+  gap: 2vw; 
+}
+
+.previous-event-image {
+  width: 50vh; 
+  height: auto;
 }
 
 .prev-button, .next-button {
-  background: none;
-  border: none;
+  background-color: #007bff;
+  color: white;
+  border: none; /* Remove a borda padrão */
+  border-radius: 50%; /* Torna o botão redondo */
+  width: 50px; /* Largura maior */
+  height: 50px; /* Altura maior */
   font-size: 24px;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Efeito suave para transformação */
+  display: flex; /* Centraliza o conteúdo do botão */
+  justify-content: center;
+  align-items: center;
+}
+
+.prev-button:hover, .next-button:hover {
+  background-color: #0056b3; /* Altera a cor ao passar o mouse */
+  transform: scale(1.1); /* Aumenta levemente o botão */
+}
+
+.prev-button:disabled, .next-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.prev-button i, .next-button i {
+  font-size: 20px; /* Define o tamanho da seta */
+}
+
+/* Adiciona sombra aos botões */
+.prev-button, .next-button {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Adiciona sombra aos botões */
 }

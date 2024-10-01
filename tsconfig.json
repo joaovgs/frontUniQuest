@@ -9,5 +9,5 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node"
   },
-  "include": ["src"]
+  "include": ["src", "src/context"]
 }

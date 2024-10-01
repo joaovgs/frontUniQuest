@@ -1,17 +1,16 @@
 .userlist-container {
   max-width: 800px;
-  margin: 0 auto;
+  margin: auto;
   padding: 20px;
+  padding-top: 60px;
   display: flex;
   flex-direction: column;
-  height: 95vh; /* Ocupar toda a altura da tela */
+  height: 90vh; /* Ocupar toda a altura da tela */
   overflow: hidden; /* Impede que a página tenha uma rolagem inesperada */
 }
 
-.userlist-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+h1 {
+  text-align: center;
 }
 
 .logo-icon {
