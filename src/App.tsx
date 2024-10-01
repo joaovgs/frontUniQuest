@@ -6,6 +6,7 @@ import Home from './components/Home/Home';
 import UserList from './components/UserList/UserList';
 import GincanaDetails from './components/Gincana/GincanaDetails';
 import SidebarLayout from './components/SidebarLayout/SidebarLayout';
+import GameCreate from './components/GameCreate/GameCreate';;
 import Header from './components/Header/Header';
 import { AuthProvider } from './context/AuthContext';
 
@@ -33,34 +34,33 @@ const App: React.FC = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Rotas com o menu lateral */}
-          <Route
-            path="/"
-            element={
-              <SidebarLayout>
-                <Home />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/users"
-            element={
-              <SidebarLayout>
-                <UserList />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/gincana/details"
-            element={
-              <SidebarLayout>
-                <GincanaDetails />
-              </SidebarLayout>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+        {/* Rotas com o menu lateral */}
+        <Route
+          path="/home"
+          element={
+            <SidebarLayout>
+              <Home />
+            </SidebarLayout>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <SidebarLayout>
+              <UserList />
+            </SidebarLayout>
+          }
+        />
+        <Route
+          path="/gincana/details"
+          element={
+            <SidebarLayout>
+              <GincanaDetails />
+            </SidebarLayout>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 };
 

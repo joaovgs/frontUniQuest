@@ -1,0 +1,100 @@
+/* Estilos para o modal de cadastro de Game */
+
+.game-create-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 95vh; /* Ocupar toda a altura da tela */
+    overflow: hidden; /* Impede que a página tenha uma rolagem inesperada */
+}
+  
+/* Modal para Cadastro de Game */
+.create-game-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 30px 40px; /* Ajuste no padding */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    border-radius: 8px;
+    width: 400px; /* Aumento na largura do modal */
+}
+  
+.create-game-modal h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+  
+.form-group {
+    margin-bottom: 15px;
+}
+
+.participants-inputs,
+.points-inputs,
+.category-options {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Ajuste no espaçamento */
+}
+
+.category-options label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.game-input-name {
+    padding: 8px;
+    width: 100%; /* Largura total do modal */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 15px; /* Espaço inferior */
+}
+  
+.game-input {
+    padding: 8px;
+    flex: 1; /* Ocupa o máximo possível dentro do container */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center; /* Alinhamento centralizado */
+}
+
+/* Ajuste adicional para os inputs */
+.participants-inputs .game-input {
+    width: 100px; /* Reduz o tamanho dos inputs */
+}
+
+.points-inputs .game-input {
+    width: 70px; /* Largura específica para pontos */
+}
+
+.modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+}
+  
+.cancel-button,
+.save-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+  
+.cancel-button {
+    background-color: #d9534f;
+    color: white;
+}
+  
+.save-button {
+    background-color: #007bff;
+    color: white;
+}
+  
+.save-button:hover {
+    background-color: #0056b3;
+}
