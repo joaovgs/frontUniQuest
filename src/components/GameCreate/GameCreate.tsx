@@ -17,17 +17,17 @@ const GameCreate: React.FC = () => {
   const handleSave = () => {
     // Lógica para salvar o cadastro do game.
     console.log('Game salvo:', { gameName, minParticipants, maxParticipants, firstPlacePoints, secondPlacePoints, thirdPlacePoints, generalPoints, category });
-    navigate('/home');
+    navigate('/');
   };
 
   const handleCancel = () => {
-    navigate('/home');
+    navigate('/');
   };
 
   return (
     <div className="game-create-container">
       <div className="create-game-modal">
-        <h2>Cadastro de Prova</h2>
+        <h1>Cadastro de Prova</h1>
         <form>
           {/* Campo para nome da prova */}
           <input
