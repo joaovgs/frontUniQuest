@@ -1,6 +1,5 @@
 import React from 'react'
 import './Home.css'
-import { FaUserCircle } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom' // Importar useNavigate
 
 const Home: React.FC = () => {
@@ -13,13 +12,9 @@ const Home: React.FC = () => {
 
   return (
     <div className="home-content">
-      <header className="home-header">
-        <FaUserCircle className="home-user-icon" />
-      </header>
-
       <main>
         <section className="current-event">
-          <h2>Gincana em Andamento</h2>
+          <h1>Gincana em Andamento</h1>
           <img
             src="/images/gincanaatual.png"
             alt="Gincana Atual"
@@ -33,10 +28,10 @@ const Home: React.FC = () => {
           <h2>Gincanas Anteriores</h2>
           <div className="previous-events-container">
             <button className="prev-button">&lt;</button>
-            <div className="event-images">
-              <img src="/images/gincana-anterior1.png" alt="Gincana Anterior 1" />
-              <img src="/images/gincana-anterior2.png" alt="Gincana Anterior 2" />
-              <img src="/images/gincana-anterior3.png" alt="Gincana Anterior 3" />
+            <div className="previous-event-images">
+              <img src="/images/gincanaatual.png" alt="Gincana Anterior 1" className="previous-event-image"/>
+              <img src="/images/gincanaatual.png" alt="Gincana Anterior 2" className="previous-event-image"/>
+              <img src="/images/gincanaatual.png" alt="Gincana Anterior 3" className="previous-event-image"/>
             </div>
             <button className="next-button">&gt;</button>
           </div>

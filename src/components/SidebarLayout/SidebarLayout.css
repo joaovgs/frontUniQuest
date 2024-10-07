@@ -3,12 +3,14 @@
   width: 250px;
   background-color: #333;
   color: #fff;
-  position: fixed;
-  top: 0;
+  top: 30px; /* Define a posição inicial abaixo do header, ajustando para a altura do header */
   left: -300px; /* Esconde o menu fora da tela à esquerda */
-  height: 100vh;
+  height: calc(100vh - 60px); /* Define a altura como a altura total da tela menos a altura do header */
   padding: 20px;
   transition: left 0.3s ease; /* Desliza a partir da esquerda */
+  position: fixed; /* Corrige a posição para que o sidebar acompanhe o scroll */
+  overflow-y: auto; /* Adiciona rolagem interna no sidebar */
+  z-index: 999; /* Garante que o sidebar fique acima de outros elementos */
 }
 
 .sidebar.open {
@@ -37,14 +39,14 @@
 
 .menu-button {
   position: fixed;
-  top: 20px;
+  top: 60px;
   left: 10px; /* Muda para o lado esquerdo */
   background-color: #007bff;
   color: white;
   border: none;
   padding: 10px;
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   cursor: pointer;
   z-index: 1000;
   border-radius: 5px;

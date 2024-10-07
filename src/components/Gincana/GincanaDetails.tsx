@@ -12,17 +12,6 @@ const GincanaDetails: React.FC = () => {
 
   return (
     <div className="gincana-details-container">
-      <header className="gincana-header">
-        <img
-          src="/images/logo.png" // Usando o caminho relativo ao "public"
-          alt="Logo"
-          className="logo-icon"
-          onClick={handleLogoClick}
-          style={{ cursor: 'pointer' }} // Cursor de ponteiro para indicar clique
-        />
-        <FaUserCircle className="home-user-icon" />
-      </header>
-
       <main className="gincana-main">
         <h1>GINCANA 2024</h1>
         <div className="gincana-info">

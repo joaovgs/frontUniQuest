@@ -108,16 +108,7 @@ const UserList: React.FC = () => {
 
   return (
     <div className="userlist-container">
-      <div className="userlist-header">
-        <img
-          src="/images/logo.png" // Usando o caminho relativo ao "public"
-          alt="Logo"
-          className="logo-icon"
-          onClick={handleLogoClick}
-          style={{ cursor: 'pointer' }} // Cursor de ponteiro para indicar clique
-        />
-        <h2>Usuários</h2>
-      </div>
+      <h1>Usuários</h1>
 
       <input
         type="text"
