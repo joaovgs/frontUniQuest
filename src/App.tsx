@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import Home from './components/Home/Home';
@@ -13,7 +13,9 @@ import GameList from './components/GameList/GameList';
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('User');
-
+  
+  const location = useLocation(); // Hook para acessar a rota atual
+  
   const handleLogin = () => {
     setIsLoggedIn(true);
     setUserName('John Doe'); // Simular um usuário logado
@@ -24,43 +26,46 @@ const App: React.FC = () => {
     setIsLoggedIn(false);
     setUserName('');
   };
-  
+
+  // Rota atual
+  const isAuthRoute = location.pathname === '/login' || location.pathname === '/register';
+
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Header />
-        <Routes>
-          {/* Rotas sem o menu lateral */}
-          <Route path="/" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+      {/* Condiciona a renderização do Header apenas quando não estiver nas rotas de login ou register */}
+      {!isAuthRoute && <Header />}
 
+      <Routes>
+        {/* Rotas sem o menu lateral e sem header */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-          {/* Rotas com o menu lateral */}
-          <Route
-            path="/home"
-            element={
-              <SidebarLayout>
-                <Home />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/users"
-            element={
-              <SidebarLayout>
-                <UserList />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/gincana/details"
-            element={
-              <SidebarLayout>
-                <GincanaDetails />
-              </SidebarLayout>
-            }
-          />
-          <Route
+        {/* Rotas com o menu lateral */}
+        <Route
+          path="/home"
+          element={
+            <SidebarLayout>
+              <Home />
+            </SidebarLayout>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <SidebarLayout>
+              <UserList />
+            </SidebarLayout>
+          }
+        />
+        <Route
+          path="/gincana/details"
+          element={
+            <SidebarLayout>
+              <GincanaDetails />
+            </SidebarLayout>
+          }
+        />
+        <Route
           path="/games"
           element={
             <SidebarLayout>
@@ -68,10 +73,15 @@ const App: React.FC = () => {
             </SidebarLayout>
           }
         />
-        </Routes>
-      </BrowserRouter>
+      </Routes>
     </AuthProvider>
   );
 };
 
-export default App;
+const WrappedApp: React.FC = () => (
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
+);
+
+export default WrappedApp;

@@ -33,7 +33,7 @@ const Login: React.FC = () => {
         login(userResponse.data.user.name);
 
         console.log('Login bem-sucedido, redirecionando para a home...');
-        navigate('/'); 
+        navigate('/home'); 
       }
     } catch (error) {
       setError('Erro ao fazer login. Verifique suas credenciais.');

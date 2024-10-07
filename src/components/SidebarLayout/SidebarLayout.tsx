@@ -1,41 +1,42 @@
-import React, { useState, useRef, useEffect, ReactNode } from 'react'
-import './SidebarLayout.css'
-import { FaBars } from 'react-icons/fa'
+import React, { useState, useRef, useEffect, ReactNode } from 'react';
+import { FaBars } from 'react-icons/fa';
+import { Link } from 'react-router-dom'; // Importar Link do react-router-dom
+import './SidebarLayout.css';
 
 interface SidebarLayoutProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const sidebarRef = useRef<HTMLDivElement | null>(null)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen)
-  }
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   const handleClickOutside = (event: MouseEvent) => {
     if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
-      setIsSidebarOpen(false)
+      setIsSidebarOpen(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (isSidebarOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('mousedown', handleClickOutside);
     } else {
-      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isSidebarOpen])
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSidebarOpen]);
 
   return (
     <div className="layout-container">
-      <button 
-        className={`menu-button ${isSidebarOpen ? 'hidden' : ''}`} 
+      <button
+        className={`menu-button ${isSidebarOpen ? 'hidden' : ''}`}
         onClick={toggleSidebar}
       >
         <FaBars />
@@ -43,10 +44,19 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
       <aside ref={sidebarRef} className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <nav className="sidebar-nav">
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/users">Cadastro de Organizadores</a></li>
-            <li><a href="/games">Cadastro de Provas</a></li>
-            <li><a href="/outra-rota">Outra opção</a></li>
+            {/* Substituir <a href="/home"> por <Link to="/home"> */}
+            <li>
+              <Link to="/home" onClick={toggleSidebar}>Home</Link>
+            </li>
+            <li>
+              <Link to="/users" onClick={toggleSidebar}>Cadastro de Organizadores</Link>
+            </li>
+            <li>
+              <Link to="/games" onClick={toggleSidebar}>Cadastro de Provas</Link>
+            </li>
+            <li>
+              <Link to="/outra-rota" onClick={toggleSidebar}>Outra opção</Link>
+            </li>
           </ul>
         </nav>
       </aside>
@@ -54,7 +64,7 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
         {children}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SidebarLayout
+export default SidebarLayout;

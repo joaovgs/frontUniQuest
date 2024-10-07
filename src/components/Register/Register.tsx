@@ -6,7 +6,7 @@ const Register: React.FC = () => {
   const navigate = useNavigate() // Hook para navegação
 
   const handleCancel = () => {
-    navigate('/') // Redireciona para a tela de login
+    navigate('/login') // Redireciona para a tela de login
   }
 
   return (
