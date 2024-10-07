@@ -43,7 +43,7 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
       <aside ref={sidebarRef} className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <nav className="sidebar-nav">
           <ul>
-            <li><a href="/">Home</a></li>
+            <li><a href="/home">Home</a></li>
             <li><a href="/users">Cadastro de Organizadores</a></li>
             <li><a href="/games">Cadastro de Provas</a></li>
             <li><a href="/outra-rota">Outra opção</a></li>

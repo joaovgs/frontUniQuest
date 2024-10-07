@@ -1,11 +1,12 @@
 /* Container principal */
 .game-list-container {
     max-width: 800px;
-    margin: 0 auto;
+    margin: auto;
     padding: 20px;
+    padding-top: 60px;
     display: flex;
     flex-direction: column;
-    height: 95vh; /* Ocupar a altura da tela */
+    height: 90vh; /* Ocupar a altura da tela */
     overflow: hidden; /* Evita rolagem inesperada na página */
   }
   
