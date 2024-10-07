@@ -31,7 +31,7 @@ const App: React.FC = () => {
         <Header />
         <Routes>
           {/* Rotas sem o menu lateral */}
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
 
