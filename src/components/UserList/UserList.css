@@ -1,21 +1,20 @@
-.userlist-container {
+/* Container principal */
+.user-list-container {
   max-width: 800px;
   margin: auto;
   padding: 20px;
   padding-top: 60px;
   display: flex;
   flex-direction: column;
-  height: 90vh; /* Ocupar toda a altura da tela */
-  overflow: hidden; /* Impede que a página tenha uma rolagem inesperada */
+  height: 90vh; /* Ocupar a altura da tela */
+  overflow: hidden; /* Evita rolagem inesperada na página */
 }
 
-h1 {
-  text-align: center;
-}
-
-.logo-icon {
-  height: 40px;
-  width: auto;
+/* Cabeçalho com título e barra de pesquisa */
+.user-list-header {
+  display: flex;
+  flex-direction: column; /* Coloca os elementos em uma coluna (um embaixo do outro) */
+  align-items: center; /* Centraliza os elementos horizontalmente */
 }
 
 .search-input {
@@ -26,11 +25,11 @@ h1 {
   border-radius: 4px;
 }
 
+/* Lista de usuários */
 .user-list {
   flex: 1;
-  overflow-y: auto; /* Rolagem interna apenas na lista */
-  max-height: calc(100vh - 220px); /* Definir limite de altura para a lista */
-  margin-bottom: 20px;
+  overflow-y: auto; /* Rolagem interna */
+  max-height: calc(100vh - 200px); /* Limite de altura para lista */
 }
 
 .user-item {
@@ -41,22 +40,25 @@ h1 {
   cursor: pointer;
 }
 
-.selected {
-  background-color: #e0e0e0;
+.user-item.selected {
+  background-color: #007bff; /* Cor de fundo para o item selecionado */
+  color: white; /* Cor do texto para o item selecionado */
+  border: 1px solid #0056b3; /* Bordas diferenciadas */
 }
 
-/* Rodapé para botões */
+/* Rodapé fixo para botões */
 .actions {
   display: flex;
   justify-content: right;
-  padding: 10px 0;
   gap: 30px; /* Espaçamento entre os botões */
-  background-color: transparent;
+  padding: 10px 0;
   position: relative;
   bottom: 0;
 }
 
-.create-button, .edit-button, .delete-button {
+.create-button,
+.edit-button,
+.delete-button {
   padding: 10px 20px;
   font-size: 16px;
   background-color: white;
@@ -66,58 +68,25 @@ h1 {
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px; /* Espaço entre ícone e texto */
   transition: background-color 0.3s, color 0.3s;
 }
 
-.create-button:hover, .edit-button:hover, .delete-button:hover {
+.create-button:hover,
+.edit-button:hover,
+.delete-button:hover {
   background-color: #007bff;
   color: white;
 }
 
-.create-user-modal {
+/* Modal Overlay */
+.modal-overlay {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 20px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-  border-radius: 10px;
-  width: 350px;
-}
-
-.create-user-modal input {
-  margin-bottom: 8px; /* Aumenta o espaço inferior entre os campos */
-  padding: 8px;
+  top: 0;
+  left: 0;
   width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.modal-actions {
-  margin-top: 10px;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: space-around;
-}
-
-.cancel-button, .save-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.cancel-button {
-  background-color: #d9534f;
-  color: white;
-}
-
-.save-button {
-  background-color: #007bff;
-  color: white;
-}
-
-.save-button:hover {
-  background-color: #0056b3;
+  justify-content: center;
+  align-items: center;
 }
