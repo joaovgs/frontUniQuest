@@ -65,7 +65,7 @@ const GameList: React.FC = () => {
   return (
     <div className="game-list-container">
       <div className="game-list-header">
-        <h2>Provas</h2>
+        <h1>Provas</h1>
         <input
           type="text"
           placeholder="Pesquisar"

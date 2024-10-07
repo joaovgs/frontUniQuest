@@ -13,14 +13,14 @@
   /* Cabeçalho com título e barra de pesquisa */
   .game-list-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+    flex-direction: column; /* Coloca os elementos em uma coluna (um embaixo do outro) */
+    align-items: center; /* Centraliza os elementos horizontalmente */
   }
   
   .search-input {
-    width: 200px; /* Tamanho da barra de pesquisa */
+    margin-bottom: 20px;
     padding: 8px;
+    width: 100%;
     border: 1px solid #ccc;
     border-radius: 4px;
   }
@@ -40,6 +40,12 @@
     cursor: pointer;
   }
   
+  .game-item.selected {
+    background-color: #007bff; /* Cor de fundo para o item selecionado */
+    color: white; /* Cor do texto para o item selecionado */
+    border: 1px solid #0056b3; /* Bordas diferenciadas */
+  }
+
   /* Rodapé fixo para botões */
   .actions {
     display: flex;

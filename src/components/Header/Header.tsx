@@ -21,7 +21,7 @@ const Header: React.FC = () => {
   return (
     <header className="header">
       {/* Logo à esquerda */}
-      <div className="logo" onClick={() => navigate('/')}>
+      <div className="logo" onClick={() => navigate('/home')}>
         LOGO
       </div>
 
