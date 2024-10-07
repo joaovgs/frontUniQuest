@@ -1,8 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './GameCreate.css'; // Importando o CSS específico do componente
-import { useNavigate } from 'react-router-dom';
 
-const GameCreate: React.FC = () => {
+interface GameCreateProps {
+  onClose: () => void; // Propriedade para fechar o modal
+  onSave: (game: Game) => void; // Propriedade para salvar o novo game
+  initialGame?: Game; // Propriedade opcional para receber um game já existente para edição
+}
+
+interface Game {
+  gameName: string;
+  minParticipants: string;
+  maxParticipants: string;
+  firstPlacePoints: string;
+  secondPlacePoints: string;
+  thirdPlacePoints: string;
+  generalPoints: string;
+  category: string;
+}
+
+const GameCreate: React.FC<GameCreateProps> = ({ onClose, onSave, initialGame }) => {
   const [gameName, setGameName] = useState('');
   const [minParticipants, setMinParticipants] = useState('');
   const [maxParticipants, setMaxParticipants] = useState('');
@@ -12,24 +28,39 @@ const GameCreate: React.FC = () => {
   const [generalPoints, setGeneralPoints] = useState('');
   const [category, setCategory] = useState('Confronto Direto');
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    if (initialGame) {
+      // Atualiza todos os campos com as informações do game ao abrir o modal no modo de edição
+      setGameName(initialGame.gameName || '');
+      setMinParticipants(initialGame.minParticipants || '');
+      setMaxParticipants(initialGame.maxParticipants || '');
+      setFirstPlacePoints(initialGame.firstPlacePoints || '');
+      setSecondPlacePoints(initialGame.secondPlacePoints || '');
+      setThirdPlacePoints(initialGame.thirdPlacePoints || '');
+      setGeneralPoints(initialGame.generalPoints || '');
+      setCategory(initialGame.category || 'Confronto Direto');
+    }
+  }, [initialGame]);
 
   const handleSave = () => {
-    // Lógica para salvar o cadastro do game.
-    console.log('Game salvo:', { gameName, minParticipants, maxParticipants, firstPlacePoints, secondPlacePoints, thirdPlacePoints, generalPoints, category });
-    navigate('/home');
-  };
-
-  const handleCancel = () => {
-    navigate('/home');
+    const newGame: Game = {
+      gameName,
+      minParticipants,
+      maxParticipants,
+      firstPlacePoints,
+      secondPlacePoints,
+      thirdPlacePoints,
+      generalPoints,
+      category,
+    };
+    onSave(newGame); // Chama a função onSave com todas as informações do game
   };
 
   return (
     <div className="game-create-container">
       <div className="create-game-modal">
-        <h2>Cadastro de Prova</h2>
+        <h2>{initialGame ? 'Editar Prova' : 'Cadastro de Prova'}</h2>
         <form>
-          {/* Campo para nome da prova */}
           <input
             type="text"
             placeholder="Nome da Prova"
@@ -38,7 +69,6 @@ const GameCreate: React.FC = () => {
             className="game-input-name"
           />
 
-          {/* Campo para participantes */}
           <div className="form-group">
             <label>Participantes:</label>
             <div className="participants-inputs">
@@ -59,7 +89,6 @@ const GameCreate: React.FC = () => {
             </div>
           </div>
 
-          {/* Campo para pontuações */}
           <div className="form-group">
             <label>Pontuações:</label>
             <div className="points-inputs">
@@ -94,7 +123,6 @@ const GameCreate: React.FC = () => {
             </div>
           </div>
 
-          {/* Campo para categoria */}
           <div className="form-group">
             <label>Categoria:</label>
             <div className="category-options">
@@ -122,9 +150,8 @@ const GameCreate: React.FC = () => {
           </div>
         </form>
 
-        {/* Botões de ação */}
         <div className="modal-actions">
-          <button className="cancel-button" onClick={handleCancel}>
+          <button className="cancel-button" onClick={onClose}>
             Cancelar
           </button>
           <button className="save-button" onClick={handleSave}>

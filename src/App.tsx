@@ -6,7 +6,8 @@ import Home from './components/Home/Home';
 import UserList from './components/UserList/UserList';
 import GincanaDetails from './components/Gincana/GincanaDetails';
 import SidebarLayout from './components/SidebarLayout/SidebarLayout';
-import GameCreate from './components/GameCreate/GameCreate';;
+//import GameCreate from './components/GameCreate/GameCreate';
+import GameList from './components/GameList/GameList';
 
 const App: React.FC = () => {
   return (
@@ -42,10 +43,10 @@ const App: React.FC = () => {
           }
         />
         <Route
-          path="/create-game"
+          path="/games"
           element={
             <SidebarLayout>
-              <GameCreate />
+              <GameList />
             </SidebarLayout>
           }
         />
