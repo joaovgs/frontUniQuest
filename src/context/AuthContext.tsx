@@ -1,7 +1,5 @@
-// src/context/AuthContext.tsx
 import React, { createContext, useContext, useState } from 'react';
 
-// Definindo os tipos para o contexto
 type AuthContextType = {
   isLoggedIn: boolean;
   userName: string;
@@ -9,10 +7,8 @@ type AuthContextType = {
   logout: () => void;
 };
 
-// Contexto inicial sem implementação (valores padrão)
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Provedor de contexto para gerenciar o estado e funções de autenticação
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
@@ -34,7 +30,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-// Hook para facilitar o uso do contexto
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

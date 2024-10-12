@@ -1,40 +1,34 @@
-// UserCreate.tsx
 import React, { useState, useEffect } from 'react';
-import './UserCreate.css'; // Importando o CSS específico do componente
+import './UserCreate.css';
+import { User } from '../../models/User';
 
 interface UserCreateProps {
-  onClose: () => void; // Propriedade para fechar o modal
-  onSave: (user: User) => void; // Propriedade para salvar o novo usuário
-  initialUser?: User; // Propriedade opcional para receber um usuário já existente para edição
-}
-
-interface User {
-  nome: string;
-  email: string;
-  senha: string;
+  onClose: () => void;
+  onSave: (user: Omit<User, 'id' | 'created_at' | 'system_deleted' | 'system_date_deleted'>) => void | Promise<void>;
+  initialUser?: User;
 }
 
 const UserCreate: React.FC<UserCreateProps> = ({ onClose, onSave, initialUser }) => {
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+  const [name, setName] = useState<string>(''); 
+  const [email, setEmail] = useState<string>(''); 
+  const [password, setPassword] = useState<string>(''); 
 
   useEffect(() => {
     if (initialUser) {
-      // Atualiza todos os campos com as informações do usuário ao abrir o modal no modo de edição
-      setNome(initialUser.nome || '');
+      setName(initialUser.name || '');
       setEmail(initialUser.email || '');
-      setSenha(initialUser.senha || '');
+      setPassword('');
     }
   }, [initialUser]);
 
   const handleSave = () => {
-    const newUser: User = {
-      nome,
+    const newUser = {
+      name,
       email,
-      senha,
+      password,
+      role: 1 
     };
-    onSave(newUser); // Chama a função onSave com todas as informações do usuário
+    onSave(newUser); 
   };
 
   return (
@@ -45,8 +39,8 @@ const UserCreate: React.FC<UserCreateProps> = ({ onClose, onSave, initialUser })
           <input
             type="text"
             placeholder="Nome"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             className="user-input"
           />
           <input
@@ -59,8 +53,8 @@ const UserCreate: React.FC<UserCreateProps> = ({ onClose, onSave, initialUser })
           <input
             type="password"
             placeholder="Senha"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="user-input"
           />
         </form>

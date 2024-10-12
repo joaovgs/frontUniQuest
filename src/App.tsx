@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation, Navigate } from 'react-router-dom';
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import Home from './components/Home/Home';
@@ -36,6 +36,9 @@ const App: React.FC = () => {
       {!isAuthRoute && <Header />}
 
       <Routes>
+        {/* Redirecionamento da rota raiz (/) para /home */}
+        <Route path="/" element={<Navigate to="/home" />} />
+
         {/* Rotas sem o menu lateral e sem header */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

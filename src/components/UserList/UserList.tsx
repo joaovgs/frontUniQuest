@@ -1,62 +1,85 @@
-// UserList.tsx
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import './UserList.css';
 import UserCreate from '../UserCreate/UserCreate';
 import { useNavigate } from 'react-router-dom';
-
-interface User {
-  nome: string;
-  email: string;
-  senha: string;
-}
+import { User, UserPayload } from '../../models/User';
+import { UserService } from '../../services/UserService';
+import axios from 'axios';
 
 const UserList: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]); // Lista de usuários
-  const [searchTerm, setSearchTerm] = useState(''); // Estado para controle de pesquisa
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false); // Estado para exibir o modal
-  const [selectedUser, setSelectedUser] = useState<User | null>(null); // Estado para armazenar o usuário selecionado
-  const navigate = useNavigate(); // Hook para navegação
+  const [users, setUsers] = useState<User[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const navigate = useNavigate();
 
-  // Função para abrir o modal de criação ou edição
-  const handleOpenCreateModal = (user?: User) => {
-    if (user) {
-      setSelectedUser(user); // Se um usuário for passado, abrir o modal no modo de edição
+  // Função para buscar os usuários com ou sem filtro
+  const fetchUsers = async (filter: string = '') => {
+    try {
+      // Obtem o objeto que contém o array de usuários
+      const response = await UserService.getUsers(filter);
+
+      // Verifica se a resposta contém a chave `users` e se é um array
+      if (response && Array.isArray(response.users)) {
+        setUsers(response.users); // Atualiza o estado com o array de usuários
+      } else {
+        setUsers([]); // Define um array vazio caso a resposta não seja um array válido
+        console.error('Erro: Resposta de usuários não é um array válido.');
+      }
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+      setUsers([]); // Definir como array vazio em caso de erro
+
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          console.log('Erro de autenticação. Redirecionando para login...');
+          navigate('/login');
+        } else if (error.response?.status === 500) {
+          console.log('Erro interno do servidor. Tente novamente mais tarde.');
+        }
+      }
     }
-    setIsCreateModalOpen(true);
   };
 
-  // Função para fechar o modal
-  const handleCloseCreateModal = () => {
-    setIsCreateModalOpen(false);
-    setSelectedUser(null); // Limpa o usuário selecionado ao fechar o modal
-  };
+  useEffect(() => {
+    fetchUsers(); // Busca inicial sem filtro
+  }, []);
 
-  // Função para salvar um novo usuário ou atualizar um existente
-  const handleSaveUser = (user: User) => {
-    if (selectedUser) {
-      // Atualizar usuário existente
-      const updatedUsers = users.map((u) => (u.email === selectedUser.email ? user : u));
-      setUsers(updatedUsers);
-    } else {
-      // Adicionar novo usuário à lista
-      setUsers([...users, user]);
-    }
-    handleCloseCreateModal(); // Fechar modal
-  };
-
-  // Função para deletar um usuário
-  const handleDeleteUser = () => {
-    if (selectedUser) {
-      const updatedUsers = users.filter((u) => u !== selectedUser);
-      setUsers(updatedUsers);
+  const handleSaveUser = async (userPayload: UserPayload) => {
+    try {
+      if (selectedUser) {
+        const updatedUser = await UserService.updateUser(selectedUser.id, userPayload);
+        setUsers((prevUsers) =>
+          prevUsers.map((u) => (u.id === selectedUser.id ? updatedUser : u))
+        );
+      } else {
+        const newUser = await UserService.createUser(userPayload);
+        setUsers((prevUsers) => [...prevUsers, newUser]);
+      }
+      setIsCreateModalOpen(false);
       setSelectedUser(null);
+    } catch (error) {
+      console.error('Erro ao salvar usuário:', error);
     }
   };
 
-  // Filtrar usuários com base no termo de pesquisa
-  const filteredUsers = users.filter((user) =>
-    user.nome.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleDeleteUser = async () => {
+    if (selectedUser) {
+      try {
+        await UserService.deleteUser(selectedUser.id);
+        setUsers((prevUsers) => prevUsers.filter((u) => u.id !== selectedUser.id));
+        setSelectedUser(null);
+      } catch (error) {
+        console.error('Erro ao deletar usuário:', error);
+      }
+    }
+  };
+
+  const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      fetchUsers(searchTerm);
+    }
+  };
 
   return (
     <div className="user-list-container">
@@ -67,35 +90,33 @@ const UserList: React.FC = () => {
           placeholder="Pesquisar"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="search-input"
+          onKeyDown={handleSearchKeyDown}
         />
       </div>
 
-      {/* Lista de usuários */}
       <div className="user-list">
-        {filteredUsers.length === 0 ? (
+        {users.length === 0 ? (
           <p>Nenhum organizador encontrado.</p>
         ) : (
-          filteredUsers.map((user, index) => (
+          users.map((user, index) => (
             <div
               key={index}
               className={`user-item ${selectedUser === user ? 'selected' : ''}`}
               onClick={() => setSelectedUser(user)}
             >
-              {user.nome}
+              {user.name}
             </div>
           ))
         )}
       </div>
 
-      {/* Rodapé com botões */}
       <div className="actions">
-        <button className="create-button" onClick={() => handleOpenCreateModal()}>
+        <button className="create-button" onClick={() => setIsCreateModalOpen(true)}>
           Criar
         </button>
         <button
           className="edit-button"
-          onClick={() => handleOpenCreateModal(selectedUser || undefined)}
+          onClick={() => setIsCreateModalOpen(true)}
           disabled={!selectedUser}
         >
           Editar
@@ -105,10 +126,9 @@ const UserList: React.FC = () => {
         </button>
       </div>
 
-      {/* Modal de Criação de Usuários */}
       {isCreateModalOpen && (
         <div className="modal-overlay">
-          <UserCreate onClose={handleCloseCreateModal} onSave={handleSaveUser} initialUser={selectedUser || undefined} />
+          <UserCreate onClose={() => setIsCreateModalOpen(false)} onSave={handleSaveUser} initialUser={selectedUser || undefined} />
         </div>
       )}
     </div>

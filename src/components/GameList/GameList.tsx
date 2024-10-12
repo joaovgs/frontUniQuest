@@ -22,7 +22,9 @@ const GameList: React.FC = () => {
   // Função para abrir o modal de criação ou edição
   const handleOpenCreateModal = (game?: Game) => {
     if (game) {
-      setSelectedGame(game); // Se um game for passado, abrir o modal no modo de edição
+      setSelectedGame(game); // Se um game for passado, configurar para edição
+    } else {
+      setSelectedGame(null); // Limpar o game selecionado para garantir criação de novo game
     }
     setIsCreateModalOpen(true);
   };
