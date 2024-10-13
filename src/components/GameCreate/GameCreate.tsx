@@ -71,7 +71,8 @@ const GameCreate: React.FC<GameCreateProps> = ({ onClose, onSave, initialGame })
 
           <div className="form-group">
             <label>Participantes:</label>
-            <div className="participants-inputs">
+          </div>
+          <div className="participants-inputs">
               <input
                 type="number"
                 placeholder="Mín."
@@ -86,12 +87,12 @@ const GameCreate: React.FC<GameCreateProps> = ({ onClose, onSave, initialGame })
                 onChange={(e) => setMaxParticipants(e.target.value)}
                 className="game-input"
               />
-            </div>
           </div>
 
           <div className="form-group">
             <label>Pontuações:</label>
-            <div className="points-inputs">
+          </div>
+          <div className="points-inputs">
               <input
                 type="number"
                 placeholder="1°"
@@ -120,7 +121,6 @@ const GameCreate: React.FC<GameCreateProps> = ({ onClose, onSave, initialGame })
                 onChange={(e) => setGeneralPoints(e.target.value)}
                 className="game-input"
               />
-            </div>
           </div>
 
           <div className="form-group">

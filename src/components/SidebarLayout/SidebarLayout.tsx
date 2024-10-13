@@ -52,6 +52,9 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
               <Link to="/users" onClick={toggleSidebar}>Cadastro de Organizadores</Link>
             </li>
             <li>
+            <li>
+              <Link to="/competition" onClick={toggleSidebar}>Cadastro de Gincana</Link>
+            </li>
               <Link to="/games" onClick={toggleSidebar}>Cadastro de Provas</Link>
             </li>
             <li>

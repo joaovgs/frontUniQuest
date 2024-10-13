@@ -1,14 +1,13 @@
-import React from 'react'
-import './GincanaDetails.css'
-import { FaUserCircle } from 'react-icons/fa'
-import { useNavigate } from 'react-router-dom'
+import React from 'react';
+import './GincanaDetails.css';
+import { useNavigate } from 'react-router-dom';
 
 const GincanaDetails: React.FC = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const handleLogoClick = () => {
-    navigate('/home')
-  }
+  const handleRankingClick = () => {
+    navigate('/ranking'); // Redireciona para a página de Ranking
+  };
 
   return (
     <div className="gincana-details-container">
@@ -56,12 +55,14 @@ const GincanaDetails: React.FC = () => {
         </div>
 
         <div className="gincana-actions">
-          <button className="ranking-button">Ranking 🏆</button>
+          <button className="ranking-button" onClick={handleRankingClick}>
+            Ranking 🏆
+          </button>
           <button className="inscrever-button">Inscrever-se ➡</button>
         </div>
       </main>
     </div>
-  )
-}
+  );
+};
 
-export default GincanaDetails
+export default GincanaDetails;

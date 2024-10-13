@@ -1,0 +1,73 @@
+.competition-list-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    overflow: hidden;
+  }
+  
+  .competition-list-header {
+    display: flex;
+    flex-direction: column; /* Coloca os elementos em uma coluna (um embaixo do outro) */
+    align-items: center; /* Centraliza os elementos horizontalmente */
+  }
+  
+  .search-input {
+    margin-bottom: 20px;
+    padding: 8px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .competition-list {
+    flex: 1;
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+  }
+  
+  .competition-item {
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .selected {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #0056b3;
+  }
+  
+  /* Rodapé para botões */
+  .actions {
+    display: flex;
+    justify-content: right;
+    gap: 30px; /* Espaçamento entre os botões */
+    padding: 10px 0;
+    position: relative;
+    bottom: 0;
+  }
+  
+  .create-button, .edit-button, .delete-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: white;
+    color: black;
+    border: 2px solid #007bff;
+    border-radius: 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .create-button:hover, .edit-button:hover, .delete-button:hover {
+    background-color: #007bff;
+    color: white;
+  }
+  

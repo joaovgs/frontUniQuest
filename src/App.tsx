@@ -9,6 +9,8 @@ import SidebarLayout from './components/SidebarLayout/SidebarLayout';
 import Header from './components/Header/Header';
 import { AuthProvider } from './context/AuthContext';
 import GameList from './components/GameList/GameList';
+import CompetitonList from './components/CompetitionList/CompetitionList';
+import RankingPage from './components/RankingPage/RankingPage'; // Import do RankingPage
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -21,29 +23,22 @@ const App: React.FC = () => {
     setUserName('John Doe'); // Simular um usuário logado
   };
 
-  // Função que será passada como prop para o Header para tratar o logout
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUserName('');
   };
 
-  // Rota atual
   const isAuthRoute = location.pathname === '/login' || location.pathname === '/register';
 
   return (
     <AuthProvider>
-      {/* Condiciona a renderização do Header apenas quando não estiver nas rotas de login ou register */}
       {!isAuthRoute && <Header />}
 
       <Routes>
-        {/* Redirecionamento da rota raiz (/) para /home */}
         <Route path="/" element={<Navigate to="/home" />} />
-
-        {/* Rotas sem o menu lateral e sem header */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Rotas com o menu lateral */}
         <Route
           path="/home"
           element={
@@ -69,10 +64,26 @@ const App: React.FC = () => {
           }
         />
         <Route
+          path="/competition"
+          element={
+            <SidebarLayout>
+              <CompetitonList />
+            </SidebarLayout>
+          }
+        />
+        <Route
           path="/games"
           element={
             <SidebarLayout>
               <GameList />
+            </SidebarLayout>
+          }
+        />
+        <Route
+          path="/ranking"
+          element={
+            <SidebarLayout>
+              <RankingPage />
             </SidebarLayout>
           }
         />

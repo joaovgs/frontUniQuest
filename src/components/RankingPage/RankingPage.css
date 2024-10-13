@@ -1,0 +1,42 @@
+.ranking-container {
+    text-align: center;
+    padding: 0px 50px;
+  }
+  
+  header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+  }
+  
+  .logo img {
+    height: 40px;
+    cursor: pointer;
+  }
+  
+  .login-button {
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+  
+  .ranking-table th, .ranking-table td {
+    border: 2px solid #ddd;
+    padding: 8px;
+  }
+  
+  .ranking-table th {
+    background-color: #f2f2f2;
+    text-align: center;
+  }
+  
+  .ranking-table td {
+    text-align: center;
+  }
+  
