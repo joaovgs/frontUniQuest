@@ -12,12 +12,19 @@ const UserCreate: React.FC<UserCreateProps> = ({ onClose, onSave, initialUser })
   const [name, setName] = useState<string>(''); 
   const [email, setEmail] = useState<string>(''); 
   const [password, setPassword] = useState<string>(''); 
+  const [isEditing, setIsEditing] = useState<boolean>(!!initialUser);
 
   useEffect(() => {
     if (initialUser) {
       setName(initialUser.name || '');
       setEmail(initialUser.email || '');
       setPassword('');
+      setIsEditing(true); 
+    } else {
+      setName('');
+      setEmail('');
+      setPassword('');
+      setIsEditing(false);
     }
   }, [initialUser]);
 
@@ -28,13 +35,13 @@ const UserCreate: React.FC<UserCreateProps> = ({ onClose, onSave, initialUser })
       password,
       role: 1 
     };
-    onSave(newUser); 
+    onSave(newUser);
   };
 
   return (
     <div className="user-create-container">
       <div className="create-user-modal">
-        <h2>{initialUser ? 'Editar Usuário' : 'Cadastro de Usuário'}</h2>
+        <h2>{isEditing ? 'Editar Usuário' : 'Cadastro de Usuário'}</h2>
         <form>
           <input
             type="text"
