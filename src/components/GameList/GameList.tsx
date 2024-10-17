@@ -1,68 +1,126 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './GameList.css';
 import GameCreate from '../GameCreate/GameCreate';
-
-interface Game {
-  gameName: string;
-  minParticipants: string;
-  maxParticipants: string;
-  firstPlacePoints: string;
-  secondPlacePoints: string;
-  thirdPlacePoints: string;
-  generalPoints: string;
-  category: string;
-}
+import { useSnackbar } from '../../context/SnackbarContext';
+import { Game, GamePayload } from '../../models/Game';
+import { GameService } from '../../services/Game';
+import axios from 'axios';
 
 const GameList: React.FC = () => {
-  const [games, setGames] = useState<Game[]>([]); // Lista de games
-  const [searchTerm, setSearchTerm] = useState(''); // Estado para controle de pesquisa
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false); // Estado para exibir o modal
-  const [selectedGame, setSelectedGame] = useState<Game | null>(null); // Estado para armazenar o game selecionado
+  const [games, setGames] = useState<Game[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const { showSnackbar } = useSnackbar();
 
-  // Função para abrir o modal de criação ou edição
+  const actionsRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  const fetchGames = async (filter: string = '') => {
+    try {
+      const response = await GameService.getGames(filter);
+
+      if (response && Array.isArray(response.games)) {
+        setGames(response.games);
+      } else {
+        setGames([]);
+        console.error('Erro: Resposta de games não é um array válido.');
+      }
+    } catch (error) {
+      console.error('Erro ao buscar games:', error);
+      setGames([]);
+
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          console.log('Erro de autenticação. Redirecionando para login...');
+        } else if (error.response?.status === 500) {
+          showSnackbar('Erro interno do servidor. Tente novamente mais tarde.', 'error');
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchGames();
+  }, []);
+
+  const handleSaveGame = async (gamePayload: GamePayload) => {
+    try {
+      if (selectedGame) {
+        await GameService.updateGame(selectedGame.id, gamePayload);
+        showSnackbar('Prova atualizada com sucesso!', 'success');
+      } else {
+        await GameService.createGame(gamePayload);
+        showSnackbar('Prova criada com sucesso!', 'success');
+      }
+      setSearchTerm('');
+      await fetchGames('');
+      setIsCreateModalOpen(false);
+      setSelectedGame(null);
+    } catch (error) {
+      showSnackbar('Erro ao salvar prova. Tente novamente.', 'error');
+      console.error('Erro ao salvar prova:', error);
+    }
+  };
+
+  const handleDeleteGame = async () => {
+    if (selectedGame) {
+      try {
+        await GameService.deleteGame(selectedGame.id);
+        setGames((prevGames) => prevGames.filter((g) => g.id !== selectedGame.id));
+        setSelectedGame(null);
+        showSnackbar('Prova excluída com sucesso!', 'success');
+      } catch (error) {
+        showSnackbar('Erro ao deletar prova. Tente novamente.', 'error');
+        console.error('Erro ao deletar prova:', error);
+      }
+    }
+  };
+
+  const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      fetchGames(searchTerm);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+
+      if (isCreateModalOpen) {
+        if (modalRef.current && !modalRef.current.contains(target)) {
+          return;
+        }
+      } else {
+        if (
+          !target.closest('.game-item') &&
+          actionsRef.current &&
+          !actionsRef.current.contains(target)
+        ) {
+          setSelectedGame(null);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isCreateModalOpen]);
+
   const handleOpenCreateModal = (game?: Game) => {
     if (game) {
-      setSelectedGame(game); // Se um game for passado, configurar para edição
+      setSelectedGame(game);
     } else {
-      setSelectedGame(null); // Limpar o game selecionado para garantir criação de novo game
+      setSelectedGame(null);
     }
     setIsCreateModalOpen(true);
   };
 
-  // Função para fechar o modal
   const handleCloseCreateModal = () => {
     setIsCreateModalOpen(false);
-    setSelectedGame(null); // Limpa o game selecionado ao fechar o modal
+    setSelectedGame(null);
   };
-
-  // Função para salvar um novo game ou atualizar um existente
-  const handleSaveGame = (game: Game) => {
-    if (selectedGame) {
-      // Atualizar game existente
-      const updatedGames = games.map((g) =>
-        g.gameName === selectedGame.gameName ? game : g
-      );
-      setGames(updatedGames);
-    } else {
-      // Adicionar novo game à lista
-      setGames([...games, game]);
-    }
-    handleCloseCreateModal(); // Fechar modal
-  };
-
-  // Função para deletar um game
-  const handleDeleteGame = () => {
-    if (selectedGame) {
-      const updatedGames = games.filter((g) => g !== selectedGame);
-      setGames(updatedGames);
-      setSelectedGame(null);
-    }
-  };
-
-  // Filtrar games com base no termo de pesquisa
-  const filteredGames = games.filter((game) =>
-    game.gameName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="game-list-container">
@@ -73,30 +131,32 @@ const GameList: React.FC = () => {
           placeholder="Pesquisar"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={handleSearchKeyDown}
           className="search-input"
         />
       </div>
 
-      {/* Lista de games */}
       <div className="game-list">
-        {filteredGames.length === 0 ? (
+        {games.length === 0 ? (
           <p>Nenhuma prova encontrada.</p>
         ) : (
-          filteredGames.map((game, index) => (
+          games.map((game, index) => (
             <div
               key={index}
               className={`game-item ${selectedGame === game ? 'selected' : ''}`}
               onClick={() => setSelectedGame(game)}
             >
-              {game.gameName}
+              {game.name}
             </div>
           ))
         )}
       </div>
 
-      {/* Rodapé com botões */}
-      <div className="actions">
-        <button className="create-button" onClick={() => handleOpenCreateModal()}>
+      <div className="actions" ref={actionsRef}>
+        <button
+          className="create-button"
+          onClick={() => handleOpenCreateModal()}
+        >
           Criar
         </button>
         <button
@@ -106,19 +166,24 @@ const GameList: React.FC = () => {
         >
           Editar
         </button>
-        <button className="delete-button" onClick={handleDeleteGame} disabled={!selectedGame}>
+        <button
+          className="delete-button"
+          onClick={handleDeleteGame}
+          disabled={!selectedGame}
+        >
           Excluir
         </button>
       </div>
 
-      {/* Modal de Criação de Games */}
       {isCreateModalOpen && (
         <div className="modal-overlay">
-          <GameCreate
-            onClose={handleCloseCreateModal}
-            onSave={handleSaveGame}
-            initialGame={selectedGame || undefined} // Passar o game selecionado para edição
-          />
+          <div ref={modalRef}>
+            <GameCreate
+              onClose={handleCloseCreateModal}
+              onSave={handleSaveGame}
+              initialGame={selectedGame || undefined}
+            />
+          </div>
         </div>
       )}
     </div>

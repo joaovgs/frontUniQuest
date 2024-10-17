@@ -1,20 +1,19 @@
-/* Menu lateral */
 .sidebar {
   width: 250px;
   background-color: #333;
   color: #fff;
-  top: 30px; /* Define a posição inicial abaixo do header, ajustando para a altura do header */
-  left: -300px; /* Esconde o menu fora da tela à esquerda */
-  height: calc(100vh - 60px); /* Define a altura como a altura total da tela menos a altura do header */
+  top: 30px; 
+  left: -300px;
+  height: calc(100vh - 60px);
   padding: 20px;
-  transition: left 0.3s ease; /* Desliza a partir da esquerda */
-  position: fixed; /* Corrige a posição para que o sidebar acompanhe o scroll */
-  overflow-y: auto; /* Adiciona rolagem interna no sidebar */
-  z-index: 999; /* Garante que o sidebar fique acima de outros elementos */
+  transition: left 0.3s ease;
+  position: fixed; 
+  overflow-y: auto;
+  z-index: 999;
 }
 
 .sidebar.open {
-  left: 0; /* Mostra o menu ao clicar */
+  left: 0;
 }
 
 .sidebar-nav ul {
@@ -40,7 +39,7 @@
 .menu-button {
   position: fixed;
   top: 60px;
-  left: 10px; /* Muda para o lado esquerdo */
+  left: 10px;
   background-color: #007bff;
   color: white;
   border: none;

@@ -1,126 +1,127 @@
 import React, { useState, useEffect } from 'react';
-import './GameCreate.css'; // Importando o CSS específico do componente
+import './GameCreate.css';
+import { Game, GamePayload } from '../../models/Game';
 
 interface GameCreateProps {
-  onClose: () => void; // Propriedade para fechar o modal
-  onSave: (game: Game) => void; // Propriedade para salvar o novo game
-  initialGame?: Game; // Propriedade opcional para receber um game já existente para edição
-}
-
-interface Game {
-  gameName: string;
-  minParticipants: string;
-  maxParticipants: string;
-  firstPlacePoints: string;
-  secondPlacePoints: string;
-  thirdPlacePoints: string;
-  generalPoints: string;
-  category: string;
+  onClose: () => void;
+  onSave: (game: GamePayload) => void | Promise<void>;
+  initialGame?: Game;
 }
 
 const GameCreate: React.FC<GameCreateProps> = ({ onClose, onSave, initialGame }) => {
-  const [gameName, setGameName] = useState('');
-  const [minParticipants, setMinParticipants] = useState('');
-  const [maxParticipants, setMaxParticipants] = useState('');
-  const [firstPlacePoints, setFirstPlacePoints] = useState('');
-  const [secondPlacePoints, setSecondPlacePoints] = useState('');
-  const [thirdPlacePoints, setThirdPlacePoints] = useState('');
-  const [generalPoints, setGeneralPoints] = useState('');
-  const [category, setCategory] = useState('Confronto Direto');
+  const [name, setName] = useState<string>(''); 
+  const [minParticipant, setMinParticipant] = useState<number | ''>(''); 
+  const [maxParticipant, setMaxParticipant] = useState<number | ''>(''); 
+  const [firstScore, setFirstScore] = useState<number | ''>(''); 
+  const [secondScore, setSecondScore] = useState<number | ''>(''); 
+  const [thirdScore, setThirdScore] = useState<number | ''>(''); 
+  const [generalScore, setGeneralScore] = useState<number | ''>(''); 
+  const [category, setCategory] = useState<number>(0); 
+  const [isEditing, setIsEditing] = useState<boolean>(!!initialGame);
 
   useEffect(() => {
     if (initialGame) {
-      // Atualiza todos os campos com as informações do game ao abrir o modal no modo de edição
-      setGameName(initialGame.gameName || '');
-      setMinParticipants(initialGame.minParticipants || '');
-      setMaxParticipants(initialGame.maxParticipants || '');
-      setFirstPlacePoints(initialGame.firstPlacePoints || '');
-      setSecondPlacePoints(initialGame.secondPlacePoints || '');
-      setThirdPlacePoints(initialGame.thirdPlacePoints || '');
-      setGeneralPoints(initialGame.generalPoints || '');
-      setCategory(initialGame.category || 'Confronto Direto');
+      setName(initialGame.name || '');
+      setMinParticipant(initialGame.min_participant || '');
+      setMaxParticipant(initialGame.max_participant || '');
+      setFirstScore(initialGame.first_score || '');
+      setSecondScore(initialGame.second_score || '');
+      setThirdScore(initialGame.third_score || '');
+      setGeneralScore(initialGame.general_score || '');
+      setCategory(initialGame.category || 0);
+      setIsEditing(true);
+    } else {
+      setName('');
+      setMinParticipant('');
+      setMaxParticipant('');
+      setFirstScore('');
+      setSecondScore('');
+      setThirdScore('');
+      setGeneralScore('');
+      setCategory(0);
+      setIsEditing(false);
     }
   }, [initialGame]);
 
   const handleSave = () => {
-    const newGame: Game = {
-      gameName,
-      minParticipants,
-      maxParticipants,
-      firstPlacePoints,
-      secondPlacePoints,
-      thirdPlacePoints,
-      generalPoints,
-      category,
+    const newGame: GamePayload = {
+      name,
+      min_participant: minParticipant as number,
+      max_participant: maxParticipant as number,
+      first_score: firstScore as number,
+      second_score: secondScore as number,
+      third_score: thirdScore as number,
+      general_score: generalScore as number,
+      category
     };
-    onSave(newGame); // Chama a função onSave com todas as informações do game
+    onSave(newGame);
   };
 
   return (
     <div className="game-create-container">
       <div className="create-game-modal">
-        <h2>{initialGame ? 'Editar Prova' : 'Cadastro de Prova'}</h2>
+        <h2>{isEditing ? 'Editar Prova' : 'Cadastro de Prova'}</h2>
         <form>
           <input
             type="text"
             placeholder="Nome da Prova"
-            value={gameName}
-            onChange={(e) => setGameName(e.target.value)}
-            className="game-input-name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="game-input"
           />
 
           <div className="form-group">
             <label>Participantes:</label>
-          </div>
-          <div className="participants-inputs">
+            <div className="participants-inputs">
               <input
                 type="number"
                 placeholder="Mín."
-                value={minParticipants}
-                onChange={(e) => setMinParticipants(e.target.value)}
+                value={minParticipant}
+                onChange={(e) => setMinParticipant(e.target.value === '' ? '' : parseInt(e.target.value))}
                 className="game-input"
               />
               <input
                 type="number"
                 placeholder="Máx."
-                value={maxParticipants}
-                onChange={(e) => setMaxParticipants(e.target.value)}
+                value={maxParticipant}
+                onChange={(e) => setMaxParticipant(e.target.value === '' ? '' : parseInt(e.target.value))}
                 className="game-input"
               />
+            </div>
           </div>
 
           <div className="form-group">
             <label>Pontuações:</label>
-          </div>
-          <div className="points-inputs">
+            <div className="points-inputs">
               <input
                 type="number"
                 placeholder="1°"
-                value={firstPlacePoints}
-                onChange={(e) => setFirstPlacePoints(e.target.value)}
+                value={firstScore}
+                onChange={(e) => setFirstScore(e.target.value === '' ? '' : parseInt(e.target.value))}
                 className="game-input"
               />
               <input
                 type="number"
                 placeholder="2°"
-                value={secondPlacePoints}
-                onChange={(e) => setSecondPlacePoints(e.target.value)}
+                value={secondScore}
+                onChange={(e) => setSecondScore(e.target.value === '' ? '' : parseInt(e.target.value))}
                 className="game-input"
               />
               <input
                 type="number"
                 placeholder="3°"
-                value={thirdPlacePoints}
-                onChange={(e) => setThirdPlacePoints(e.target.value)}
+                value={thirdScore}
+                onChange={(e) => setThirdScore(e.target.value === '' ? '' : parseInt(e.target.value))}
                 className="game-input"
               />
               <input
                 type="number"
                 placeholder="Geral"
-                value={generalPoints}
-                onChange={(e) => setGeneralPoints(e.target.value)}
+                value={generalScore}
+                onChange={(e) => setGeneralScore(e.target.value === '' ? '' : parseInt(e.target.value))}
                 className="game-input"
               />
+            </div>
           </div>
 
           <div className="form-group">
@@ -130,9 +131,9 @@ const GameCreate: React.FC<GameCreateProps> = ({ onClose, onSave, initialGame })
                 <input
                   type="radio"
                   name="category"
-                  value="Confronto Direto"
-                  checked={category === 'Confronto Direto'}
-                  onChange={(e) => setCategory(e.target.value)}
+                  value="1"
+                  checked={category === 0}
+                  onChange={() => setCategory(0)}
                 />
                 Confronto Direto
               </label>
@@ -140,9 +141,9 @@ const GameCreate: React.FC<GameCreateProps> = ({ onClose, onSave, initialGame })
                 <input
                   type="radio"
                   name="category"
-                  value="Todos Contra Todos"
-                  checked={category === 'Todos Contra Todos'}
-                  onChange={(e) => setCategory(e.target.value)}
+                  value="2"
+                  checked={category === 1}
+                  onChange={() => setCategory(1)}
                 />
                 Todos Contra Todos
               </label>
