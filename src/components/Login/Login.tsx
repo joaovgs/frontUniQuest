@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import api from '../../services/api'; 
+import { useSnackbar } from '../../context/SnackbarContext';
+import api from '../../services/api';
 import './Login.css';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { showSnackbar } = useSnackbar(); 
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     try {
       console.log('Enviando requisição de login...');
-      
       const response = await api.post('/sessions', { email, password });
 
       if (response.status === 200) {
@@ -29,14 +29,14 @@ const Login: React.FC = () => {
         });
 
         console.log('Informações do usuário obtidas:', userResponse.data);
-
         login(userResponse.data.user.name);
 
-        console.log('Login bem-sucedido, redirecionando para a home...');
-        navigate('/home'); 
+        showSnackbar('Login realizado com sucesso!', 'success');
+
+        navigate('/home');
       }
-    } catch (error) {
-      setError('Erro ao fazer login. Verifique suas credenciais.');
+    } catch (error: any) {
+      showSnackbar('Credenciais incorretas. Verifique e tente novamente.', 'error');
       console.error('Erro ao fazer login:', error);
     }
   };
@@ -68,8 +68,6 @@ const Login: React.FC = () => {
               required
             />
           </div>
-          {/* Exibe uma mensagem de erro, se houver */}
-          {error && <div className="error-message">{error}</div>}
           <button type="submit" className="login-button">
             Entrar
           </button>

@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import './UserList.css';
 import UserCreate from '../UserCreate/UserCreate';
 import { useNavigate } from 'react-router-dom';
+import { useSnackbar } from '../../context/SnackbarContext';
 import { User, UserPayload } from '../../models/User';
-import { UserService } from '../../services/UserService';
+import { UserService } from '../../services/User';
 import axios from 'axios';
 
 const UserList: React.FC = () => {
@@ -12,6 +13,7 @@ const UserList: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const navigate = useNavigate();
+  const { showSnackbar } = useSnackbar();
 
   const actionsRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -23,19 +25,19 @@ const UserList: React.FC = () => {
       if (response && Array.isArray(response.users)) {
         setUsers(response.users);
       } else {
-        setUsers([]); 
+        setUsers([]);
         console.error('Erro: Resposta de usuários não é um array válido.');
       }
     } catch (error) {
       console.error('Erro ao buscar usuários:', error);
-      setUsers([]); 
+      setUsers([]);
 
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
           console.log('Erro de autenticação. Redirecionando para login...');
           navigate('/login');
         } else if (error.response?.status === 500) {
-          console.log('Erro interno do servidor. Tente novamente mais tarde.');
+          showSnackbar('Erro interno do servidor. Tente novamente mais tarde.', 'error');
         }
       }
     }
@@ -48,15 +50,18 @@ const UserList: React.FC = () => {
   const handleSaveUser = async (userPayload: UserPayload) => {
     try {
       if (selectedUser) {
-        const updatedUser = await UserService.updateUser(selectedUser.id, userPayload);
+        await UserService.updateUser(selectedUser.id, userPayload);
+        showSnackbar('Usuário atualizado com sucesso!', 'success');
       } else {
-        await UserService.createUser(userPayload);                
-      }      
+        await UserService.createUser(userPayload);
+        showSnackbar('Usuário criado com sucesso!', 'success');
+      }
       setSearchTerm('');
       await fetchUsers('');
       setIsCreateModalOpen(false);
       setSelectedUser(null);
     } catch (error) {
+      showSnackbar('Erro ao salvar usuário. Tente novamente.', 'error');
       console.error('Erro ao salvar usuário:', error);
     }
   };
@@ -67,7 +72,9 @@ const UserList: React.FC = () => {
         await UserService.deleteUser(selectedUser.id);
         setUsers((prevUsers) => prevUsers.filter((u) => u.id !== selectedUser.id));
         setSelectedUser(null);
+        showSnackbar('Usuário excluído com sucesso!', 'success');
       } catch (error) {
+        showSnackbar('Erro ao deletar usuário. Tente novamente.', 'error');
         console.error('Erro ao deletar usuário:', error);
       }
     }
@@ -75,7 +82,7 @@ const UserList: React.FC = () => {
 
   const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      fetchUsers(searchTerm);      
+      fetchUsers(searchTerm);
     }
   };
 
@@ -85,12 +92,12 @@ const UserList: React.FC = () => {
 
       if (isCreateModalOpen) {
         if (modalRef.current && !modalRef.current.contains(target)) {
-          return; 
+          return;
         }
       } else {
         if (
-          !target.closest('.user-item') && 
-          actionsRef.current && 
+          !target.closest('.user-item') &&
+          actionsRef.current &&
           !actionsRef.current.contains(target)
         ) {
           setSelectedUser(null);
@@ -134,10 +141,13 @@ const UserList: React.FC = () => {
       </div>
 
       <div className="actions" ref={actionsRef}>
-        <button className="create-button" onClick={() => {
-          setSelectedUser(null);
-          setIsCreateModalOpen(true);
-        }}>
+        <button
+          className="create-button"
+          onClick={() => {
+            setSelectedUser(null);
+            setIsCreateModalOpen(true);
+          }}
+        >
           Criar
         </button>
         <button
@@ -147,7 +157,11 @@ const UserList: React.FC = () => {
         >
           Editar
         </button>
-        <button className="delete-button" onClick={handleDeleteUser} disabled={!selectedUser}>
+        <button
+          className="delete-button"
+          onClick={handleDeleteUser}
+          disabled={!selectedUser}
+        >
           Excluir
         </button>
       </div>
@@ -155,7 +169,11 @@ const UserList: React.FC = () => {
       {isCreateModalOpen && (
         <div className="modal-overlay">
           <div ref={modalRef}>
-            <UserCreate onClose={() => setIsCreateModalOpen(false)} onSave={handleSaveUser} initialUser={selectedUser || undefined} />
+            <UserCreate
+              onClose={() => setIsCreateModalOpen(false)}
+              onSave={handleSaveUser}
+              initialUser={selectedUser || undefined}
+            />
           </div>
         </div>
       )}

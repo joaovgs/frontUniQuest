@@ -2,6 +2,7 @@ import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
 const api = axios.create({
   baseURL: 'https://uniquest-production.up.railway.app',
+  //baseURL: 'http://localhost:3333',
   withCredentials: true,
 });
 
