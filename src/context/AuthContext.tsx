@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import api from '../services/api';
 
 type AuthContextType = {
   isLoggedIn: boolean;
@@ -18,9 +19,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUserName(name);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await api.post('/logout');
+    localStorage.removeItem('authToken');
     setIsLoggedIn(false);
-    setUserName('');
+    setUserName('');    
   };
 
   return (

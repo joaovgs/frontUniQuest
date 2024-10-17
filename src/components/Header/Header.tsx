@@ -1,13 +1,13 @@
-// src/components/Header/Header.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext'; // Importa o hook useAuth para acessar o contexto
+import { useAuth } from '../../context/AuthContext'; 
 import './Header.css';
 
 const Header: React.FC = () => {
-  const { isLoggedIn, userName, login, logout } = useAuth(); // Acessa diretamente o contexto
+  const { isLoggedIn, userName, login, logout } = useAuth(); 
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleLoginClick = () => {
     navigate('/login');
@@ -15,20 +15,31 @@ const Header: React.FC = () => {
 
   const handleLogoutClick = () => {
     setShowDropdown(false);
-    logout(); // Chama a função logout diretamente do contexto
+    logout();
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <header className="header">
-      {/* Logo à esquerda */}
       <div className="logo" onClick={() => navigate('/home')}>
         LOGO
       </div>
 
-      {/* Botão de login/logout à direita */}
       <div className="auth-button">
         {isLoggedIn ? (
-          <div>
+          <div ref={dropdownRef}>
             <div onClick={() => setShowDropdown(!showDropdown)}>{userName}</div>
             {showDropdown && (
               <div className="dropdown">

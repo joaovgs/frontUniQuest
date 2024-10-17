@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './UserList.css';
 import UserCreate from '../UserCreate/UserCreate';
 import { useNavigate } from 'react-router-dom';
@@ -13,22 +13,22 @@ const UserList: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const navigate = useNavigate();
 
-  // Função para buscar os usuários com ou sem filtro
+  const actionsRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+
   const fetchUsers = async (filter: string = '') => {
     try {
-      // Obtem o objeto que contém o array de usuários
       const response = await UserService.getUsers(filter);
 
-      // Verifica se a resposta contém a chave `users` e se é um array
       if (response && Array.isArray(response.users)) {
-        setUsers(response.users); // Atualiza o estado com o array de usuários
+        setUsers(response.users);
       } else {
-        setUsers([]); // Define um array vazio caso a resposta não seja um array válido
+        setUsers([]); 
         console.error('Erro: Resposta de usuários não é um array válido.');
       }
     } catch (error) {
       console.error('Erro ao buscar usuários:', error);
-      setUsers([]); // Definir como array vazio em caso de erro
+      setUsers([]); 
 
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
@@ -42,20 +42,18 @@ const UserList: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchUsers(); // Busca inicial sem filtro
+    fetchUsers();
   }, []);
 
   const handleSaveUser = async (userPayload: UserPayload) => {
     try {
       if (selectedUser) {
         const updatedUser = await UserService.updateUser(selectedUser.id, userPayload);
-        setUsers((prevUsers) =>
-          prevUsers.map((u) => (u.id === selectedUser.id ? updatedUser : u))
-        );
       } else {
-        const newUser = await UserService.createUser(userPayload);
-        setUsers((prevUsers) => [...prevUsers, newUser]);
-      }
+        await UserService.createUser(userPayload);                
+      }      
+      setSearchTerm('');
+      await fetchUsers('');
       setIsCreateModalOpen(false);
       setSelectedUser(null);
     } catch (error) {
@@ -77,9 +75,34 @@ const UserList: React.FC = () => {
 
   const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      fetchUsers(searchTerm);
+      fetchUsers(searchTerm);      
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+
+      if (isCreateModalOpen) {
+        if (modalRef.current && !modalRef.current.contains(target)) {
+          return; 
+        }
+      } else {
+        if (
+          !target.closest('.user-item') && 
+          actionsRef.current && 
+          !actionsRef.current.contains(target)
+        ) {
+          setSelectedUser(null);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isCreateModalOpen]);
 
   return (
     <div className="user-list-container">
@@ -104,14 +127,17 @@ const UserList: React.FC = () => {
               className={`user-item ${selectedUser === user ? 'selected' : ''}`}
               onClick={() => setSelectedUser(user)}
             >
-              {user.name}
+              {user.name ? user.name : 'Usuário sem nome'}
             </div>
           ))
         )}
       </div>
 
-      <div className="actions">
-        <button className="create-button" onClick={() => setIsCreateModalOpen(true)}>
+      <div className="actions" ref={actionsRef}>
+        <button className="create-button" onClick={() => {
+          setSelectedUser(null);
+          setIsCreateModalOpen(true);
+        }}>
           Criar
         </button>
         <button
@@ -128,7 +154,9 @@ const UserList: React.FC = () => {
 
       {isCreateModalOpen && (
         <div className="modal-overlay">
-          <UserCreate onClose={() => setIsCreateModalOpen(false)} onSave={handleSaveUser} initialUser={selectedUser || undefined} />
+          <div ref={modalRef}>
+            <UserCreate onClose={() => setIsCreateModalOpen(false)} onSave={handleSaveUser} initialUser={selectedUser || undefined} />
+          </div>
         </div>
       )}
     </div>
