@@ -53,7 +53,7 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
       maxParticipants,
       location,
       description,
-      games,  // Salvando as provas corretamente
+      games,
       image,
       regulation,
     };

@@ -9,6 +9,10 @@ const GincanaDetails: React.FC = () => {
     navigate('/ranking'); // Redireciona para a página de Ranking
   };
 
+  const handleTeamSignupClick = () => {
+    navigate('/teamsignup');
+  };
+
   return (
     <div className="gincana-details-container">
       <main className="gincana-main">
@@ -56,9 +60,9 @@ const GincanaDetails: React.FC = () => {
 
         <div className="gincana-actions">
           <button className="ranking-button" onClick={handleRankingClick}>
-            Ranking 🏆
-          </button>
-          <button className="inscrever-button">Inscrever-se ➡</button>
+            Ranking 🏆</button>
+          <button className="inscrever-button" onClick={handleTeamSignupClick}>
+            Inscrever-se ➡</button>
         </div>
       </main>
     </div>

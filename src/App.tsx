@@ -10,7 +10,8 @@ import Header from './components/Header/Header';
 import { AuthProvider } from './context/AuthContext';
 import GameList from './components/GameList/GameList';
 import CompetitonList from './components/CompetitionList/CompetitionList';
-import RankingPage from './components/RankingPage/RankingPage'; // Import do RankingPage
+import RankingPage from './components/RankingPage/RankingPage';
+import TeamList from './components/TeamList/TeamList';
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -80,13 +81,21 @@ const App: React.FC = () => {
           }
         />
         <Route
+          path="/teamsignup"
+          element={
+            <SidebarLayout>
+              <TeamList />
+            </SidebarLayout>
+          }
+        />
+        <Route
           path="/ranking"
           element={
             <SidebarLayout>
               <RankingPage />
             </SidebarLayout>
           }
-        />
+        />   
       </Routes>
     </AuthProvider>
   );
