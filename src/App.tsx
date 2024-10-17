@@ -12,6 +12,7 @@ import { SnackbarProvider } from './context/SnackbarContext';
 import GameList from './components/GameList/GameList';
 import CompetitonList from './components/CompetitionList/CompetitionList';
 import RankingPage from './components/RankingPage/RankingPage';
+import TeamList from './components/TeamList/TeamList';
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -62,6 +63,14 @@ const App: React.FC = () => {
             element={
               <SidebarLayout>
                 <GameList />
+              </SidebarLayout>
+            }
+          />
+          <Route
+            path="/teamsignup"
+            element={
+              <SidebarLayout>
+                <TeamList />
               </SidebarLayout>
             }
           />
