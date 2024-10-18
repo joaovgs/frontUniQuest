@@ -1,17 +1,44 @@
 import React, { useState } from 'react';
 import './TeamList.css';
 import TeamCreate from '../TeamCreate/TeamCreate';
+import TeamParticipants from '../TeamParticipants/TeamParticipants';
+
+interface Participant {
+  name: string;
+}
 
 interface Team {
   name: string;
   memberCount: string;
   status: 'Aberta' | 'Fechada';
+  participants: Participant[];
   password?: string;
 }
 
 const TeamList: React.FC = () => {
-  const [teams, setTeams] = useState<Team[]>([]);
+  const [teams, setTeams] = useState<Team[]>([
+    {
+      name: 'Equipe A',
+      memberCount: '5/10',
+      status: 'Aberta',
+      participants: [
+        { name: 'John' },
+        { name: 'Jane' },
+      ],
+    },
+    {
+      name: 'Equipe B',
+      memberCount: '8/10',
+      status: 'Fechada',
+      participants: [
+        { name: 'Mark' },
+        { name: 'Emma' },
+      ],
+    },
+  ]);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showParticipantsModal, setShowParticipantsModal] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
 
   const handleCreate = () => {
     setShowCreateModal(true);
@@ -24,14 +51,21 @@ const TeamList: React.FC = () => {
         name: teamData.name,
         memberCount: '0/10',
         status: teamData.status,
+        participants: [],
         password: teamData.password,
       },
     ]);
     setShowCreateModal(false);
   };
 
-  const handleCloseModal = () => {
-    setShowCreateModal(false);
+  const handleShowParticipants = (team: Team) => {
+    setSelectedTeam(team);
+    setShowParticipantsModal(true);
+  };
+
+  const handleCloseParticipantsModal = () => {
+    setShowParticipantsModal(false);
+    setSelectedTeam(null);
   };
 
   return (
@@ -40,8 +74,8 @@ const TeamList: React.FC = () => {
       <input type="text" placeholder="Pesquisar equipes..." className="search-input" />
       <div className="teams-grid">
         {teams.map((team, index) => (
-          <div key={index} className="team-card">
-            <div className={`team-status ${team.status === 'Fechada' ? 'closed' : 'open'}`}>
+          <div key={index} className="team-card" onClick={() => handleShowParticipants(team)}>
+            <div className={`team-status ${team.status === 'Fechada' ? 'closed' : 'opened'}`}>
               {team.status}
             </div>
             <h3>{team.name}</h3>
@@ -52,7 +86,17 @@ const TeamList: React.FC = () => {
       <div className="footer">
         <button className="create-team-button" onClick={handleCreate}>Criar</button>
       </div>
-      {showCreateModal && <TeamCreate onClose={handleCloseModal} onSave={handleSaveTeam} />}
+      {showCreateModal && <TeamCreate onClose={() => setShowCreateModal(false)} onSave={handleSaveTeam} />}
+      {showParticipantsModal && selectedTeam && (
+        <TeamParticipants
+          teamName={selectedTeam.name}
+          participants={selectedTeam.participants.map((participant) => participant.name)}
+          status={selectedTeam.status}
+          memberCount={selectedTeam.memberCount}
+          onJoin={() => console.log('Entrar na equipe')}
+          onCancel={handleCloseParticipantsModal}
+        />
+      )}
     </div>
   );
 };
