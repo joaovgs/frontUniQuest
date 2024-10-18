@@ -11,8 +11,8 @@
   
   .competition-list-header {
     display: flex;
-    flex-direction: column; /* Coloca os elementos em uma coluna (um embaixo do outro) */
-    align-items: center; /* Centraliza os elementos horizontalmente */
+    flex-direction: column; 
+    align-items: center; 
   }
   
   .search-input {
@@ -43,11 +43,10 @@
     border: 1px solid #0056b3;
   }
   
-  /* Rodapé para botões */
   .actions {
     display: flex;
     justify-content: right;
-    gap: 30px; /* Espaçamento entre os botões */
+    gap: 30px; 
     padding: 10px 0;
     position: relative;
     bottom: 0;

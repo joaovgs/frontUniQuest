@@ -1,42 +1,70 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './CompetitionCreate.css';
+import { CompetitionPayload } from '../../models/Competition';
+import { Game } from '../../models/Game'; 
+import { GameService } from '../../services/Game';
 
 interface CompetitionCreateProps {
   onClose: () => void;
-  onSave: (newCompetition: any) => void;
-  initialCompetition?: any | null;
+  onSave: (competition: CompetitionPayload) => void | Promise<void>;
+  initialCompetition?: CompetitionPayload | null;
 }
 
-interface Game {
-  name: string;
-  dateTime: string;
-  location: string;
+interface CompetitionGame {
+  local: string;
+  date_game?: Date; 
+  game_id: number;
 }
 
 const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, initialCompetition }) => {
-  const [title, setTitle] = useState(initialCompetition?.title || '');
-  const [date, setDate] = useState(initialCompetition?.date || '');
-  const [startDate, setStartDate] = useState(initialCompetition?.startDate || '');
-  const [endDate, setEndDate] = useState(initialCompetition?.endDate || '');
-  const [minParticipants, setMinParticipants] = useState(initialCompetition?.minParticipants || '');
-  const [maxParticipants, setMaxParticipants] = useState(initialCompetition?.maxParticipants || '');
-  const [location, setLocation] = useState(initialCompetition?.location || '');
-  const [description, setDescription] = useState(initialCompetition?.description || '');
-  const [games, setGames] = useState<Game[]>(initialCompetition?.games || [{ name: '', dateTime: '', location: '' }]);  // Inicia com os jogos existentes ao editar
+  const [title, setTitle] = useState<string>(initialCompetition?.title || '');
+  const [dateEvent, setDateEvent] = useState<Date | undefined>(initialCompetition?.date_event ? new Date(initialCompetition.date_event) : undefined);
+  const [startRegistration, setStartRegistration] = useState<Date | undefined>(initialCompetition?.start_registration ? new Date(initialCompetition.start_registration) : undefined);
+  const [endRegistration, setEndRegistration] = useState<Date | undefined>(initialCompetition?.end_registration ? new Date(initialCompetition.end_registration) : undefined);
+  const [minParticipant, setMinParticipant] = useState<number>(initialCompetition?.min_participant || 0);
+  const [maxParticipant, setMaxParticipant] = useState<number>(initialCompetition?.max_participant || 0);
+  const [local, setLocal] = useState<string>(initialCompetition?.local || '');
+  const [description, setDescription] = useState<string>(initialCompetition?.description || '');
+  const [games, setGames] = useState<CompetitionGame[]>(initialCompetition?.games || [{ local: '', date_game: undefined, game_id: 0 }]);
   const [image, setImage] = useState<File | null>(null);
   const [regulation, setRegulation] = useState<File | null>(null);
-
-  const [availableGames, setAvailableGames] = useState<Game[]>([]);
+  const [availableGames, setAvailableGames] = useState<Game[]>([]); 
+  const [isEditing, setIsEditing] = useState<boolean>(!!initialCompetition);
 
   useEffect(() => {
-    fetch('/api/games') // Simulando a busca de provas da API
-      .then((response) => response.json())
-      .then((data) => setAvailableGames(data))
-      .catch((error) => console.error('Erro ao buscar provas:', error));
+    const fetchGames = async () => {
+      try {
+        const response = await GameService.getGames(''); 
+        setAvailableGames(response.games);
+      } catch (error) {
+        console.error('Erro ao buscar as provas:', error);
+      }
+    };
+
+    fetchGames();
   }, []);
 
+  const gamesContainerRef = useRef<HTMLDivElement>(null);
+
   const handleAddGame = () => {
-    setGames([...games, { name: '', dateTime: '', location: '' }]);
+    const newGames = [...games, { local: '', date_game: undefined, game_id: 0 }];
+    setGames(newGames);
+
+    setTimeout(() => {
+      if (gamesContainerRef.current) {
+        const newGameElement = gamesContainerRef.current.lastElementChild;
+        if (newGameElement) {
+          newGameElement.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+          
+          setTimeout(() => {
+            gamesContainerRef.current?.scrollTo({
+              top: gamesContainerRef.current.scrollHeight,
+              behavior: 'smooth'
+            });
+          }, 100);
+        }
+      }
+    }, 0);
   };
 
   const handleRemoveGame = (index: number) => {
@@ -44,166 +72,189 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
   };
 
   const handleSave = () => {
-    const newCompetition = {
+    const newCompetition: CompetitionPayload = {
       title,
-      date,
-      startDate,
-      endDate,
-      minParticipants,
-      maxParticipants,
-      location,
+      date_event: dateEvent || new Date(),
+      start_registration: startRegistration || new Date(),
+      end_registration: endRegistration || new Date(), 
+      min_participant: minParticipant,
+      max_participant: maxParticipant,
+      local,
       description,
-      games,
-      image,
-      regulation,
+      games: games.map((game) => ({
+        ...game,
+        date_game: game.date_game || new Date(),
+      })),
     };
     onSave(newCompetition);
+  };
+
+  const handleDateChange = (setter: React.Dispatch<React.SetStateAction<Date | undefined>>, event: React.ChangeEvent<HTMLInputElement>) => {
+    setter(event.target.value ? new Date(event.target.value) : undefined);
   };
 
   return (
     <div className="competition-create-container">
       <div className="create-competition-modal">
-        <h2>Cadastro de Gincana</h2>
-        <form>
-          <input
-            type="text"
-            placeholder="Título da Gincana"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="competition-input-title"
-          />
-
-          <div className="form-group">
-            <div className="date-group">
-              <label>Data</label>
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="competition-input"
-                max="9999-12-31"
-              />
-            </div>
-            <div className="date-group">
-              <label>Início Inscrições</label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="competition-input"
-                max="9999-12-31"
-              />
-            </div>
-            <div className="date-group">
-              <label>Fim Inscrições</label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="competition-input"
-                max="9999-12-31"
-              />
-            </div>
-          </div>
-
-          <div className="form-group participants-inputs">
+        <h2>{isEditing ? 'Editar Gincana' : 'Cadastro de Gincana'}</h2>
+        <div className="competition-form">
+          <form>
             <input
-              type="number"
-              placeholder="Min integrantes equipe"
-              value={minParticipants}
-              onChange={(e) => setMinParticipants(e.target.value)}
+              type="text"
+              placeholder="Título da Gincana"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="competition-input-title"
             />
-            <input
-              type="number"
-              placeholder="Máx integrantes equipe"
-              value={maxParticipants}
-              onChange={(e) => setMaxParticipants(e.target.value)}
-            />
-          </div>
 
-          <input
-            type="text"
-            placeholder="Local"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="competition-input-location"
-          />
-
-          <textarea
-            placeholder="Descrição"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="competition-input-description"
-          />
-
-          {/* Provas */}
-          <label>Provas</label>
-          <div className="form-group provas-container">
-            {games.map((game, index) => (
-              <div key={index} className="game-item">
-                <select
-                  value={game.name}
-                  onChange={(e) => {
-                    const updatedGames = [...games];
-                    updatedGames[index].name = e.target.value;
-                    setGames(updatedGames);
-                  }}
-                >
-                  <option value="">Selecione uma prova</option>
-                  {availableGames.map((availableGame) => (
-                    <option key={availableGame.name} value={availableGame.name}>
-                      {availableGame.name}
-                    </option>
-                  ))}
-                </select>
-
+            <div className="form-group">
+              <div className="date-group">
+                <label>Data do Evento</label>
                 <input
                   type="datetime-local"
-                  value={game.dateTime}
-                  onChange={(e) => {
-                    const updatedGames = [...games];
-                    updatedGames[index].dateTime = e.target.value;
-                    setGames(updatedGames);
-                  }}
-                  placeholder="Data e Hora da Prova"
-                  max="9999-12-31T23:59"
+                  value={dateEvent ? dateEvent.toISOString().substring(0, 16) : ""}
+                  onChange={(e) => handleDateChange(setDateEvent, e)}
+                  className="competition-input"
                 />
-                <input
-                  type="text"
-                  placeholder="Local da Prova"
-                  value={game.location}
-                  onChange={(e) => {
-                    const updatedGames = [...games];
-                    updatedGames[index].location = e.target.value;
-                    setGames(updatedGames);
-                  }}
-                />
-                <button type="button" onClick={() => handleRemoveGame(index)}>🗑</button>
               </div>
-            ))}
-          </div>
-          <button type="button" onClick={handleAddGame} className="add-game-button">Adicionar Prova +</button>
+              <div className="date-group">
+                <label>Início Inscrições</label>
+                <input
+                  type="datetime-local"
+                  value={startRegistration ? startRegistration.toISOString().substring(0, 16) : ""}
+                  onChange={(e) => handleDateChange(setStartRegistration, e)}
+                  className="competition-input"
+                />
+              </div>
+              <div className="date-group">
+                <label>Fim Inscrições</label>
+                <input
+                  type="datetime-local"
+                  value={endRegistration ? endRegistration.toISOString().substring(0, 16) : ""}
+                  onChange={(e) => handleDateChange(setEndRegistration, e)}
+                  className="competition-input"
+                />
+              </div>
+            </div>
 
-          {/* Anexos */}
-          <div className="form-group attachment-row">
-            <div className="attachment-item">
-              <label>Imagem</label>
+            <div className="form-group participants-inputs">
               <input
-                type="file"
-                onChange={(e) => setImage(e.target.files?.[0] || null)}
+                type="number"
+                placeholder="Min. Participantes por Equipe"
+                value={minParticipant}
+                onChange={(e) => setMinParticipant(Number(e.target.value))}
+              />
+              <input
+                type="number"
+                placeholder="Máx. Participantes por Equipe"
+                value={maxParticipant}
+                onChange={(e) => setMaxParticipant(Number(e.target.value))}
               />
             </div>
-            <div className="attachment-item">
-              <label>Regulamento</label>
-              <input
-                type="file"
-                onChange={(e) => setRegulation(e.target.files?.[0] || null)}
-              />
+
+            <input
+              type="text"
+              placeholder="Local do Evento"
+              value={local}
+              onChange={(e) => setLocal(e.target.value)}
+              className="competition-input-location"
+            />
+
+            <textarea
+              placeholder="Descrição"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="competition-input-description"
+            />
+
+            <div className="section-container">
+              <label>Provas</label>
+              <div className="games-container" ref={gamesContainerRef}>
+                {games.map((game, index) => (
+                  <div key={index} className="competition-game-item">
+                    <select
+                      value={game.game_id}
+                      onChange={(e) => {
+                        const updatedGames = [...games];
+                        updatedGames[index].game_id = Number(e.target.value);
+                        setGames(updatedGames);
+                      }}
+                    >
+                      <option value={0}>Selecione uma prova</option>
+                      {availableGames.map((availableGame) => (
+                        <option key={availableGame.id} value={availableGame.id}>
+                          {availableGame.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    <input
+                      type="datetime-local"
+                      value={game.date_game ? game.date_game.toISOString().substring(0, 16) : ""}
+                      onChange={(e) => {
+                        const updatedGames = [...games];
+                        updatedGames[index].date_game = e.target.value ? new Date(e.target.value) : undefined;
+                        setGames(updatedGames);
+                      }}
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="Local da Prova"
+                      value={game.local}
+                      onChange={(e) => {
+                        const updatedGames = [...games];
+                        updatedGames[index].local = e.target.value;
+                        setGames(updatedGames);
+                      }}
+                    />
+                    <button type="button" onClick={() => handleRemoveGame(index)}>🗑</button>
+                  </div>
+                ))}
+              </div>
+              <button type="button" onClick={handleAddGame} className="add-game-button">
+                Adicionar Prova
+              </button>
             </div>
-          </div>
 
-        </form>
+            <div className="section-container">
+              <label>Anexos</label>
+              <div className="attachments-container">
+                <div className="attachment-item">
+                  <label className="attachment-label">Imagem</label>
+                  <div className="file-input-wrapper">
+                    <input
+                      id="image-upload"
+                      type="file"
+                      onChange={(e) => setImage(e.target.files?.[0] || null)}
+                      accept="image/*"
+                    />
+                    <label htmlFor="image-upload" className="file-input-label">
+                      <span>Selecione uma imagem ou arraste o arquivo</span>
+                      <span className="file-input-icon">⬆️</span>
+                    </label>
+                  </div>
+                </div>
+                <div className="attachment-item">
+                  <label className="attachment-label">Regulamento</label>
+                  <div className="file-input-wrapper">
+                    <input
+                      id="regulation-upload"
+                      type="file"
+                      onChange={(e) => setRegulation(e.target.files?.[0] || null)}
+                      accept=".pdf,.doc,.docx"
+                    />
+                    <label htmlFor="regulation-upload" className="file-input-label">
+                      <span>Selecione um arquivo ou arraste o arquivo</span>
+                      <span className="file-input-icon">⬆️</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
 
+          </form>
+        </div>
         <div className="modal-actions">
           <button className="cancel-button" onClick={onClose}>Cancelar</button>
           <button className="save-button" onClick={handleSave}>Salvar</button>

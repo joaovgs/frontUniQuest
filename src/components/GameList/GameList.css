@@ -1,4 +1,3 @@
-/* Container principal */
 .game-list-container {
     max-width: 800px;
     margin: auto;
@@ -6,15 +5,14 @@
     padding-top: 60px;
     display: flex;
     flex-direction: column;
-    height: 90vh; /* Ocupar a altura da tela */
-    overflow: hidden; /* Evita rolagem inesperada na página */
+    height: 90vh; 
+    overflow: hidden;
   }
-  
-  /* Cabeçalho com título e barra de pesquisa */
+
   .game-list-header {
     display: flex;
-    flex-direction: column; /* Coloca os elementos em uma coluna (um embaixo do outro) */
-    align-items: center; /* Centraliza os elementos horizontalmente */
+    flex-direction: column; 
+    align-items: center; 
   }
   
   .search-input {
@@ -25,11 +23,10 @@
     border-radius: 4px;
   }
   
-  /* Lista de games */
   .game-list {
     flex: 1;
-    overflow-y: auto; /* Rolagem interna */
-    max-height: calc(100vh - 200px); /* Limite de altura para lista */
+    overflow-y: auto; 
+    max-height: calc(100vh - 200px); 
   }
   
   .game-item {
@@ -41,16 +38,15 @@
   }
   
   .game-item.selected {
-    background-color: #007bff; /* Cor de fundo para o item selecionado */
-    color: white; /* Cor do texto para o item selecionado */
-    border: 1px solid #0056b3; /* Bordas diferenciadas */
+    background-color: #007bff; 
+    color: white; 
+    border: 1px solid #0056b3;
   }
 
-  /* Rodapé fixo para botões */
   .actions {
     display: flex;
     justify-content: right;
-    gap: 30px; /* Espaçamento entre os botões */
+    gap: 30px;
     padding: 10px 0;
     position: relative;
     bottom: 0;
@@ -78,7 +74,6 @@
     color: white;
   }
   
-  /* Modal Overlay */
   .modal-overlay {
     position: fixed;
     top: 0;
