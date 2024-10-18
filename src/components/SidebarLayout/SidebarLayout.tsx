@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, ReactNode } from 'react';
 import { FaBars } from 'react-icons/fa';
-import { Link } from 'react-router-dom'; // Importar Link do react-router-dom
+import { Link } from 'react-router-dom'; 
 import './SidebarLayout.css';
 
 interface SidebarLayoutProps {
@@ -44,7 +44,6 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
       <aside ref={sidebarRef} className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <nav className="sidebar-nav">
           <ul>
-            {/* Substituir <a href="/home"> por <Link to="/home"> */}
             <li>
               <Link to="/home" onClick={toggleSidebar}>Home</Link>
             </li>

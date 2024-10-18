@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './UserCreate.css';
-import { User } from '../../models/User';
+import { User, UserPayload } from '../../models/User';
 
 interface UserCreateProps {
   onClose: () => void;
-  onSave: (user: Omit<User, 'id' | 'created_at' | 'system_deleted' | 'system_date_deleted'>) => void | Promise<void>;
+  onSave: (user: UserPayload) => void | Promise<void>;
   initialUser?: User;
 }
 

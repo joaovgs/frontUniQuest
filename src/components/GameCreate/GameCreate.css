@@ -1,27 +1,24 @@
-/* Estilos para o modal de cadastro de Game */
-
 .game-create-container {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
     display: flex;
     flex-direction: column;
-    height: 95vh; /* Ocupar toda a altura da tela */
-    overflow: hidden; /* Impede que a página tenha uma rolagem inesperada */
+    height: 95vh; 
+    overflow: hidden; 
 }
   
-/* Modal para Cadastro de Game */
 .create-game-modal {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: white;
-    padding: 30px 40px; /* Ajuste no padding */
+    padding: 30px 40px; 
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 10;
     border-radius: 8px;
-    width: 400px; /* Aumento na largura do modal */
+    width: 400px; 
 }
   
 .create-game-modal h2 {
@@ -38,7 +35,7 @@
 .category-options {
     display: flex;
     justify-content: space-between;
-    gap: 20px; /* Ajuste no espaçamento */
+    gap: 20px; 
 }
 
 .category-options label {
@@ -49,27 +46,25 @@
 
 .game-input-name {
     padding: 8px;
-    width: 100%; /* Largura total do modal */
+    width: 100%;
     border: 1px solid #ccc;
     border-radius: 4px;
-    margin-bottom: 15px; /* Espaço inferior */
+    margin-bottom: 15px;
 }
   
 .game-input {
     padding: 8px;
-    flex: 1; /* Ocupa o máximo possível dentro do container */
+    flex: 1;
     border: 1px solid #ccc;
     border-radius: 4px;
-    text-align: center; /* Alinhamento centralizado */
 }
 
-/* Ajuste adicional para os inputs */
 .participants-inputs .game-input {
-    width: 100px; /* Reduz o tamanho dos inputs */
+    width: 100px;
 }
 
 .points-inputs .game-input {
-    width: 70px; /* Largura específica para pontos */
+    width: 70px;
 }
 
 .modal-actions {

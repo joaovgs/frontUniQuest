@@ -1,0 +1,26 @@
+export interface CompetitionGame {
+  local: string;
+  date_game: Date;
+  game_id: number;
+}
+
+export interface Competition {
+  id: number;
+  title: string;
+  date_event: Date;
+  start_registration: Date;
+  end_registration: Date;
+  min_participant: number;
+  max_participant: number;
+  local: string;
+  description?: string | null;
+  games?: CompetitionGame[];
+  created_at: string;
+  system_deleted?: boolean | null;
+  system_date_deleted?: string | null;
+}
+
+export type CompetitionPayload = Omit<
+  Competition,
+  'id' | 'created_at' | 'system_deleted' | 'system_date_deleted'
+>;

@@ -1,62 +1,114 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './CompetitionList.css';
-import CompetitionCreate from '../CompetitionCreate/CompetitionCreate'; // Importar o modal de criação de gincanas
-
-interface Competition {
-  title: string;
-  startDate: string;
-  endDate: string;
-}
+import CompetitionCreate from '../CompetitionCreate/CompetitionCreate';
+import { useSnackbar } from '../../context/SnackbarContext';
+import { Competition, CompetitionPayload } from '../../models/Competition';
+import { CompetitionService } from '../../services/Competition';
+import axios from 'axios';
 
 const CompetitionList: React.FC = () => {
-  const [competitions, setCompetitions] = useState<Competition[]>([
-  ]); // Lista de gincanas
+  const [competitions, setCompetitions] = useState<Competition[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [selectedCompetition, setSelectedCompetition] = useState<Competition | null>(null);
+  const { showSnackbar } = useSnackbar();
 
-  const [searchTerm, setSearchTerm] = useState(''); // Estado para controle de pesquisa
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false); // Estado para exibir o modal de criação
-  const [selectedCompetitionIndex, setSelectedCompetitionIndex] = useState<number | null>(null); // Índice da gincana selecionada para edição
+  const actionsRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
-  // Função para abrir o modal de criação
-  const handleOpenCreateModal = () => {
-    setSelectedCompetitionIndex(null); // Limpa a seleção
-    setIsCreateModalOpen(true); // Abre o modal
-  };
+  const fetchCompetitions = async (filter: string = '') => {
+    try {
+      const response = await CompetitionService.getCompetitions(filter);
 
-  // Função para abrir o modal de edição
-  const handleOpenEditModal = () => {
-    if (selectedCompetitionIndex !== null) {
-      setIsCreateModalOpen(true); // Abre o modal para edição
+      if (response && Array.isArray(response.competitions)) {
+        setCompetitions(response.competitions);
+      } else {
+        setCompetitions([]);
+        console.error('Erro: Resposta de competições não é um array válido.');
+      }
+    } catch (error) {
+      console.error('Erro ao buscar competições:', error);
+      setCompetitions([]);
+
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          console.log('Erro de autenticação. Redirecionando para login...');
+        } else if (error.response?.status === 500) {
+          showSnackbar('Erro interno do servidor. Tente novamente mais tarde.', 'error');
+        }
+      }
     }
   };
 
-  // Função para fechar o modal
-  const handleCloseCreateModal = () => {
-    setIsCreateModalOpen(false); // Fecha o modal
-  };
+  useEffect(() => {
+    fetchCompetitions();
+  }, []);
 
-  // Função para salvar uma nova gincana ou editar uma existente
-  const handleSaveCompetition = (newCompetition: Competition) => {
-    if (selectedCompetitionIndex !== null) {
-      // Atualizar a gincana existente
-      const updatedCompetitions = [...competitions];
-      updatedCompetitions[selectedCompetitionIndex] = newCompetition;
-      setCompetitions(updatedCompetitions);
-    } else {
-      // Adicionar nova gincana
-      setCompetitions([...competitions, newCompetition]);
+  const handleSaveCompetition = async (competitionPayload: CompetitionPayload) => {
+    try {
+      if (selectedCompetition) {
+        await CompetitionService.updateCompetition(selectedCompetition.id, competitionPayload);
+        showSnackbar('Gincana atualizada com sucesso!', 'success');
+      } else {
+        await CompetitionService.createCompetition(competitionPayload);
+        showSnackbar('Gincana criada com sucesso!', 'success');
+      }
+      setSearchTerm('');
+      await fetchCompetitions('');
+      setIsCreateModalOpen(false);
+      setSelectedCompetition(null);
+    } catch (error) {
+      showSnackbar('Erro ao salvar gincana. Tente novamente.', 'error');
+      console.error('Erro ao salvar gincana:', error);
     }
-    handleCloseCreateModal(); // Fecha o modal após salvar
   };
 
-  // Função para selecionar uma gincana da lista
-  const handleCompetitionClick = (index: number) => {
-    setSelectedCompetitionIndex(index); // Seleciona a gincana
+  const handleDeleteCompetition = async () => {
+    if (selectedCompetition) {
+      try {
+        await CompetitionService.deleteCompetition(selectedCompetition.id);
+        setCompetitions((prevCompetitions) =>
+          prevCompetitions.filter((competition) => competition.id !== selectedCompetition.id)
+        );
+        setSelectedCompetition(null);
+        showSnackbar('Gincana excluída com sucesso!', 'success');
+      } catch (error) {
+        showSnackbar('Erro ao deletar gincana. Tente novamente.', 'error');
+        console.error('Erro ao deletar gincana:', error);
+      }
+    }
   };
 
-  // Filtrar gincanas com base no termo de pesquisa
-  const filteredCompetitions = competitions.filter((competition) =>
-    competition.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      fetchCompetitions(searchTerm);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+
+      if (isCreateModalOpen) {
+        if (modalRef.current && !modalRef.current.contains(target)) {
+          return;
+        }
+      } else {
+        if (
+          !target.closest('.competition-item') &&
+          actionsRef.current &&
+          !actionsRef.current.contains(target)
+        ) {
+          setSelectedCompetition(null);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isCreateModalOpen]);
 
   return (
     <div className="competition-list-container">
@@ -67,20 +119,20 @@ const CompetitionList: React.FC = () => {
           placeholder="Pesquisar"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={handleSearchKeyDown}
           className="search-input"
         />
       </div>
 
-      {/* Lista de gincanas */}
       <div className="competition-list">
-        {filteredCompetitions.length === 0 ? (
+        {competitions.length === 0 ? (
           <p>Nenhuma gincana encontrada.</p>
         ) : (
-          filteredCompetitions.map((competition, index) => (
+          competitions.map((competition, index) => (
             <div
               key={index}
-              className={`competition-item ${selectedCompetitionIndex === index ? 'selected' : ''}`}
-              onClick={() => handleCompetitionClick(index)}
+              className={`competition-item ${selectedCompetition === competition ? 'selected' : ''}`}
+              onClick={() => setSelectedCompetition(competition)}
             >
               {competition.title}
             </div>
@@ -88,35 +140,41 @@ const CompetitionList: React.FC = () => {
         )}
       </div>
 
-      {/* Rodapé com botões */}
-      <div className="actions">
-        <button className="create-button" onClick={handleOpenCreateModal}>
+      <div className="actions" ref={actionsRef}>
+        <button
+          className="create-button"
+          onClick={() => {
+            setSelectedCompetition(null);
+            setIsCreateModalOpen(true);
+          }}
+        >
           Criar
         </button>
         <button
           className="edit-button"
-          onClick={handleOpenEditModal}
-          disabled={selectedCompetitionIndex === null}
+          onClick={() => setIsCreateModalOpen(true)}
+          disabled={!selectedCompetition}
         >
           Editar
         </button>
         <button
           className="delete-button"
-          onClick={() => setCompetitions(competitions.filter((_, index) => index !== selectedCompetitionIndex))}
-          disabled={selectedCompetitionIndex === null}
+          onClick={handleDeleteCompetition}
+          disabled={!selectedCompetition}
         >
           Excluir
         </button>
       </div>
 
-      {/* Modal de Criação/Edição de Gincanas */}
       {isCreateModalOpen && (
         <div className="modal-overlay">
-          <CompetitionCreate
-            onClose={handleCloseCreateModal}
-            onSave={handleSaveCompetition}
-            initialCompetition={selectedCompetitionIndex !== null ? competitions[selectedCompetitionIndex] : null}
-          />
+          <div ref={modalRef}>
+            <CompetitionCreate
+              onClose={() => setIsCreateModalOpen(false)}
+              onSave={handleSaveCompetition}
+              initialCompetition={selectedCompetition || undefined}
+            />
+          </div>
         </div>
       )}
     </div>

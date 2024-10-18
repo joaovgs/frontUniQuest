@@ -1,30 +1,93 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import './Register.css'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { useSnackbar } from '../../context/SnackbarContext';
+import api from '../../services/api';
+import './Register.css';
 
 const Register: React.FC = () => {
-  const navigate = useNavigate() // Hook para navegação
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const { showSnackbar } = useSnackbar();
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleCancel = () => {
-    navigate('/login') // Redireciona para a tela de login
-  }
+    navigate('/login');
+  };
+
+  const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const newUser = { name, email, password, role: 0 };
+      await api.post('/users', newUser);
+
+      try {
+        const response = await api.post('/sessions', { email, password });
+
+        if (response.status === 200) {
+          localStorage.setItem('authToken', response.data.token);
+          const userResponse = await api.get('/users/me', { params: { email } });
+
+          login(userResponse.data.user.name);
+
+          showSnackbar('Usuário cadastrado e logado com sucesso!', 'success');
+
+          navigate('/home');
+        }
+      } catch (loginError) {
+        showSnackbar('Erro ao fazer login após o registro. Tente manualmente.', 'error');
+        console.error('Erro ao fazer login após registro:', loginError);
+      }
+    } catch (registerError: any) {
+      if (registerError.response && registerError.response.status === 409) {
+        showSnackbar('E-mail já cadastrado. Tente outro e-mail.', 'error');
+      } else {
+        showSnackbar('Erro ao criar usuário. Tente novamente.', 'error');
+      }
+      console.error('Erro ao criar usuário:', registerError);
+    }
+  };
 
   return (
     <div className="register-modal">
       <div className="register-box">
         <h2>Cadastro de Usuário</h2>
-        <form>
+        <form onSubmit={handleSave}>
           <div className="register-field">
             <label htmlFor="name">Nome</label>
-            <input type="text" id="name" name="name" />
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
           </div>
           <div className="register-field">
             <label htmlFor="email">Email</label>
-            <input type="email" id="email" name="email" />
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
           <div className="register-field">
             <label htmlFor="password">Senha</label>
-            <input type="password" id="password" name="password" />
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
           <div className="register-actions">
             <button type="button" className="cancel-button" onClick={handleCancel}>
@@ -37,7 +100,7 @@ const Register: React.FC = () => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;
