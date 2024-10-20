@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './CompetitionCreate.css';
-import { CompetitionPayload } from '../../models/Competition';
+import { CompetitionPayload, CompetitionGame } from '../../models/Competition';
 import { Game } from '../../models/Game'; 
 import { GameService } from '../../services/Game';
 
@@ -10,26 +10,43 @@ interface CompetitionCreateProps {
   initialCompetition?: CompetitionPayload | null;
 }
 
-interface CompetitionGame {
-  local: string;
-  date_game?: Date; 
-  game_id: number;
-}
-
 const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, initialCompetition }) => {
   const [title, setTitle] = useState<string>(initialCompetition?.title || '');
   const [dateEvent, setDateEvent] = useState<Date | undefined>(initialCompetition?.date_event ? new Date(initialCompetition.date_event) : undefined);
   const [startRegistration, setStartRegistration] = useState<Date | undefined>(initialCompetition?.start_registration ? new Date(initialCompetition.start_registration) : undefined);
   const [endRegistration, setEndRegistration] = useState<Date | undefined>(initialCompetition?.end_registration ? new Date(initialCompetition.end_registration) : undefined);
-  const [minParticipant, setMinParticipant] = useState<number>(initialCompetition?.min_participant || 0);
-  const [maxParticipant, setMaxParticipant] = useState<number>(initialCompetition?.max_participant || 0);
+  const [minParticipant, setMinParticipant] = useState<string>(''); 
+  const [maxParticipant, setMaxParticipant] = useState<string>(''); 
   const [local, setLocal] = useState<string>(initialCompetition?.local || '');
   const [description, setDescription] = useState<string>(initialCompetition?.description || '');
-  const [games, setGames] = useState<CompetitionGame[]>(initialCompetition?.games || [{ local: '', date_game: undefined, game_id: 0 }]);
+  const [competitionGames, setCompetitionGames] = useState<CompetitionGame[]>(initialCompetition?.CompetitionGames || [{ local: '', date_game: undefined, game_id: 0, game_name: '' }]); 
   const [image, setImage] = useState<File | null>(null);
   const [regulation, setRegulation] = useState<File | null>(null);
   const [availableGames, setAvailableGames] = useState<Game[]>([]); 
   const [isEditing, setIsEditing] = useState<boolean>(!!initialCompetition);
+  const [imageName, setImageName] = useState<string | null>(null);
+  const [regulationName, setRegulationName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (initialCompetition) {
+      setTitle(initialCompetition.title || '');
+      setDateEvent(initialCompetition.date_event ? new Date(initialCompetition.date_event) : undefined);
+      setStartRegistration(initialCompetition.start_registration ? new Date(initialCompetition.start_registration) : undefined);
+      setEndRegistration(initialCompetition.end_registration ? new Date(initialCompetition.end_registration) : undefined);
+      setMinParticipant(initialCompetition.min_participant ? initialCompetition.min_participant.toString() : '0'); 
+      setMaxParticipant(initialCompetition.max_participant ? initialCompetition.max_participant.toString() : '0');
+      setLocal(initialCompetition.local || '');
+      setDescription(initialCompetition.description || '');
+      setCompetitionGames(initialCompetition.CompetitionGames && initialCompetition.CompetitionGames.length > 0 
+        ? initialCompetition.CompetitionGames.map(game => ({
+            local: game.local,
+            date_game: game.date_game ? new Date(game.date_game) : undefined,
+            game_id: game.game_id,
+            game_name: game.game_name 
+          })) 
+        : [{ local: '', date_game: undefined, game_id: 0, game_name: '' }]); 
+    }
+  }, [initialCompetition]);
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -47,8 +64,8 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
   const gamesContainerRef = useRef<HTMLDivElement>(null);
 
   const handleAddGame = () => {
-    const newGames = [...games, { local: '', date_game: undefined, game_id: 0 }];
-    setGames(newGames);
+    const newGames = [...competitionGames, { local: '', date_game: undefined, game_id: 0, game_name: '' }];
+    setCompetitionGames(newGames);
 
     setTimeout(() => {
       if (gamesContainerRef.current) {
@@ -68,7 +85,7 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
   };
 
   const handleRemoveGame = (index: number) => {
-    setGames(games.filter((_, i) => i !== index));
+    setCompetitionGames(competitionGames.filter((_, i) => i !== index));
   };
 
   const handleSave = () => {
@@ -77,20 +94,21 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
       date_event: dateEvent || new Date(),
       start_registration: startRegistration || new Date(),
       end_registration: endRegistration || new Date(), 
-      min_participant: minParticipant,
-      max_participant: maxParticipant,
+      min_participant: minParticipant ? parseInt(minParticipant) : 0, 
+      max_participant: maxParticipant ? parseInt(maxParticipant) : 0, 
       local,
       description,
-      games: games.map((game) => ({
+      CompetitionGames: competitionGames.map((game) => ({
         ...game,
         date_game: game.date_game || new Date(),
-      })),
+      })), 
     };
     onSave(newCompetition);
   };
 
   const handleDateChange = (setter: React.Dispatch<React.SetStateAction<Date | undefined>>, event: React.ChangeEvent<HTMLInputElement>) => {
-    setter(event.target.value ? new Date(event.target.value) : undefined);
+    const localDate = event.target.value ? new Date(event.target.value + 'Z') : undefined;
+    setter(localDate);
   };
 
   return (
@@ -141,14 +159,14 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
               <input
                 type="number"
                 placeholder="Min. Participantes por Equipe"
-                value={minParticipant}
-                onChange={(e) => setMinParticipant(Number(e.target.value))}
+                value={minParticipant} 
+                onChange={(e) => setMinParticipant(e.target.value)}
               />
               <input
                 type="number"
                 placeholder="Máx. Participantes por Equipe"
-                value={maxParticipant}
-                onChange={(e) => setMaxParticipant(Number(e.target.value))}
+                value={maxParticipant} 
+                onChange={(e) => setMaxParticipant(e.target.value)} 
               />
             </div>
 
@@ -170,17 +188,21 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
             <div className="section-container">
               <label>Provas</label>
               <div className="games-container" ref={gamesContainerRef}>
-                {games.map((game, index) => (
+                {competitionGames.map((game, index) => ( 
                   <div key={index} className="competition-game-item">
                     <select
-                      value={game.game_id}
+                      value={game.game_id || ''} 
                       onChange={(e) => {
-                        const updatedGames = [...games];
-                        updatedGames[index].game_id = Number(e.target.value);
-                        setGames(updatedGames);
+                        const selectedValue = Number(e.target.value);
+                        const updatedGames = [...competitionGames]; 
+                        updatedGames[index] = {
+                          ...updatedGames[index],
+                          game_id: selectedValue, 
+                        };
+                        setCompetitionGames(updatedGames); 
                       }}
                     >
-                      <option value={0}>Selecione uma prova</option>
+                      <option value="" disabled>Selecione uma prova</option>
                       {availableGames.map((availableGame) => (
                         <option key={availableGame.id} value={availableGame.id}>
                           {availableGame.name}
@@ -190,11 +212,15 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
 
                     <input
                       type="datetime-local"
-                      value={game.date_game ? game.date_game.toISOString().substring(0, 16) : ""}
+                      value={game.date_game instanceof Date ? game.date_game.toISOString().substring(0, 16) : ""}
                       onChange={(e) => {
-                        const updatedGames = [...games];
-                        updatedGames[index].date_game = e.target.value ? new Date(e.target.value) : undefined;
-                        setGames(updatedGames);
+                        const localDate = e.target.value ? new Date(e.target.value + 'Z') : undefined; 
+                        const updatedGames = [...competitionGames]; 
+                        updatedGames[index] = {
+                          ...updatedGames[index],
+                          date_game: localDate, 
+                        };
+                        setCompetitionGames(updatedGames); 
                       }}
                     />
 
@@ -203,9 +229,12 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
                       placeholder="Local da Prova"
                       value={game.local}
                       onChange={(e) => {
-                        const updatedGames = [...games];
-                        updatedGames[index].local = e.target.value;
-                        setGames(updatedGames);
+                        const updatedGames = [...competitionGames]; 
+                        updatedGames[index] = {
+                          ...updatedGames[index],
+                          local: e.target.value, 
+                        };
+                        setCompetitionGames(updatedGames); 
                       }}
                     />
                     <button type="button" onClick={() => handleRemoveGame(index)}>🗑</button>
@@ -226,11 +255,15 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
                     <input
                       id="image-upload"
                       type="file"
-                      onChange={(e) => setImage(e.target.files?.[0] || null)}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] || null;
+                        setImage(file);
+                        setImageName(file ? file.name : null);
+                      }}
                       accept="image/*"
                     />
                     <label htmlFor="image-upload" className="file-input-label">
-                      <span>Selecione uma imagem ou arraste o arquivo</span>
+                      <span>{imageName || "Selecione uma imagem ou arraste o arquivo"}</span>
                       <span className="file-input-icon">⬆️</span>
                     </label>
                   </div>
@@ -241,11 +274,15 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
                     <input
                       id="regulation-upload"
                       type="file"
-                      onChange={(e) => setRegulation(e.target.files?.[0] || null)}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] || null;
+                        setRegulation(file);
+                        setRegulationName(file ? file.name : null);
+                      }}
                       accept=".pdf,.doc,.docx"
                     />
                     <label htmlFor="regulation-upload" className="file-input-label">
-                      <span>Selecione um arquivo ou arraste o arquivo</span>
+                      <span>{regulationName || "Selecione um arquivo ou arraste o arquivo"}</span>
                       <span className="file-input-icon">⬆️</span>
                     </label>
                   </div>
@@ -255,7 +292,7 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
 
           </form>
         </div>
-        <div className="modal-actions">
+        <div className="modal-actions-buttons">
           <button className="cancel-button" onClick={onClose}>Cancelar</button>
           <button className="save-button" onClick={handleSave}>Salvar</button>
         </div>

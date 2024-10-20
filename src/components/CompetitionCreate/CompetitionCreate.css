@@ -79,22 +79,14 @@
     display: flex;
     justify-content: space-between;
   }
-  
-  .game-item {
-    display: flex;
-    justify-content: space-between;
-    gap: 5px;
-    margin-bottom: 5px;
-    border: none;
-  }
-  
-  .game-item:last-child {
+    
+  .competition-game-item:last-child {
     margin-bottom: 0;
   }
   
-  .game-item select,
-  .game-item input[type="datetime-local"],
-  .game-item input[type="text"] {
+  .competition-game-item select,
+  .competition-game-item input[type="datetime-local"],
+  .competition-game-item input[type="text"] {
     flex: 1;
     padding: 6px;
     border: 1px solid #ccc;
@@ -102,7 +94,7 @@
     font-size: 14px;
   }
   
-  .game-item button {
+  .competition-game-item button {
     padding: 6px;
     background-color: #007bff;
     color: white;
@@ -118,15 +110,16 @@
     gap: 20px;
   }
   
-  .modal-actions {
+  .modal-actions-buttons {
     display: flex;
     justify-content: center;
     margin-top: 10px;
-    border-top: 1px solid #eee;
+    gap: 15vw; 
   }
 
-  .modal-actions button{
+  .modal-actions-buttons button{
     width: 120px;
+    border-radius: 4px;
   }
   
   .cancel-button, .save-button {
@@ -228,10 +221,6 @@
     gap: 10px;
     margin-bottom: 10px; 
     border: none;
-  }
-  
-  .competition-game-item:last-child {
-    margin-bottom: 0; 
   }
   
   .competition-game-item select,

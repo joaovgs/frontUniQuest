@@ -1,7 +1,8 @@
 export interface CompetitionGame {
   local: string;
-  date_game: Date;
+  date_game?: Date;
   game_id: number;
+  game_name?: string;
 }
 
 export interface Competition {
@@ -14,7 +15,7 @@ export interface Competition {
   max_participant: number;
   local: string;
   description?: string | null;
-  games?: CompetitionGame[];
+  CompetitionGames?: CompetitionGame[];
   created_at: string;
   system_deleted?: boolean | null;
   system_date_deleted?: string | null;
