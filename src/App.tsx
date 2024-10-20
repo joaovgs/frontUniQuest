@@ -13,6 +13,7 @@ import GameList from './components/GameList/GameList';
 import CompetitonList from './components/CompetitionList/CompetitionList';
 import RankingPage from './components/RankingPage/RankingPage';
 import TeamList from './components/TeamList/TeamList';
+import TeamParticipants from './components/TeamParticipants/TeamParticipants';
 
 const App: React.FC = () => {
   const location = useLocation();

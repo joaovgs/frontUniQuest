@@ -30,14 +30,15 @@
 
 .modal-actions {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
+    margin-top: 20px;
 }
 
 .cancel-button, .save-button {
-    padding: 10px 20px;
+    font-size: 16px;
     cursor: pointer;
-    border: none;
-    border-radius: 4px;
+    width: 120px;
+    text-align: center;
 }
 
 .cancel-button {
@@ -47,5 +48,15 @@
 
 .save-button {
     background-color: #007bff;
+    color: white;
+}
+
+.cancel-button:hover {
+    background-color: #5A6268; /* cor mais escura de vermelho no hover */
+    color: white;
+}
+
+.save-button:hover {
+    background-color: #0056b3; /* cor mais escura de azul no hover */
     color: white;
 }
