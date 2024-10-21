@@ -14,8 +14,12 @@ export interface Competition {
   min_participant: number;
   max_participant: number;
   local: string;
-  description?: string | null;
+  description?: string | null;  
   CompetitionGames?: CompetitionGame[];
+  image?: string | null;
+  image_name?: string | null;
+  regulation?: string | null;
+  regulation_name?: string | null;
   created_at: string;
   system_deleted?: boolean | null;
   system_date_deleted?: string | null;

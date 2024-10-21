@@ -35,7 +35,6 @@ const UserList: React.FC = () => {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
           console.log('Erro de autenticação. Redirecionando para login...');
-          navigate('/login');
         } else if (error.response?.status === 500) {
           showSnackbar('Erro interno do servidor. Tente novamente mais tarde.', 'error');
         }

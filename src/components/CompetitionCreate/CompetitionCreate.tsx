@@ -3,6 +3,7 @@ import './CompetitionCreate.css';
 import { CompetitionPayload, CompetitionGame } from '../../models/Competition';
 import { Game } from '../../models/Game'; 
 import { GameService } from '../../services/Game';
+import { createPortal } from 'react-dom';
 
 interface CompetitionCreateProps {
   onClose: () => void;
@@ -20,12 +21,12 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
   const [local, setLocal] = useState<string>(initialCompetition?.local || '');
   const [description, setDescription] = useState<string>(initialCompetition?.description || '');
   const [competitionGames, setCompetitionGames] = useState<CompetitionGame[]>(initialCompetition?.CompetitionGames || [{ local: '', date_game: undefined, game_id: 0, game_name: '' }]); 
-  const [image, setImage] = useState<File | null>(null);
-  const [regulation, setRegulation] = useState<File | null>(null);
+  const [image, setImage] = useState<string | null>(null);
+  const [regulation, setRegulation] = useState<string | null>(null);
   const [availableGames, setAvailableGames] = useState<Game[]>([]); 
   const [isEditing, setIsEditing] = useState<boolean>(!!initialCompetition);
-  const [imageName, setImageName] = useState<string | null>(null);
-  const [regulationName, setRegulationName] = useState<string | null>(null);
+  const [imageName, setImageName] = useState<string | null>(initialCompetition?.image_name || null);
+  const [regulationName, setRegulationName] = useState<string | null>(initialCompetition?.regulation_name || null);
 
   useEffect(() => {
     if (initialCompetition) {
@@ -45,6 +46,10 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
             game_name: game.game_name 
           })) 
         : [{ local: '', date_game: undefined, game_id: 0, game_name: '' }]); 
+      setImage(initialCompetition.image || null);
+      setRegulation(initialCompetition.regulation || null);
+      setImageName(initialCompetition.image_name || null);
+      setRegulationName(initialCompetition.regulation_name || null);
     }
   }, [initialCompetition]);
 
@@ -88,6 +93,20 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
     setCompetitionGames(competitionGames.filter((_, i) => i !== index));
   };
 
+  const handleFileToBase64 = (file: File | null, setter: React.Dispatch<React.SetStateAction<string | null>>) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      if (reader.result) {
+        setter(reader.result as string);
+      }
+    };
+    reader.onerror = (error) => {
+      console.error('Erro ao converter o arquivo para Base64:', error);
+    };
+  };
+
   const handleSave = () => {
     const newCompetition: CompetitionPayload = {
       title,
@@ -98,11 +117,16 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
       max_participant: maxParticipant ? parseInt(maxParticipant) : 0, 
       local,
       description,
+      image, 
+      regulation,
+      image_name: imageName, 
+      regulation_name: regulationName, 
       CompetitionGames: competitionGames.map((game) => ({
         ...game,
         date_game: game.date_game || new Date(),
       })), 
     };
+    console.log(newCompetition)
     onSave(newCompetition);
   };
 
@@ -111,7 +135,7 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
     setter(localDate);
   };
 
-  return (
+  return createPortal(
     <div className="competition-create-container">
       <div className="create-competition-modal">
         <h2>{isEditing ? 'Editar Gincana' : 'Cadastro de Gincana'}</h2>
@@ -257,8 +281,8 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
                       type="file"
                       onChange={(e) => {
                         const file = e.target.files?.[0] || null;
-                        setImage(file);
                         setImageName(file ? file.name : null);
+                        handleFileToBase64(file, setImage);
                       }}
                       accept="image/*"
                     />
@@ -276,8 +300,8 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
                       type="file"
                       onChange={(e) => {
                         const file = e.target.files?.[0] || null;
-                        setRegulation(file);
                         setRegulationName(file ? file.name : null);
+                        handleFileToBase64(file, setRegulation);
                       }}
                       accept=".pdf,.doc,.docx"
                     />
@@ -289,7 +313,6 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
                 </div>
               </div>
             </div>
-
           </form>
         </div>
         <div className="modal-actions-buttons">
@@ -297,7 +320,8 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
           <button className="save-button" onClick={handleSave}>Salvar</button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
