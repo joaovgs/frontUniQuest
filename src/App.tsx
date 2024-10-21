@@ -14,6 +14,7 @@ import CompetitonList from './components/CompetitionList/CompetitionList';
 import RankingPage from './components/RankingPage/RankingPage';
 import TeamList from './components/TeamList/TeamList';
 import TeamParticipants from './components/TeamParticipants/TeamParticipants';
+import DirectConfrontationMatches from './components/DirectConfrontationMatches/DirectConfrontantionMatches';
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -80,6 +81,14 @@ const App: React.FC = () => {
             element={
               <SidebarLayout>
                 <RankingPage />
+              </SidebarLayout>
+            }
+          />
+          <Route
+            path="/direct"
+            element={
+              <SidebarLayout>
+                <DirectConfrontationMatches />
               </SidebarLayout>
             }
           />

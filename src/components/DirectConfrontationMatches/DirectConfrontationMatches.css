@@ -1,0 +1,115 @@
+/* CSS para estilizar o chaveamento */
+
+.container {
+  padding: 20px;
+  padding-top: 60px;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+.bracket-container {
+  padding-top: 30px;
+}
+
+.bracket {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.rounds {
+  display: flex;
+}
+
+.round {
+  position: relative;
+  margin: 0 20px;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.matches {
+  position: relative;
+  width: 150px;
+}
+
+.match {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: white;
+}
+
+.team {
+  font-weight: bold;
+}
+
+.winner {
+  color: green;
+}
+
+.loser {
+  color: red;
+}
+
+.vs {
+  margin: 5px 0;
+}
+
+/* Linhas de conexão entre as partidas */
+.line-vertical {
+  position: absolute;
+  left: 100%;
+  width: 2px;
+  background-color: black;
+}
+
+.line-horizontal {
+  position: absolute;
+  left: 100%;
+  width: 40px; /* Ajustar conforme o espaço entre rodadas */
+  height: 2px;
+  background-color: black;
+}
+
+/* Div para a saída de uma partida conectando à próxima */
+.exit.down {
+  position: absolute;
+  top: calc(50% - 1px);
+  right: -7px;
+  width: 6px;
+  border-top: 1px solid rgba(0, 0, 0, 0.65);
+  border-right: 1px solid rgba(0, 0, 0, 0.65);
+}
+
+.exit.up {
+  position: absolute;
+  bottom: 50%;
+  right: -7px;
+  width: 6px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.65);
+  border-right: 1px solid rgba(0, 0, 0, 0.65);
+}
+
+.entry.down {
+  position: absolute;
+  bottom: 0;
+  right: -16px;
+  width: 15px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.65);
+}
+
+.entry.up {
+  position: absolute;
+  top: 0;
+  right: -16px;
+  width: 15px;
+  border-top: 1px solid rgba(0, 0, 0, 0.65);
+}
