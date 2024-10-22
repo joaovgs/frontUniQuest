@@ -1,5 +1,4 @@
 .home-content {
-  padding: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,52 +14,63 @@ img:hover {
 }
 
 .current-event, .previous-events {
-  margin-top: 50px;
+  margin-top: 30px;
   text-align: center;
 }
 
 .current-event-image {
-  width: 40vw;
-  height: auto;
+  width: 35vw; 
+  height: 40vh;  
+  object-fit: fill; 
+  border-radius: 10px;
 }
 
 .previous-events-container {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: auto 1fr auto; 
   align-items: center;
   width: 80vw; 
   margin: 20px auto;
-  gap: 2vw;
+}
+
+.previous-events-left, .previous-events-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 2vw;
 }
 
 .previous-event-images {
   display: flex;
-  gap: 2vw; 
+  gap: 5vw;
+  justify-content: center;
 }
 
 .previous-event-image {
-  width: 50vh; 
-  height: auto;
+  width: 20vw;  
+  height: 30vh;
+  object-fit: fill; 
+  border-radius: 8px;
 }
 
 .prev-button, .next-button {
   background-color: #007bff;
   color: white;
-  border: none; /* Remove a borda padrão */
-  border-radius: 50%; /* Torna o botão redondo */
-  width: 50px; /* Largura maior */
-  height: 50px; /* Altura maior */
+  border: none; 
+  border-radius: 50%;
+  width: 50px; 
+  height: 50px; 
   font-size: 24px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease; /* Efeito suave para transformação */
-  display: flex; /* Centraliza o conteúdo do botão */
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  display: flex; 
   justify-content: center;
   align-items: center;
 }
 
 .prev-button:hover, .next-button:hover {
-  background-color: #0056b3; /* Altera a cor ao passar o mouse */
-  transform: scale(1.1); /* Aumenta levemente o botão */
+  background-color: #0056b3;
+  transform: scale(1.1); 
 }
 
 .prev-button:disabled, .next-button:disabled {
@@ -69,10 +79,9 @@ img:hover {
 }
 
 .prev-button i, .next-button i {
-  font-size: 20px; /* Define o tamanho da seta */
+  font-size: 20px; 
 }
 
-/* Adiciona sombra aos botões */
 .prev-button, .next-button {
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Adiciona sombra aos botões */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); 
 }

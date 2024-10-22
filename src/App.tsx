@@ -4,7 +4,7 @@ import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import Home from './components/Home/Home';
 import UserList from './components/UserList/UserList';
-import GincanaDetails from './components/Gincana/GincanaDetails';
+import CompetitionDetails from './components/CompetitionDetails/CompetitionDetails';
 import SidebarLayout from './components/SidebarLayout/SidebarLayout';
 import Header from './components/Header/Header';
 import { AuthProvider } from './context/AuthContext';
@@ -45,10 +45,10 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path="/gincana/details"
+            path="/competition/details"
             element={
               <SidebarLayout>
-                <GincanaDetails />
+                <CompetitionDetails />
               </SidebarLayout>
             }
           />
