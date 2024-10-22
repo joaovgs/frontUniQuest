@@ -1,34 +1,81 @@
-import React from 'react';
-import './DirectConfrontationMatches.css'; // Import the CSS file
+import React, { useState } from 'react';
+import './DirectConfrontationMatches.css';
+import MatchWinnerModal from '../DirectConfrontationMatchWinner/DirectConfrontationMatchWinner';
+import PresentTeamsList from '../PresentTeamsList/PresentTeamsList';
+
+interface Team {
+  id: number;
+  name: string;
+  isPresent: boolean;
+}
 
 const DirectConfrontationMatches: React.FC = () => {
-  const matches = [
-    { id: 134, round: 1, match: 1, team1_id: 7, team2_id: 6, winner_team_id: 7 },
-    { id: 135, round: 1, match: 2, team1_id: 4, team2_id: 2, winner_team_id: 4 },
-    { id: 136, round: 1, match: 3, team1_id: 1, team2_id: 8, winner_team_id: 1 },
-    { id: 137, round: 1, match: 4, team1_id: 3, team2_id: 5, winner_team_id: 3 },
-    { id: 138, round: 2, match: 1, team1_id: 7, team2_id: 4, winner_team_id: 7 },
-    { id: 139, round: 2, match: 2, team1_id: 1, team2_id: 3, winner_team_id: 1 },
-    { id: 140, round: 3, match: 1, team1_id: 7, team2_id: 1, winner_team_id: 7 },
-    { id: 141, round: 3, match: 2, team1_id: 4, team2_id: 3, winner_team_id: 4 },
-  ];
+  const [matches, setMatches] = useState<
+    { id: number; round: number; match: number; team1_id: number; team2_id: number; winner_team_id: number | null }[]
+  >([
+    { id: 158, round: 1, match: 1, team1_id: 1, team2_id: 5, winner_team_id: null },
+    { id: 159, round: 1, match: 2, team1_id: 9, team2_id: 13, winner_team_id: null },
+    { id: 160, round: 1, match: 3, team1_id: 17, team2_id: 21, winner_team_id: null },
+    { id: 161, round: 1, match: 4, team1_id: 25, team2_id: 29, winner_team_id: null },
 
-  // Função com tipagem correta em TypeScript
+    { id: 162, round: 2, match: 1, team1_id: 1, team2_id: 9, winner_team_id: null },
+    { id: 163, round: 2, match: 2, team1_id: 17, team2_id: 25, winner_team_id: null },
+
+    { id: 164, round: 3, match: 1, team1_id: 1, team2_id: 17, winner_team_id: null },
+    { id: 165, round: 3, match: 2, team1_id: 1, team2_id: 17, winner_team_id: null },
+  ]);
+
+  const [selectedMatch, setSelectedMatch] = useState<{ team1: string, team2: string, matchId: number } | null>(null);
+  const [showTeamsList, setShowTeamsList] = useState(false); // Controla a exibição da lista de equipes
+  const [presentTeams, setPresentTeams] = useState<Team[]>([]); // Armazena as equipes presentes
+
+  const openModal = (matchId: number, team1: string, team2: string) => {
+    setSelectedMatch({ team1, team2, matchId });
+  };
+
+  const closeModal = () => {
+    setSelectedMatch(null);
+  };
+
+  const handleSaveWinner = (winner: string) => {
+    setMatches(prevMatches =>
+      prevMatches.map(match =>
+        match.id === selectedMatch?.matchId
+          ? {
+              ...match,
+              winner_team_id: winner === `Equipe ${match.team1_id}` ? match.team1_id : match.team2_id,
+            }
+          : match
+      )
+    );
+    closeModal();
+  };
+  
+  const handleGenerateMatches = () => {
+    setShowTeamsList(true);
+  };
+
+  const handleCloseTeamsList = () => {
+    setShowTeamsList(false);
+  };
+
+  const handleConfirmTeamsList = (presentTeams: Team[]) => {
+    setPresentTeams(presentTeams); 
+    setShowTeamsList(false);
+  };
+
   const calculateTop = (round: number, matchIndex: number, previousRoundTops: number[]): number => {
-    const baseSpacing = 120;
+    const baseSpacing = 100;
 
     if (round === 1) {
       return matchIndex * baseSpacing;
     }
 
-    // Encontra o top das duas partidas da rodada anterior correspondentes a esta partida
     const previousMatchTop1 = previousRoundTops[matchIndex * 2] ?? 0;
     const previousMatchTop2 = previousRoundTops[matchIndex * 2 + 1] ?? 0;
 
-    // Retorna o top como a média das duas partidas da rodada anterior
     return (previousMatchTop1 + previousMatchTop2) / 2;
   };
-  
 
   const renderBracket = () => {
     const rounds = Array.from(new Set(matches.map(match => match.round)));
@@ -53,36 +100,32 @@ const DirectConfrontationMatches: React.FC = () => {
                       }
                       previousRoundsTops[round].push(topValue);
 
-                      // Verifica se a partida é ímpar ou par para definir a classe exit
                       const exitClass = index % 2 === 0 ? 'exit down' : 'exit up';
                       const entryClass = exitClass === 'exit down' ? 'entry down' : 'entry up';
-
-                      // Calcula a altura de acordo com a rodada usando a lógica exponencial
-                      const exitHeight = 35 + 60 * (Math.pow(2, roundIndex) - 1);
-
-                      // Verifica se é a última rodada para não renderizar a exit class
+                      const exitHeight = 35 + 50 * (Math.pow(2, roundIndex) - 1);
                       const isLastRound = roundIndex === rounds.length - 1;
-                      
+
                       if (isLastRound && match.match === 2) {
-                        // Se for a disputa de 3º lugar, ajusta o topValue com 150px abaixo do final
-                        const finalMatchTop = previousRoundsTops[round][0]; // Pega o topValue do 1º jogo (final)
+                        const finalMatchTop = previousRoundsTops[round][0];
                         topValue = finalMatchTop + 150;
-                      }                      
+                      }
+
+                      const team1Class = match.winner_team_id === match.team1_id ? 'winner' : match.winner_team_id === null ? '' : 'loser';
+                      const team2Class = match.winner_team_id === match.team2_id ? 'winner' : match.winner_team_id === null ? '' : 'loser';
 
                       return (
-                        <div key={match.id} className="match" style={{ top: `${topValue}px` }}>
-                          <div className={`team ${match.winner_team_id === match.team1_id ? 'winner' : 'loser'}`}>
-                            Equipe {match.team1_id}
-                          </div>
-                          <div className="vs">vs</div>
-                          <div className={`team ${match.winner_team_id === match.team2_id ? 'winner' : 'loser'}`}>
-                            Equipe {match.team2_id}
-                          </div>
+                        <div
+                          key={match.id}
+                          className="match"
+                          style={{ top: `${topValue}px` }}
+                          onClick={() => openModal(match.id, `Equipe ${match.team1_id}`, `Equipe ${match.team2_id}`)}
+                        >
+                          <div className={`team ${team1Class}`}>Equipe {match.team1_id}</div>
+                          <div className="vs">x</div>
+                          <div className={`team ${team2Class}`}>Equipe {match.team2_id}</div>
 
-                          {/* Condicional para não renderizar exit na última rodada */}
                           {!isLastRound && (
                             <div className={exitClass} style={{ height: `${exitHeight}px` }}>
-                              {/* Div de entrada dentro da div de saída */}
                               <div className={entryClass}></div>
                             </div>
                           )}
@@ -100,8 +143,23 @@ const DirectConfrontationMatches: React.FC = () => {
 
   return (
     <div className="container">
-      <h1>Confrontos Diretos</h1>
+      <h1>Prova A</h1>
+      <div className="generate-matches-container">
+        <h3>Confronto Direto</h3>
+        <button className="generate-matches-button" onClick={handleGenerateMatches}>
+          Gerar Partidas ⚙️
+        </button>
+      </div>
+      {showTeamsList && <PresentTeamsList onClose={handleCloseTeamsList} onConfirm={handleConfirmTeamsList} />}
       {renderBracket()}
+      {selectedMatch && (
+        <MatchWinnerModal
+          team1={selectedMatch.team1}
+          team2={selectedMatch.team2}
+          onClose={closeModal}
+          onSaveWinner={handleSaveWinner}
+        />
+      )}
     </div>
   );
 };

@@ -85,7 +85,7 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path="/direct"
+            path="/direct-confrontation"
             element={
               <SidebarLayout>
                 <DirectConfrontationMatches />
