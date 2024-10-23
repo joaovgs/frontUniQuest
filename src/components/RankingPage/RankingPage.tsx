@@ -25,7 +25,7 @@ const RankingPage: React.FC = () => {
   return (
     <div className="ranking-container">
       <header>
-        <div className="logo" onClick={() => window.location.href = '/home'}>
+        <div className="logo" onClick={() => window.location.href = '/'}>
           <img src="/path-to-logo.png" alt="Logo" />
         </div>
         <button className="login-button">Entrar</button>

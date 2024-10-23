@@ -24,10 +24,10 @@ const CompetitionList: React.FC = () => {
         setCompetitions(response.competitions);
       } else {
         setCompetitions([]);
-        console.error('Erro: Resposta de competições não é um array válido.');
+        console.error('Erro: Resposta de gincanas não é um array válido.');
       }
     } catch (error) {
-      console.error('Erro ao buscar competições:', error);
+      console.error('Erro ao buscar gincanas:', error);
       setCompetitions([]);
 
       if (axios.isAxiosError(error)) {

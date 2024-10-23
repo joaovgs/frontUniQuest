@@ -29,3 +29,18 @@ export type CompetitionPayload = Omit<
   Competition,
   'id' | 'created_at' | 'system_deleted' | 'system_date_deleted'
 >;
+
+export type CompetitionWithoutRegulation = Omit<
+  Competition,
+  'regulation'
+>;
+
+export type CompetitionImages = Pick<
+  Competition,
+  'id' | 'image'
+>;
+
+export type Regulation = Pick<
+  Competition,
+  'regulation'
+>;

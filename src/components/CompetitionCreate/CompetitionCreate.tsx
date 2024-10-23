@@ -126,6 +126,19 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
         date_game: game.date_game || new Date(),
       })), 
     };
+
+    if (image === null) {
+      delete newCompetition.image;
+    } else {
+      newCompetition.image = image;
+    }
+  
+    if (regulation === null) {
+      delete newCompetition.regulation;
+    } else {
+      newCompetition.regulation = regulation;
+    }
+    
     console.log(newCompetition)
     onSave(newCompetition);
   };

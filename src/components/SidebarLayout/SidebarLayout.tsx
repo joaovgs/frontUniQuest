@@ -45,16 +45,16 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
         <nav className="sidebar-nav">
           <ul>
             <li>
-              <Link to="/home" onClick={toggleSidebar}>Home</Link>
+              <Link to="/" onClick={toggleSidebar}>Home</Link>
             </li>
             <li>
-              <Link to="/users" onClick={toggleSidebar}>Cadastro de Organizadores</Link>
+              <Link to="/usuarios" onClick={toggleSidebar}>Cadastro de Organizadores</Link>
             </li>
             <li>
             <li>
-              <Link to="/competition" onClick={toggleSidebar}>Cadastro de Gincana</Link>
+              <Link to="/gincanas" onClick={toggleSidebar}>Cadastro de Gincana</Link>
             </li>
-              <Link to="/games" onClick={toggleSidebar}>Cadastro de Provas</Link>
+              <Link to="/provas" onClick={toggleSidebar}>Cadastro de Provas</Link>
             </li>
             <li>
               <Link to="/outra-rota" onClick={toggleSidebar}>Outra opção</Link>

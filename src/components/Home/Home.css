@@ -9,10 +9,6 @@ img {
   border: 1px solid black;
 }
 
-img:hover {
-  transform: scale(1.02);
-}
-
 .current-event, .previous-events {
   margin-top: 30px;
   text-align: center;

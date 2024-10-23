@@ -1,21 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './CompetitionDetails.css';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { CompetitionService } from '../../services/Competition'; 
 
 const CompetitionDetails: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const competition = location.state?.competition;
+  const { id } = useParams<{ id: string }>(); 
+  const [competition, setCompetition] = useState<any>(null); 
+  const [loading, setLoading] = useState<boolean>(true); 
+
+  useEffect(() => {
+    const fetchCompetition = async () => {
+      if (id) {
+        try {
+          const response = await CompetitionService.getById(Number(id)); 
+          if (!response.competition) {
+            navigate('/');
+          } else {
+            setCompetition(response.competition);
+          }
+        } catch (error) {
+          console.error('Erro ao buscar competição:', error);
+        } finally {
+          setLoading(false); 
+        }
+      }
+    };
+
+    fetchCompetition();
+  }, [id]);
 
   const handleRankingClick = () => {
     navigate('/ranking');
   };
 
   const handleTeamSignupClick = () => {
-    navigate('/teamsignup');
+    if (id) {
+      navigate(`/gincana/${id}/equipes`);
+    }
   };
+  
 
-  // Função para formatar a data em dd/mm/aaaa HH:mm
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const day = String(date.getUTCDate()).padStart(2, '0');
@@ -25,6 +50,30 @@ const CompetitionDetails: React.FC = () => {
 
     return `${day}/${month}/${year} ${timePart.substring(0, 5)}`;
   };
+
+  const handleDownloadRegulation = async () => {
+    try {
+      if (competition?.id) {
+        const response = await CompetitionService.getRegulation(competition.id);
+        const base64Regulation = response.regulation as string;
+        const byteCharacters = atob(base64Regulation.split(',')[1]);
+        const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'Regulamento.pdf'; 
+        link.click();
+      }
+    } catch (error) {
+      console.error('Erro ao baixar o regulamento:', error);
+    }
+  };
+
+  if (loading) {
+    return <div>Carregando...</div>; 
+  }
 
   return (
     <div className="competition-details-container">
@@ -58,7 +107,7 @@ const CompetitionDetails: React.FC = () => {
           <p>
             <strong>Detalhes:</strong> {competition?.description || 'Descrição não informada'}
           </p>
-          <button className="competition-regulamento-button">
+          <button className="competition-regulamento-button" onClick={handleDownloadRegulation}>
             Baixar Regulamento
           </button>
         </div>
@@ -68,7 +117,7 @@ const CompetitionDetails: React.FC = () => {
         <h2>Provas</h2>
         <div className="games-list">
           {competition?.CompetitionGames?.map((game: any) => (
-            <div key={game.id} className="game-item">
+            <div key={game.id} className="games-item">
               <div className="game-name">{game.game_name}</div>
               <div className="game-info">Data: {formatDate(game.date_game)}</div>
               <div className="game-info">Local: {game.local}</div>
@@ -78,10 +127,10 @@ const CompetitionDetails: React.FC = () => {
       </div>
 
       <div className="competition-actions">
-        <button className="create-button" onClick={handleRankingClick}>
+        <button className="action-button" onClick={handleRankingClick}>
           Ranking 🏆
         </button>
-        <button className="create-button" onClick={handleTeamSignupClick}>
+        <button className="action-button" onClick={handleTeamSignupClick}>
           Inscrever-se ➡
         </button>
       </div>

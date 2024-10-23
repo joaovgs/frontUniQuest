@@ -35,7 +35,7 @@ const Register: React.FC = () => {
 
           showSnackbar('Usuário cadastrado e logado com sucesso!', 'success');
 
-          navigate('/home');
+          navigate('/');
         }
       } catch (loginError) {
         showSnackbar('Erro ao fazer login após o registro. Tente manualmente.', 'error');

@@ -33,7 +33,7 @@ const Login: React.FC = () => {
 
         showSnackbar('Login realizado com sucesso!', 'success');
 
-        navigate('/home');
+        navigate('/');
       }
     } catch (error: any) {
       showSnackbar('Credenciais incorretas. Verifique e tente novamente.', 'error');
@@ -73,7 +73,7 @@ const Login: React.FC = () => {
           </button>
         </form>
         <div className="register-link">
-          <a href="/register">Cadastre-se</a>
+          <a href="/registro">Cadastre-se</a>
         </div>
       </div>
     </div>

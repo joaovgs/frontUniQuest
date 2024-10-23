@@ -1,7 +1,37 @@
 import api from './api';
-import { Competition, CompetitionPayload } from '../models/Competition';
+import { Competition, CompetitionPayload, CompetitionImages, Regulation, CompetitionWithoutRegulation } from '../models/Competition';
 
 export const CompetitionService = {
+  async getById(competitionId: number): Promise<{ competition: CompetitionWithoutRegulation }> {
+    try {
+      const response = await api.get<{ competition: CompetitionWithoutRegulation }>(`/competitions/${competitionId}`);
+      return response.data; 
+    } catch (error) {
+      console.error('Erro ao buscar gincana:', error);
+      throw error;
+    }
+  },
+  
+  async getImages(): Promise<{ competitions: CompetitionImages[] }> {
+    try {
+      const response = await api.get<{ competitions: CompetitionImages[] }>('/competitions/images');
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar imagens das gincanas:', error);
+      throw error;
+    }
+  },
+
+  async getRegulation(competitionId: number): Promise<{ regulation: Regulation }> {
+    try {
+      const response = await api.get<{ regulation: Regulation }>(`/competitions/regulation/${competitionId}`);
+      return response.data; 
+    } catch (error) {
+      console.error('Erro ao buscar regulamento:', error);
+      throw error;
+    }
+  },
+
   async getCompetitions(filter: string = ''): Promise<{ competitions: Competition[] }> {
     try {
       const response = await api.get<{ competitions: Competition[] }>('/competitions', {
@@ -9,7 +39,7 @@ export const CompetitionService = {
       });
       return response.data;
     } catch (error) {
-      console.error('Erro ao buscar competições:', error);
+      console.error('Erro ao buscar gincanas:', error);
       throw error;
     }
   },
@@ -19,7 +49,7 @@ export const CompetitionService = {
       const response = await api.post('/competitions', competition);
       return response.data;
     } catch (error) {
-      console.error('Erro ao criar competição:', error);
+      console.error('Erro ao criar gincana:', error);
       throw error;
     }
   },
@@ -29,7 +59,7 @@ export const CompetitionService = {
       const response = await api.put(`/competitions/${competitionId}`, competition);
       return response.data;
     } catch (error) {
-      console.error('Erro ao atualizar competição:', error);
+      console.error('Erro ao atualizar gincana:', error);
       throw error;
     }
   },
@@ -38,7 +68,7 @@ export const CompetitionService = {
     try {
       await api.delete(`/competitions/${competitionId}`);
     } catch (error) {
-      console.error('Erro ao deletar competição:', error);
+      console.error('Erro ao deletar gincana:', error);
       throw error;
     }
   },

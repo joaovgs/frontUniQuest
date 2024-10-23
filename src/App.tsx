@@ -18,18 +18,18 @@ import DirectConfrontationMatches from './components/DirectConfrontationMatches/
 
 const App: React.FC = () => {
   const location = useLocation();
-  const isAuthRoute = location.pathname === '/login' || location.pathname === '/register';
+  const isAuthRoute = location.pathname === '/login' || location.pathname === '/registro';
 
   return (
     <AuthProvider>
       <SnackbarProvider>
         {!isAuthRoute && <Header />}
         <Routes>
-          <Route path="/" element={<Navigate to="/home" />} />
+          <Route path="/home" element={<Navigate to="/" />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/registro" element={<Register />} />
           <Route
-            path="/home"
+            path="/"
             element={
               <SidebarLayout>
                 <Home />
@@ -37,7 +37,7 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path="/users"
+            path="/usuarios"
             element={
               <SidebarLayout>
                 <UserList />
@@ -45,7 +45,7 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path="/competition/details"
+            path="/gincana/:id/detalhes"
             element={
               <SidebarLayout>
                 <CompetitionDetails />
@@ -53,7 +53,7 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path="/competition"
+            path="/gincanas"
             element={
               <SidebarLayout>
                 <CompetitonList />
@@ -61,7 +61,7 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path="/games"
+            path="/provas"
             element={
               <SidebarLayout>
                 <GameList />
@@ -69,7 +69,7 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path="/teamsignup"
+            path="gincana/:competitionId/equipes"
             element={
               <SidebarLayout>
                 <TeamList />
