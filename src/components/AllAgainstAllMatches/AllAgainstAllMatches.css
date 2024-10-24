@@ -1,0 +1,113 @@
+.container {
+  padding: 20px;
+  padding-top: 60px;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+.generate-matches-container {
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: white;
+  max-width: 300px;
+  text-align: center;
+  margin: 10px;
+}
+
+.matches-tabs {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 20px;
+}
+
+.tab {
+  margin-bottom: 0; 
+}
+
+.tab input[type="radio"] {
+  display: none;
+}
+
+.tab label {
+  padding: 10px 20px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  cursor: pointer;
+  display: inline-block;
+  margin-right: -1px; 
+  border-radius: 5px 5px 0 0; 
+}
+
+.tab input[type="radio"]:checked + label {
+  background-color: #007bff;
+  color: white;
+}
+
+.tab-content {
+  display: block;
+  margin-top: 0;
+}
+
+.matches-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.draggable-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: grab;
+}
+
+.draggable-item:active {
+  cursor: grabbing;
+}
+
+.position {
+  flex: 1;
+  text-align: left;
+}
+
+.name {
+  flex: 3;
+  text-align: center;
+}
+
+.score {
+  flex: 1;
+  text-align: right;
+}
+
+.input-num-matches {
+  width: 50px;
+  padding: 8px;
+  margin-right: 10px;
+  text-align: center;
+  font-size: 20px;
+}
+
+.generate-matches-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.generate-matches-button:hover {
+  background-color: #0056b3;
+}
