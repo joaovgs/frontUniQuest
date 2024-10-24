@@ -1,105 +1,159 @@
 .team-list-container {
-    max-width: 800px;
-    margin: auto;
-    padding: 20px;
-    padding-top: 60px;
-    display: flex;
-    flex-direction: column;
-    height: 90vh;
-    overflow: hidden;
-    align-items: center;
-    position: relative;
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+  padding-top: 60px;
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  overflow: hidden;
+}
+
+.team-list-header {
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
 }
 
 .search-input {
-    padding: 10px;
-    margin-bottom: 20px;
-    width: 100%;
-    box-sizing: border-box;
-    border-radius: 4px;
-    border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 20px;
+  width: 100%; 
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.team-list {
+  flex: 1; 
+  overflow-y: auto; 
+  max-height: calc(100vh - 200px); 
+}
+
+.team-item {
+  padding: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.team-item.selected {
+  background-color: #007bff; 
+  color: white; 
+  border: 1px solid #0056b3;
 }
 
 .teams-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    width: 100%;
-    overflow-y: auto;
-    height: calc(100% - 180px);
-    align-content: start;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 10px;
+  width: 100%;
+  overflow-y: auto;
+  height: calc(100% - 180px);
+  align-content: start;
 }
 
 .team-card {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
-    transition: box-shadow 0.3s;
-    height: 100px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    position: relative;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  transition: box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Adicionando uma leve sombra */
 }
 
 .team-status {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    padding: 5px 10px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: bold;
-    color: white;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
 }
 
-.closed {
-    background-color: red;
+.private {
+  background-color: red;
 }
 
-.opened {
-    background-color: green;
+.public {
+  background-color: green;
 }
 
-.team-card:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.team-card h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .team-card p {
-    font-size: 14px;
-    color: #666;
-    margin: 0;
+  font-size: 14px;
+  color: #666;
+  margin: 5px 0 0;
 }
 
-.footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 80px;
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    background-color: inherit;
+.team-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.create-team-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: white;
-    color: black;
-    border: 2px solid #007bff;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    max-width: 200px;
-    width: 100%;
-    margin: 0 auto;
+
+.actions {
+  display: flex;
+  justify-content: right;
+  gap: 30px;
+  padding: 10px 0;
+  position: relative;
+  bottom: 0;
 }
 
-.create-team-button:hover {
-    background-color: #007bff;
-    color: white;
+.create-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: white;
+  color: black;
+  border: 2px solid #007bff;
+  border-radius: 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.create-button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9998;
+}
+
+.your-team {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background-color: #007bff;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }

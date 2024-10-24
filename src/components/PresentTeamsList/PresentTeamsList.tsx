@@ -47,7 +47,7 @@ const PresentTeamsList: React.FC<PresentTeamsListProps> = ({ onClose, onConfirm 
         <h2>Equipes Presentes</h2>
         <ul className="team-list">
           {teams.map((team) => (
-            <li key={team.id} className="team-item">
+            <li key={team.id} className="present-team-item">
               <div className="team-row">
                 <span className="team-name">{team.name}</span>
                 <label>

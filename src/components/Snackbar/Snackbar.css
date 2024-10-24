@@ -6,7 +6,7 @@
   border-radius: 5px;
   color: white;
   font-size: 14px;
-  z-index: 1000;
+  z-index: 10001;
   opacity: 0;
   transform: translateY(-100%);
   transition: opacity 0.3s ease, transform 0.3s ease;

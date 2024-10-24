@@ -25,7 +25,7 @@
   padding: 0;
 }
 
-.team-item {
+.present-team-item {
   margin-bottom: 5px;
   display: flex;
   align-items: center;
@@ -33,7 +33,7 @@
   border-bottom: 1px solid #ddd; 
 }
 
-.team-item:last-child {
+.present-team-item:last-child {
   border-bottom: none; 
 }
 
@@ -50,7 +50,7 @@
   text-align: left; 
 }
 
-.team-item label {
+.present-team-item label {
   margin-left: auto; 
 }
 
@@ -88,7 +88,7 @@
   cursor: not-allowed; 
 }
 
-.team-item input[type="checkbox"] {
+.present-team-item input[type="checkbox"] {
   width: 20px; 
   height: 20px; 
   transform: scale(1); 

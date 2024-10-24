@@ -10,7 +10,7 @@ export interface Game {
   category: number;
   created_at: string;
   system_deleted?: boolean | null;
-  system_date_deleted?: string | null;
+  system_date_deleted?: Date | null;
 }
 
 export type GamePayload = Omit<Game, 'id' | 'created_at' | 'system_deleted' | 'system_date_deleted'>;

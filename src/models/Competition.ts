@@ -22,7 +22,7 @@ export interface Competition {
   regulation_name?: string | null;
   created_at: string;
   system_deleted?: boolean | null;
-  system_date_deleted?: string | null;
+  system_date_deleted?: Date | null;
 }
 
 export type CompetitionPayload = Omit<
