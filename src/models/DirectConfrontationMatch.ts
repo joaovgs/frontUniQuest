@@ -2,6 +2,7 @@ export interface DirectConfrontationMatch {
   id: number;
   competition_id: number;
   game_id: number;
+  game_name: string;
   round: number;
   match: number;
   team1_id?: number | null;

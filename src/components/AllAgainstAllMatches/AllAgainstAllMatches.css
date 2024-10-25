@@ -111,3 +111,14 @@ h1 {
 .generate-matches-button:hover {
   background-color: #0056b3;
 }
+
+.active-tab {
+  background-color: #007bff; 
+  color: white;
+}
+
+.inative-tab {
+  border: 1px solid #ccc;
+  background-color: white; 
+  color: black;
+}

@@ -14,6 +14,8 @@ const DirectConfrontationMatches: React.FC = () => {
   const [showTeamsList, setShowTeamsList] = useState(false);
   const { showSnackbar } = useSnackbar();
 
+  const gameName = matches.length > 0 ? matches[0].game_name : 'Prova';
+
   const fetchMatches = useCallback(async () => {
     if (competitionId && gameId) {
       try {
@@ -67,7 +69,15 @@ const DirectConfrontationMatches: React.FC = () => {
     setShowTeamsList(false);
 
     try {
-      await DirectConfrontationMatchService.deleteDirectConfrontationMatches(Number(competitionId), Number(gameId));
+      try {
+        await DirectConfrontationMatchService.deleteDirectConfrontationMatches(Number(competitionId), Number(gameId));
+      } catch (error: any) {
+        if (error.response && error.response.status === 404) {
+          console.warn('No matches to delete, proceeding to create new matches.');
+        } else {
+          throw error;
+        }
+      }
 
       const payload: DirectConfrontationMatchPayload = {
         competition_id: Number(competitionId),
@@ -114,7 +124,7 @@ const DirectConfrontationMatches: React.FC = () => {
           <div className="rounds">
             {rounds.map((round, roundIndex) => (
               <div key={round} className={`round round-${round}`}>
-                <h2>Round {round}</h2>
+                <h2>Rodada {round}</h2>
                 <div className="matches">
                   {matches
                     .filter(match => match.round === round)
@@ -170,7 +180,7 @@ const DirectConfrontationMatches: React.FC = () => {
 
   return (
     <div className="container">
-      <h1>Prova A</h1>
+      <h1>{gameName}</h1>
       <div className="generate-matches-container">
         <h3>Confronto Direto</h3>
         <button className="generate-matches-button" onClick={handleGenerateMatches}>
