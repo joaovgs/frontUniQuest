@@ -1,19 +1,32 @@
 import React, { useState } from 'react';
 import './DirectConfrontationMatchWinner.css';
+import { DirectConfrontationMatchService } from '../../services/DirectConfrontationMatch';
 
 interface DirectConfrontationMatchWinnerProps {
   onClose: () => void;
   onSaveWinner: (winner: string) => void | Promise<void>;
-  team1: string;
-  team2: string;
+  team1Id: number;
+  team1Name: string;
+  team2Id: number;
+  team2Name: string;
+  matchId: number;
+  competitionId: number;
+  gameId: number;
 }
 
-const DirectConfrontationMatchWinner: React.FC<DirectConfrontationMatchWinnerProps> = ({ onClose, onSaveWinner, team1, team2 }) => {
-  const [selectedWinner, setSelectedWinner] = useState<string>('');
+const DirectConfrontationMatchWinner: React.FC<DirectConfrontationMatchWinnerProps> = ({
+  onClose, onSaveWinner, team1Id, team1Name, team2Id, team2Name, matchId, competitionId, gameId
+}) => {
+  const [selectedWinner, setSelectedWinner] = useState<number | null>(null);
 
-  const handleSave = () => {
-    if (selectedWinner) {
-      onSaveWinner(selectedWinner);
+  const handleSave = async () => {
+    if (selectedWinner !== null) {
+      try {
+        await DirectConfrontationMatchService.updateWinnerDirectConfrontationMatch(matchId, competitionId, gameId, selectedWinner);
+        onSaveWinner(selectedWinner === team1Id ? team1Name : team2Name);
+      } catch (error) {
+        console.error('Erro ao definir vencedor:', error);
+      }
     }
   };
 
@@ -23,17 +36,17 @@ const DirectConfrontationMatchWinner: React.FC<DirectConfrontationMatchWinnerPro
         <h2>Definir Vencedor</h2>
         <div className="teams-options">
           <button
-            className={`team-button ${selectedWinner === team1 ? 'selected' : ''}`}
-            onClick={() => setSelectedWinner(team1)}
+            className={`team-button ${selectedWinner === team1Id ? 'selected' : ''}`}
+            onClick={() => setSelectedWinner(team1Id)}
           >
-            {team1}
+            {team1Name}
           </button>
           <span className="vs-text">x</span>
           <button
-            className={`team-button ${selectedWinner === team2 ? 'selected' : ''}`}
-            onClick={() => setSelectedWinner(team2)}
+            className={`team-button ${selectedWinner === team2Id ? 'selected' : ''}`}
+            onClick={() => setSelectedWinner(team2Id)}
           >
-            {team2}
+            {team2Name}
           </button>
         </div>
 
@@ -41,7 +54,7 @@ const DirectConfrontationMatchWinner: React.FC<DirectConfrontationMatchWinnerPro
           <button className="cancel-button" onClick={onClose}>
             Cancelar
           </button>
-          <button className="save-button" onClick={handleSave} disabled={!selectedWinner}>
+          <button className="save-button" onClick={handleSave} disabled={selectedWinner === null}>
             Confirmar
           </button>
         </div>

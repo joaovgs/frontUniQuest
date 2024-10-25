@@ -51,7 +51,6 @@ h1 {
 .match:hover {
   cursor: pointer; 
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); 
-  background-color: #f9f9f9; 
 }
 
 .team {
@@ -129,7 +128,7 @@ h1 {
   background-color: white; 
   max-width: 300px; 
   text-align: center; 
-  margin: 10px;
+  margin: 10px 0;
 }
 
 .generate-matches-button {
@@ -145,4 +144,17 @@ h1 {
 
 .generate-matches-button:hover {
   background-color: #0056b3;
+}
+
+.no-matches {
+  text-align: center;
+  font-size: 28px; 
+  margin-top: 40px; 
+  color: #333; 
+  font-weight: bold;
+  background-color: white; 
+  padding: 20px;
+  border-radius: 10px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  border: 1px solid #ccc;
 }

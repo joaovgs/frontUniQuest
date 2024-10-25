@@ -1,13 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import './CompetitionDetails.css';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CompetitionService } from '../../services/Competition'; 
+import { CompetitionService } from '../../services/Competition';
+
+interface Game {
+  id: number;
+  local: string;
+  date_game: string;
+  competition_id: number;
+  game_id: number;
+  game_name: string;
+  game_category: number;
+}
 
 const CompetitionDetails: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>(); 
   const [competition, setCompetition] = useState<any>(null); 
-  const [loading, setLoading] = useState<boolean>(true); 
 
   useEffect(() => {
     const fetchCompetition = async () => {
@@ -21,9 +30,7 @@ const CompetitionDetails: React.FC = () => {
           }
         } catch (error) {
           console.error('Erro ao buscar competição:', error);
-        } finally {
-          setLoading(false); 
-        }
+        } 
       }
     };
 
@@ -71,9 +78,13 @@ const CompetitionDetails: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return <div>Carregando...</div>; 
-  }
+  const handleGameClick = (game: Game) => {
+    if (game.game_category === 0) {
+      navigate(`/gincana/${id}/confronto-direto/${game.game_id}`);
+    } else if (game.game_category === 1) {
+      navigate(`/gincana/${id}/todos-contra-todos/${game.game_id}`);
+    }
+  };
 
   return (
     <div className="competition-details-container">
@@ -117,7 +128,7 @@ const CompetitionDetails: React.FC = () => {
         <h2>Provas</h2>
         <div className="games-list">
           {competition?.CompetitionGames?.map((game: any) => (
-            <div key={game.id} className="games-item">
+            <div key={game.id} className="games-item" onClick={() => handleGameClick(game as Game)}>
               <div className="game-name">{game.game_name}</div>
               <div className="game-info">Data: {formatDate(game.date_game)}</div>
               <div className="game-info">Local: {game.local}</div>

@@ -14,6 +14,16 @@ export const TeamService = {
     }
   },
 
+  async getTeamsRegistered(competitionId: number): Promise<{ teams: Team[] }> {
+    try {
+      const response = await api.get<{ teams: Team[] }>(`/${competitionId}/teams-registered`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar equipes inscritas:', error);
+      throw error;
+    }
+  },
+
   createTeam: async (team: TeamPayload): Promise<Team> => {
     try {
       const response = await api.post('/teams', team);

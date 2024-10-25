@@ -1,36 +1,37 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useParams, } from 'react-router-dom';
 import './DirectConfrontationMatches.css';
 import MatchWinnerModal from '../DirectConfrontationMatchWinner/DirectConfrontationMatchWinner';
 import PresentTeamsList from '../PresentTeamsList/PresentTeamsList';
-
-interface Team {
-  id: number;
-  name: string;
-  isPresent: boolean;
-}
+import { DirectConfrontationMatchService } from '../../services/DirectConfrontationMatch';
+import { DirectConfrontationMatch, DirectConfrontationMatchPayload } from '../../models/DirectConfrontationMatch';
+import { useSnackbar } from '../../context/SnackbarContext';
 
 const DirectConfrontationMatches: React.FC = () => {
-  const [matches, setMatches] = useState<
-    { id: number; round: number; match: number; team1_id: number; team2_id: number; winner_team_id: number | null }[]
-  >([
-    { id: 158, round: 1, match: 1, team1_id: 1, team2_id: 5, winner_team_id: null },
-    { id: 159, round: 1, match: 2, team1_id: 9, team2_id: 13, winner_team_id: null },
-    { id: 160, round: 1, match: 3, team1_id: 17, team2_id: 21, winner_team_id: null },
-    { id: 161, round: 1, match: 4, team1_id: 25, team2_id: 29, winner_team_id: null },
+  const { competitionId, gameId } = useParams<{ competitionId: string; gameId: string }>();
+  const [matches, setMatches] = useState<DirectConfrontationMatch[]>([]);
+  const [selectedMatch, setSelectedMatch] = useState<DirectConfrontationMatch | null>(null);
+  const [showTeamsList, setShowTeamsList] = useState(false);
+  const { showSnackbar } = useSnackbar();
 
-    { id: 162, round: 2, match: 1, team1_id: 1, team2_id: 9, winner_team_id: null },
-    { id: 163, round: 2, match: 2, team1_id: 17, team2_id: 25, winner_team_id: null },
+  const fetchMatches = useCallback(async () => {
+    if (competitionId && gameId) {
+      try {
+        const response = await DirectConfrontationMatchService.getDirectConfrontationMatches(Number(competitionId), Number(gameId));
+        setMatches(response.directConfrontationMatches);
+        console.log('Fetched matches:', response.directConfrontationMatches);
+      } catch (error) {
+        console.error('Erro ao buscar partidas:', error);
+      }
+    }
+  }, [competitionId, gameId]);
 
-    { id: 164, round: 3, match: 1, team1_id: 1, team2_id: 17, winner_team_id: null },
-    { id: 165, round: 3, match: 2, team1_id: 1, team2_id: 17, winner_team_id: null },
-  ]);
+  useEffect(() => {
+    fetchMatches();
+  }, [fetchMatches]);
 
-  const [selectedMatch, setSelectedMatch] = useState<{ team1: string, team2: string, matchId: number } | null>(null);
-  const [showTeamsList, setShowTeamsList] = useState(false); // Controla a exibição da lista de equipes
-  const [presentTeams, setPresentTeams] = useState<Team[]>([]); // Armazena as equipes presentes
-
-  const openModal = (matchId: number, team1: string, team2: string) => {
-    setSelectedMatch({ team1, team2, matchId });
+  const openModal = (selectedMatch: DirectConfrontationMatch) => {
+    setSelectedMatch(selectedMatch);
   };
 
   const closeModal = () => {
@@ -40,7 +41,7 @@ const DirectConfrontationMatches: React.FC = () => {
   const handleSaveWinner = (winner: string) => {
     setMatches(prevMatches =>
       prevMatches.map(match =>
-        match.id === selectedMatch?.matchId
+        match.id === selectedMatch?.id
           ? {
               ...match,
               winner_team_id: winner === `Equipe ${match.team1_id}` ? match.team1_id : match.team2_id,
@@ -49,8 +50,11 @@ const DirectConfrontationMatches: React.FC = () => {
       )
     );
     closeModal();
+    fetchMatches();
+
+    showSnackbar('Resultado da partida salvo com sucesso!', 'success');
   };
-  
+
   const handleGenerateMatches = () => {
     setShowTeamsList(true);
   };
@@ -59,9 +63,28 @@ const DirectConfrontationMatches: React.FC = () => {
     setShowTeamsList(false);
   };
 
-  const handleConfirmTeamsList = (presentTeams: Team[]) => {
-    setPresentTeams(presentTeams); 
+  const handleConfirmTeamsList = async (presentTeams: number[]) => {
     setShowTeamsList(false);
+
+    try {
+      await DirectConfrontationMatchService.deleteDirectConfrontationMatches(Number(competitionId), Number(gameId));
+
+      const payload: DirectConfrontationMatchPayload = {
+        competition_id: Number(competitionId),
+        game_id: Number(gameId),
+        teams: presentTeams,
+      };
+
+      await DirectConfrontationMatchService.createDirectConfrontationMatches(payload);
+
+      const response = await DirectConfrontationMatchService.getDirectConfrontationMatches(Number(competitionId), Number(gameId));
+      setMatches(response.directConfrontationMatches);
+
+      showSnackbar('Chaveamento gerado com sucesso!', 'success');
+    } catch (error) {
+      console.error('Erro ao criar ou buscar partidas:', error);
+      showSnackbar('Erro ao gerar chaveamento. Tente novamente.', 'error');
+    }
   };
 
   const calculateTop = (round: number, matchIndex: number, previousRoundTops: number[]): number => {
@@ -78,6 +101,10 @@ const DirectConfrontationMatches: React.FC = () => {
   };
 
   const renderBracket = () => {
+    if (!matches || matches.length === 0) {
+      return <div className="no-matches">Sem partidas criadas</div>;
+    }
+
     const rounds = Array.from(new Set(matches.map(match => match.round)));
     const previousRoundsTops: { [key: number]: number[] } = {};
 
@@ -110,19 +137,19 @@ const DirectConfrontationMatches: React.FC = () => {
                         topValue = finalMatchTop + 150;
                       }
 
-                      const team1Class = match.winner_team_id === match.team1_id ? 'winner' : match.winner_team_id === null ? '' : 'loser';
-                      const team2Class = match.winner_team_id === match.team2_id ? 'winner' : match.winner_team_id === null ? '' : 'loser';
+                      const team1Class = match.winner_team_id === null ? '' : (match.winner_team_id === match.team1_id ? 'winner' : 'loser');
+                      const team2Class = match.winner_team_id === null ? '' : (match.winner_team_id === match.team2_id ? 'winner' : 'loser');
 
                       return (
                         <div
                           key={match.id}
                           className="match"
                           style={{ top: `${topValue}px` }}
-                          onClick={() => openModal(match.id, `Equipe ${match.team1_id}`, `Equipe ${match.team2_id}`)}
+                          onClick={() => openModal(match)}
                         >
-                          <div className={`team ${team1Class}`}>Equipe {match.team1_id}</div>
+                          <div className={`team ${team1Class}`}>{match.team1_name || (round === 1 ? 'BYE' : 'A definir')}</div>
                           <div className="vs">x</div>
-                          <div className={`team ${team2Class}`}>Equipe {match.team2_id}</div>
+                          <div className={`team ${team2Class}`}>{match.team2_name || (round === 1 ? 'BYE' : 'A definir')}</div>
 
                           {!isLastRound && (
                             <div className={exitClass} style={{ height: `${exitHeight}px` }}>
@@ -150,12 +177,23 @@ const DirectConfrontationMatches: React.FC = () => {
           Gerar Partidas ⚙️
         </button>
       </div>
-      {showTeamsList && <PresentTeamsList onClose={handleCloseTeamsList} onConfirm={handleConfirmTeamsList} />}
+      {showTeamsList && (
+        <PresentTeamsList 
+          competitionId={Number(competitionId)} 
+          onClose={handleCloseTeamsList} 
+          onConfirm={handleConfirmTeamsList} 
+        />
+      )}
       {renderBracket()}
       {selectedMatch && (
         <MatchWinnerModal
-          team1={selectedMatch.team1}
-          team2={selectedMatch.team2}
+          competitionId={Number(competitionId)}
+          gameId={Number(gameId)}
+          team1Id={selectedMatch.team1_id || 0}
+          team2Id={selectedMatch.team2_id || 0}
+          team1Name={selectedMatch.team1_name || 'Unknown Team 1'}
+          team2Name={selectedMatch.team2_name || 'Unknown Team 2'}
+          matchId={selectedMatch.id}
           onClose={closeModal}
           onSaveWinner={handleSaveWinner}
         />

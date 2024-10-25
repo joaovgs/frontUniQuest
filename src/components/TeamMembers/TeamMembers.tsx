@@ -42,6 +42,12 @@ const TeamMembers: React.FC<TeamMembersProps> = ({ teamId, teamName, status, mem
       return;
     }
 
+    const [currentCount, maxCount] = memberCount.split('/').map(Number);
+    if (currentCount >= maxCount) {
+      showSnackbar('A equipe está cheia. Não é possível entrar.', 'error');
+      return;
+    }
+
     try {
       const payload: TeamMemberPayload = { team_id: teamId }; 
       if (status === 'Privada') {

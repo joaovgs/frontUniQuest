@@ -86,7 +86,7 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path="/direct-confrontation"
+            path="/gincana/:competitionId/confronto-direto/:gameId"
             element={
               <SidebarLayout>
                 <DirectConfrontationMatches />
@@ -94,7 +94,7 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path="/all-against-all"
+            path="/gincana/:competitionId/todos-contra-todos/:gameId"
             element={
               <SidebarLayout>
                 <AllAgainstAllMatches/>
