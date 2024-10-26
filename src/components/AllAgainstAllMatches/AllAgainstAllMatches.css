@@ -19,69 +19,55 @@ h1 {
   margin: 10px;
 }
 
-.matches-tabs {
+.matches-table {
   display: flex;
-  justify-content: flex-start;
-  margin-top: 20px;
+  align-items: flex-start;  
 }
 
-.tab {
-  margin-bottom: 0; 
-}
-
-.tab input[type="radio"] {
-  display: none;
-}
-
-.tab label {
-  padding: 10px 20px;
+.fixed-positions {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 0.5;
+  text-align: center;
+  font-weight: bold;
+  color: #333;
   background-color: white;
+}
+
+.position-item {
+  padding: 10px;
   border: 1px solid #ccc;
-  border-bottom: none;
-  cursor: pointer;
-  display: inline-block;
-  margin-right: -1px; 
-  border-radius: 5px 5px 0 0; 
-}
-
-.tab input[type="radio"]:checked + label {
-  background-color: #007bff;
-  color: white;
-}
-
-.tab-content {
-  display: block;
-  margin-top: 0;
+  border-radius: 5px 0 0 5px;
 }
 
 .matches-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  flex: 2;
 }
 
 .draggable-item {
   display: flex;
   justify-content: space-between;
   padding: 10px;
-  background-color: white;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 0 5px 5px 0;
+  background-color: white;
+}
+
+.draggable-item-cursor {
   cursor: grab;
 }
 
-.draggable-item:active {
+.draggable-item-cursor:active {
   cursor: grabbing;
 }
 
-.position {
-  flex: 1;
-  text-align: left;
-}
-
 .name {
-  flex: 3;
-  text-align: center;
+  flex: 2;
+  text-align: left;
 }
 
 .score {
@@ -113,12 +99,16 @@ h1 {
 }
 
 .active-tab {
-  background-color: #007bff; 
+  background-color: #007bff;
   color: white;
 }
 
 .inative-tab {
   border: 1px solid #ccc;
-  background-color: white; 
+  background-color: white;
   color: black;
+}
+
+.non-draggable-item-cursor {
+  cursor: default;
 }

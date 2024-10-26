@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './RankingPage.css'; // Arquivo de CSS para estilizar a tabela e layout
+import './Ranking.css'; // Arquivo de CSS para estilizar a tabela e layout
 
 interface Team {
   name: string;

@@ -35,10 +35,12 @@ const CompetitionDetails: React.FC = () => {
     };
 
     fetchCompetition();
-  }, [id]);
+  }, [id, navigate]); 
 
   const handleRankingClick = () => {
-    navigate('/ranking');
+    if (id) {
+      navigate(`/gincana/${id}/ranking`);
+    }
   };
 
   const handleTeamSignupClick = () => {

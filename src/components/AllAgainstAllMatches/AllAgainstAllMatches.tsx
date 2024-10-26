@@ -13,7 +13,7 @@ const AllAgainstAllMatches: React.FC = () => {
   const [numRounds, setNumRounds] = useState(1);
   const { showSnackbar } = useSnackbar();
   const [showTeamsList, setShowTeamsList] = useState(false);
-  const [activeRound, setActiveRound] = useState(0);
+  const [activeRound, setActiveRound] = useState(0); // 0 por padrão na 1ª partida
   const [dragKey, setDragKey] = useState(0);
 
   const gameName = matches.length > 0 ? matches[0].game_name : 'Prova';
@@ -35,12 +35,12 @@ const AllAgainstAllMatches: React.FC = () => {
 
   useEffect(() => {
     if (matches.length > 0) {
-      setDragKey(dragKey + 1);
+      setDragKey((prevDragKey) => prevDragKey + 1);
     }
   }, [matches]);
 
   useEffect(() => {
-    if (matches.length > 0 && activeRound >= matches.length) {
+    if (matches.length > 0 && activeRound >= matches.length + 1) { // Ajuste para manter "Geral" sempre visível
       setActiveRound(0);
     }
   }, [matches, activeRound]);
@@ -87,6 +87,24 @@ const AllAgainstAllMatches: React.FC = () => {
     }
   };
 
+  const calculateTotalScores = () => {
+    const teamScores: { [key: number]: number } = {};
+
+    matches.forEach(match => {
+      match.AllAgainstAllPlacement.forEach(team => {
+        teamScores[team.team_id] = (teamScores[team.team_id] || 0) + team.score;
+      });
+    });
+
+    return Object.entries(teamScores)
+      .map(([team_id, score]) => ({
+        team_id: Number(team_id),
+        team_name: matches[0].AllAgainstAllPlacement.find(t => t.team_id === Number(team_id))?.team_name || 'Equipe',
+        score,
+      }))
+      .sort((a, b) => b.score - a.score); // Ordena por pontuação decrescente
+  };
+
   const onDragEnd = async (result: any) => {
     const { source, destination } = result;
 
@@ -125,6 +143,8 @@ const AllAgainstAllMatches: React.FC = () => {
       showSnackbar('Erro ao atualizar colocações. Tente novamente.', 'error');
     }
   };
+
+  const totalScores = calculateTotalScores();
 
   return (
     <div className="container">
@@ -170,40 +190,69 @@ const AllAgainstAllMatches: React.FC = () => {
                 {index + 1}ª partida
               </button>
             ))}
+            <button
+              className={activeRound === matches.length ? 'active-tab' : 'inative-tab'}
+              onClick={() => setActiveRound(matches.length)}
+            >
+              Geral
+            </button>
           </div>
 
           <div className="tab-content">
-            {matches.length > 0 && (
+            {activeRound === matches.length ? (
+              <div className="matches-table">
+                <ul className="fixed-positions">
+                  {totalScores.map((_, idx) => (
+                    <li key={`position-${idx}`} className="position-item">
+                      {`${idx + 1}º`}
+                    </li>
+                  ))}
+                </ul>
+                <ul className="matches-list">
+                  {totalScores.map((team, idx) => (
+                    <li key={team.team_id} className={`draggable-item ${activeRound === matches.length ? 'non-draggable-item-cursor' : 'draggable-item-cursor'}`}>
+                      <span className="name">{team.team_name}</span>
+                      <span className="score">{team.score}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
               <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId={`droppable-${activeRound}`} key={`droppable-${activeRound}-${dragKey}`}>
                   {(provided) => (
-                    <ul
-                      className="matches-list"
-                      {...provided.droppableProps}
-                      ref={provided.innerRef}
-                    >
-                      {matches[activeRound].AllAgainstAllPlacement.map((team, idx) => (
-                        <Draggable
-                          key={`draggable-${team.team_id}-${activeRound}-${idx}-${dragKey}`}
-                          draggableId={`team-${team.team_id}-${activeRound}`}
-                          index={idx}
-                        >
-                          {(provided) => (
-                            <li
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              className="draggable-item"
-                            >
-                              <span className="position">{`${team.position}º`}</span>
-                              <span className="name">{team.team_name}</span>
-                              <span className="score">{team.score}</span>
-                            </li>
-                          )}
-                        </Draggable>
-                      ))}
-                      {provided.placeholder}
-                    </ul>
+                    <div className="matches-table">
+                      <ul className="fixed-positions">
+                        {Array.from({ length: matches[activeRound].AllAgainstAllPlacement.length }, (_, idx) => (
+                          <li key={`position-${idx}`} className="position-item">
+                            {`${idx + 1}º`}
+                          </li>
+                        ))}
+                      </ul>
+                      
+                      <ul className="matches-list" {...provided.droppableProps} ref={provided.innerRef}>
+                        {matches[activeRound].AllAgainstAllPlacement.map((team, idx) => (
+                          <Draggable
+                            key={`draggable-${team.team_id}-${activeRound}-${idx}-${dragKey}`}
+                            draggableId={`team-${team.team_id}-${activeRound}`}
+                            index={idx}
+                          >
+                            {(provided) => (
+                              <li
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className="draggable-item"
+                              >
+                                <span className="name">{team.team_name}</span>
+                                <span className="score">{team.score}</span>
+                              </li>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </ul>
+                    </div>
                   )}
                 </Droppable>
               </DragDropContext>
