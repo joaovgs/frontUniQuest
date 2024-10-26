@@ -41,21 +41,21 @@
     border-radius: 12px;
     font-size: 12px;
     font-weight: bold;
-    color: white;
+    color: white; 
   }
   
-  .pending {
+  .pendente {
     background-color: orange;
-  }
-  
-  .approved {
+}
+
+.aprovada {
     background-color: green;
-  }
-  
-  .rejected {
+}
+
+.rejeitada {
     background-color: red;
-  }
-  
+}
+
   .team-card h3 {
     font-size: 18px;
     margin-bottom: 10px;

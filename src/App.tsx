@@ -11,11 +11,12 @@ import { AuthProvider } from './context/AuthContext';
 import { SnackbarProvider } from './context/SnackbarContext';
 import GameList from './components/GameList/GameList';
 import CompetitonList from './components/CompetitionList/CompetitionList';
-import RankingPage from './components/RankingPage/RankingPage';
+import RankingPage from './components/Ranking/Ranking';
 import TeamList from './components/TeamList/TeamList';
-import TeamParticipants from './components/TeamMembers/TeamMembers';
+import TeamOverview from './components/TeamOverview/TeamOverview';
 import DirectConfrontationMatches from './components/DirectConfrontationMatches/DirectConfrontantionMatches';
 import AllAgainstAllMatches from './components/AllAgainstAllMatches/AllAgainstAllMatches';
+
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -98,6 +99,14 @@ const App: React.FC = () => {
             element={
               <SidebarLayout>
                 <AllAgainstAllMatches/>
+              </SidebarLayout>
+            }
+          />
+          <Route
+            path="/teamoverview"
+            element={
+              <SidebarLayout>
+                <TeamOverview />
               </SidebarLayout>
             }
           />

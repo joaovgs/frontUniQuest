@@ -57,7 +57,7 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
               <Link to="/provas" onClick={toggleSidebar}>Cadastro de Provas</Link>
             </li>
             <li>
-              <Link to="/outra-rota" onClick={toggleSidebar}>Outra opção</Link>
+              <Link to="/teamoverview" onClick={toggleSidebar}>Lista de Equipes</Link>
             </li>
           </ul>
         </nav>
