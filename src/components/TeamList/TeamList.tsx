@@ -8,6 +8,7 @@ import { Team, TeamPayload } from '../../models/Team';
 import { TeamService } from '../../services/Team';
 import axios from 'axios';
 import Spinner from '../Spinner/Spinner'; 
+import { TeamMemberService } from '../../services/TeamMember';
 
 const TeamList: React.FC = () => {
   const { competitionId } = useParams<{ competitionId: string }>(); 
@@ -56,6 +57,16 @@ const TeamList: React.FC = () => {
   };
 
   useEffect(() => {
+    const fetchUserTeamId = async () => {
+      try {
+        const { team_id } = await TeamMemberService.getUserInCompetition(Number(competitionId));
+        setUserTeamId(team_id);
+      } catch (error) {
+        console.error('Erro ao buscar equipe do usuário:', error);
+      }
+    };
+
+    fetchUserTeamId();
     fetchTeams('');
   }, [competitionId]);
 

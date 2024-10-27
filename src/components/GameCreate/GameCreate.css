@@ -94,14 +94,9 @@
   background-color: #0056b3;
 }
 
-label {
-  font-weight: bold;
-}
-
 .category-options {
   display: flex;
   justify-content: space-between;
-  /* gap: 10px; */
 }
 
 .category-option-radio:hover {
@@ -125,4 +120,8 @@ label {
 
 .points-inputs {
   margin-left: 7px;
+}
+
+.create-game-modal label {
+  font-weight: bold;
 }
