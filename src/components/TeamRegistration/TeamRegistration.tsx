@@ -25,13 +25,17 @@ const TeamRegistration: React.FC = () => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   const fetchTeams = async (filter: string = '') => {
+    setLoadingTeams(true);
     try {
+      const { team_id } = await TeamMemberService.getUserInCompetition(Number(competitionId));
+      setUserTeamId(team_id);
+
       const response = await TeamService.getTeams(Number(competitionId), filter);
 
       if (response && Array.isArray(response.teams)) {
         const sortedTeams = response.teams.sort((a, b) => {
-          if (a.id === userTeamId) return -1;
-          if (b.id === userTeamId) return 1;
+          if (a.id === team_id) return -1;
+          if (b.id === team_id) return 1;
           return 0;
         });
         setTeams(sortedTeams);
@@ -50,6 +54,8 @@ const TeamRegistration: React.FC = () => {
           showSnackbar('Erro interno do servidor. Tente novamente mais tarde.', 'error');
         }
       }
+    } finally {
+      setLoadingTeams(false); // Stop loading after fetching data
     }
   };
 
