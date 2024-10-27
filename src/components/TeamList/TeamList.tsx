@@ -7,7 +7,7 @@ import { useSnackbar } from '../../context/SnackbarContext';
 import { Team, TeamPayload } from '../../models/Team';
 import { TeamService } from '../../services/Team';
 import axios from 'axios';
-import { TeamMemberService } from '../../services/TeamMember';
+import Spinner from '../Spinner/Spinner'; 
 
 const TeamList: React.FC = () => {
   const { competitionId } = useParams<{ competitionId: string }>(); 
@@ -17,12 +17,14 @@ const TeamList: React.FC = () => {
   const [isParticipantsModalOpen, setIsParticipantsModalOpen] = useState(false); 
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [userTeamId, setUserTeamId] = useState<number | null>(null);
+  const [loadingTeams, setLoadingTeams] = useState(true);
   const { showSnackbar } = useSnackbar();
 
   const actionsRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
   const fetchTeams = async (filter: string = '') => {
+    setLoadingTeams(true); 
     try {
       const response = await TeamService.getTeams(Number(competitionId), filter);
 
@@ -48,42 +50,14 @@ const TeamList: React.FC = () => {
           showSnackbar('Erro interno do servidor. Tente novamente mais tarde.', 'error');
         }
       }
-    }
-  };
-
-  const fetchUserTeam = async () => {
-    try {
-      const response = await TeamMemberService.getUserInCompetition(Number(competitionId));
-      setUserTeamId(response.team_id);
-    } catch (error) {
-      console.error('Erro ao buscar equipe do usuário:', error);
+    } finally {
+      setLoadingTeams(false); 
     }
   };
 
   useEffect(() => {
-    const fetchUserTeam = async () => {
-      try {
-        const response = await TeamMemberService.getUserInCompetition(Number(competitionId));
-        setUserTeamId(response.team_id);
-        
-        if (response.team_id !== null) {
-          const teamsResponse = await TeamService.getTeams(Number(competitionId), '');
-          const sortedTeams = teamsResponse.teams.sort((a, b) => {
-            if (a.id === response.team_id) return -1;
-            if (b.id === response.team_id) return 1;
-            return 0;
-          });
-          setTeams(sortedTeams);
-        } else {
-          await fetchTeams('');
-        }
-      } catch (error) {
-        console.error('Erro ao buscar equipe do usuário:', error);
-      }
-    };
-
-    fetchUserTeam();
-  }, [competitionId, userTeamId]);
+    fetchTeams('');
+  }, [competitionId]);
 
   const handleSaveTeam = async (teamPayload: TeamPayload) => {
     try {
@@ -122,7 +96,6 @@ const TeamList: React.FC = () => {
     setIsParticipantsModalOpen(false);
     setSelectedTeam(null);
     await fetchTeams(''); 
-    await fetchUserTeam();
   };
 
   return (
@@ -139,26 +112,32 @@ const TeamList: React.FC = () => {
         />
       </div>
 
-      <div className="teams-grid">
-        {teams.length === 0 ? (
-          <p>Nenhuma equipe encontrada.</p>
-        ) : (
-          teams.map((team, index) => (
-            <div
-              key={index}
-              className={"team-card"}
-              onClick={() => handleTeamClick(team)}
-            >
-              <div className={`team-status ${team.is_private === 1 ? 'private' : 'public'}`}>
-                {team.is_private === 1 ? 'Privada' : 'Pública'}
+      {loadingTeams ? (
+        <div className="spinner-container">
+          <Spinner />
+        </div>
+      ) : (
+        <div className="teams-grid">
+          {teams.length === 0 ? (
+            <p>Nenhuma equipe encontrada.</p>
+          ) : (
+            teams.map((team, index) => (
+              <div
+                key={index}
+                className={"team-card"}
+                onClick={() => handleTeamClick(team)}
+              >
+                <div className={`team-status ${team.is_private === 1 ? 'private' : 'public'}`}>
+                  {team.is_private === 1 ? 'Privada' : 'Pública'}
+                </div>
+                <h3>{team.name}</h3>
+                <p>{team.members_count}/{team.max_participant}</p>
+                {userTeamId === team.id && <span className="your-team">Sua equipe</span>}
               </div>
-              <h3>{team.name}</h3>
-              <p>{team.members_count}/{team.max_participant}</p>
-              {userTeamId === team.id && <span className="your-team">Sua equipe</span>}
-            </div>
-          ))
-        )}
-      </div>
+            ))
+          )}
+        </div>
+      )}
 
       <div className="actions" ref={actionsRef}>
         <button

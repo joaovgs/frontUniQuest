@@ -5,7 +5,9 @@ import './AllAgainstAllMatches.css';
 import { AllAgainstAllMatchService } from '../../services/AllAgainstAllMatch';
 import { AllAgainstAllMatch, AllAgainstAllMatchPayload } from '../../models/AllAgainstAllMatch';
 import { useSnackbar } from '../../context/SnackbarContext';
-import PresentTeamsList from '../PresentTeamsList/PresentTeamsList'; 
+import PresentTeamsList from '../PresentTeamsList/PresentTeamsList';
+import { GameService } from '../../services/Game';
+import Spinner from '../Spinner/Spinner';
 
 const AllAgainstAllMatches: React.FC = () => {
   const { competitionId, gameId } = useParams<{ competitionId: string; gameId: string }>();
@@ -13,18 +15,24 @@ const AllAgainstAllMatches: React.FC = () => {
   const [numRounds, setNumRounds] = useState(1);
   const { showSnackbar } = useSnackbar();
   const [showTeamsList, setShowTeamsList] = useState(false);
-  const [activeRound, setActiveRound] = useState(0); // 0 por padrão na 1ª partida
+  const [activeRound, setActiveRound] = useState(0);
   const [dragKey, setDragKey] = useState(0);
-
-  const gameName = matches.length > 0 ? matches[0].game_name : 'Prova';
+  const [updatedPlacements, setUpdatedPlacements] = useState<{ [key: number]: any[] }>({});
+  const [isModified, setIsModified] = useState(false);
+  const [gameName, setGameName] = useState('Prova');
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchMatches = useCallback(async () => {
     if (competitionId && gameId) {
+      setLoading(true);
       try {
         const response = await AllAgainstAllMatchService.getAllAgainstAllMatches(Number(competitionId), Number(gameId));
         setMatches(response.allAgainstAllMatches);
+        console.log('Matches fetched:', response.allAgainstAllMatches);
       } catch (error) {
         console.error('Erro ao buscar partidas:', error);
+      } finally {
+        setLoading(false);
       }
     }
   }, [competitionId, gameId]);
@@ -40,10 +48,14 @@ const AllAgainstAllMatches: React.FC = () => {
   }, [matches]);
 
   useEffect(() => {
-    if (matches.length > 0 && activeRound >= matches.length + 1) { // Ajuste para manter "Geral" sempre visível
+    if (matches.length > 0 && activeRound >= matches.length + 1) {
       setActiveRound(0);
     }
   }, [matches, activeRound]);
+
+  useEffect(() => {
+    setUpdatedPlacements({});
+  }, [matches]);
 
   const handleGenerateMatches = () => {
     setShowTeamsList(true);
@@ -62,7 +74,7 @@ const AllAgainstAllMatches: React.FC = () => {
           competition_id: Number(competitionId),
           game_id: Number(gameId),
           number_of_rounds: numRounds,
-          teams: presentTeams, 
+          teams: presentTeams,
         };
 
         try {
@@ -74,11 +86,11 @@ const AllAgainstAllMatches: React.FC = () => {
             throw error;
           }
         }
-        
+
         await AllAgainstAllMatchService.createAllAgainstAllMatch(payload);
-        
+
         fetchMatches();
-        
+
         showSnackbar('Partidas todos contra todos geradas com sucesso!', 'success');
       } catch (error) {
         console.error('Erro ao gerar partidas todos contra todos:', error);
@@ -102,162 +114,199 @@ const AllAgainstAllMatches: React.FC = () => {
         team_name: matches[0].AllAgainstAllPlacement.find(t => t.team_id === Number(team_id))?.team_name || 'Equipe',
         score,
       }))
-      .sort((a, b) => b.score - a.score); // Ordena por pontuação decrescente
+      .sort((a, b) => b.score - a.score);
   };
 
-  const onDragEnd = async (result: any) => {
+  const onDragEnd = (result: any) => {
     const { source, destination } = result;
 
     if (!destination) return;
 
-    const updatedMatches = [...matches];
-    const currentMatch = updatedMatches[activeRound];
-    
-    const updatedPlacements = [...currentMatch.AllAgainstAllPlacement];
-    const [movedTeam] = updatedPlacements.splice(source.index, 1);
-    updatedPlacements.splice(destination.index, 0, movedTeam);
+    const currentMatch = matches[activeRound];
+    const newPlacements = [...(updatedPlacements[activeRound] || currentMatch.AllAgainstAllPlacement)];
+    const [movedTeam] = newPlacements.splice(source.index, 1);
+    newPlacements.splice(destination.index, 0, movedTeam);
 
-    const positionsChanged = updatedPlacements.some((team, idx) => team.position !== idx + 1);
-    if (!positionsChanged) return; 
-
-    const newPlacements = updatedPlacements.map((team, idx) => ({
-      team_id: team.team_id,
-      position: idx + 1,
+    setUpdatedPlacements((prev) => ({
+      ...prev,
+      [activeRound]: newPlacements.map((team, idx) => ({
+        ...team,
+        position: idx + 1,
+      })),
     }));
 
-    currentMatch.AllAgainstAllPlacement = updatedPlacements;
-    setMatches(updatedMatches);
-
-    try {
-      await AllAgainstAllMatchService.updatePlacementsAllAgainstAllMatch(
-        currentMatch.id,         
-        Number(competitionId), 
-        Number(gameId),
-        newPlacements, 
-      );
-      showSnackbar('Colocações atualizadas com sucesso!', 'success');
-      
-      fetchMatches();
-    } catch (error) {
-      console.error('Erro ao atualizar colocações:', error);
-      showSnackbar('Erro ao atualizar colocações. Tente novamente.', 'error');
-    }
+    setIsModified(true);
   };
 
   const totalScores = calculateTotalScores();
 
+  const handleSavePlacements = async () => {
+    const currentMatch = matches[activeRound];
+    const placementsToSave = updatedPlacements[activeRound];
+
+    if (!placementsToSave) return;
+
+    try {
+      await AllAgainstAllMatchService.updatePlacementsAllAgainstAllMatch(
+        currentMatch.id,
+        Number(competitionId),
+        Number(gameId),
+        placementsToSave,
+      );
+      showSnackbar('Colocações salvas com sucesso!', 'success');
+      
+      await fetchMatches();
+      
+      setIsModified(false);
+    } catch (error) {
+      console.error('Erro ao salvar colocações:', error);
+      showSnackbar('Erro ao salvar colocações. Tente novamente.', 'error');
+    }
+  };
+
+  const fetchGameName = useCallback(async () => {
+    if (gameId) {
+      try {
+        const response = await GameService.getGameById(Number(gameId));
+        setGameName(response.game.name);
+        console.log('Game name fetched:', response.game.name);
+      } catch (error) {
+        console.error('Erro ao buscar nome do jogo:', error);
+      }
+    }
+  }, [gameId]);
+
+  useEffect(() => {
+    if (matches.length > 0) {
+      setGameName(matches[0].game_name);
+    } else {
+      fetchGameName();
+    }
+  }, [matches, fetchGameName]);
+
   return (
     <div className="container">
-      <h1>{gameName}</h1>
-      
-      <div className="generate-matches-container">
-        <h3>Todos Contra Todos</h3>
-        <input
-          type="number"
-          value={numRounds}
-          onChange={(e) => setNumRounds(Number(e.target.value))}
-          min={1}
-          max={10}
-          className="input-num-matches"
-        />
-        <button className="generate-matches-button" onClick={handleGenerateMatches}>
-          Gerar Partidas ⚙️
-        </button>
-      </div>
-
-      {showTeamsList && (
-        <PresentTeamsList 
-          competitionId={Number(competitionId)} 
-          onClose={handleCloseTeamsList} 
-          onConfirm={handleConfirmTeamsList} 
-        />
-      )}
-
-      {matches.length === 0 ? (
-        <div className="no-matches">Sem partidas criadas</div>
+      {loading ? (
+        <Spinner /> 
       ) : (
         <>
-          <div className="matches-tabs">
-            {matches.map((match, index) => (
-              <button
-                key={match.id}
-                className={activeRound === index ? 'active-tab' : 'inative-tab'}
-                onClick={() => {
-                  setActiveRound(index);
-                  setDragKey(dragKey + 1); 
-                }}
-              >
-                {index + 1}ª partida
-              </button>
-            ))}
-            <button
-              className={activeRound === matches.length ? 'active-tab' : 'inative-tab'}
-              onClick={() => setActiveRound(matches.length)}
-            >
-              Geral
+          <h1>{gameName}</h1>
+          
+          <div className="generate-matches-container">
+            <h3>Todos Contra Todos</h3>
+            <input
+              type="number"
+              value={numRounds}
+              onChange={(e) => setNumRounds(Number(e.target.value))}
+              min={1}
+              max={10}
+              className="input-num-matches"
+            />
+            <button className="generate-matches-button" onClick={handleGenerateMatches}>
+              Gerar Partidas ⚙️
             </button>
           </div>
 
-          <div className="tab-content">
-            {activeRound === matches.length ? (
-              <div className="matches-table">
-                <ul className="fixed-positions">
-                  {totalScores.map((_, idx) => (
-                    <li key={`position-${idx}`} className="position-item">
-                      {`${idx + 1}º`}
-                    </li>
-                  ))}
-                </ul>
-                <ul className="matches-list">
-                  {totalScores.map((team, idx) => (
-                    <li key={team.team_id} className={`draggable-item ${activeRound === matches.length ? 'non-draggable-item-cursor' : 'draggable-item-cursor'}`}>
-                      <span className="name">{team.team_name}</span>
-                      <span className="score">{team.score}</span>
-                    </li>
-                  ))}
-                </ul>
+          {showTeamsList && (
+            <PresentTeamsList 
+              competitionId={Number(competitionId)} 
+              onClose={handleCloseTeamsList} 
+              onConfirm={handleConfirmTeamsList} 
+            />
+          )}
+
+          {matches.length === 0 ? (
+            <div className="no-matches">Sem partidas criadas</div>
+          ) : (
+            <>
+              <div className="matches-tabs">
+                {matches.map((match, index) => (
+                  <button
+                    key={match.id}
+                    className={activeRound === index ? 'active-tab' : 'inative-tab'}
+                    onClick={() => setActiveRound(index)}
+                  >
+                    {index + 1}ª partida
+                  </button>
+                ))}
+                {matches.length > 1 && (
+                  <button
+                    className={activeRound === matches.length ? 'active-tab' : 'inative-tab'}
+                    onClick={() => setActiveRound(matches.length)}
+                  >
+                    Geral
+                  </button>
+                )}
               </div>
-            ) : (
-              <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId={`droppable-${activeRound}`} key={`droppable-${activeRound}-${dragKey}`}>
-                  {(provided) => (
-                    <div className="matches-table">
-                      <ul className="fixed-positions">
-                        {Array.from({ length: matches[activeRound].AllAgainstAllPlacement.length }, (_, idx) => (
-                          <li key={`position-${idx}`} className="position-item">
-                            {`${idx + 1}º`}
-                          </li>
-                        ))}
-                      </ul>
-                      
-                      <ul className="matches-list" {...provided.droppableProps} ref={provided.innerRef}>
-                        {matches[activeRound].AllAgainstAllPlacement.map((team, idx) => (
-                          <Draggable
-                            key={`draggable-${team.team_id}-${activeRound}-${idx}-${dragKey}`}
-                            draggableId={`team-${team.team_id}-${activeRound}`}
-                            index={idx}
-                          >
-                            {(provided) => (
-                              <li
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                className="draggable-item"
-                              >
-                                <span className="name">{team.team_name}</span>
-                                <span className="score">{team.score}</span>
-                              </li>
-                            )}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
-                      </ul>
+
+              <div className="tab-content">
+                {activeRound === matches.length ? (
+                  <div className="matches-table">
+                    <ul className="fixed-positions">
+                      {totalScores.map((_, idx) => (
+                        <li key={`position-${idx}`} className="position-item">
+                          {`${idx + 1}º`}
+                        </li>
+                      ))}
+                    </ul>
+                    <ul className="matches-list">
+                      {totalScores.map((team, idx) => (
+                        <li key={team.team_id} className="draggable-item non-draggable-item-cursor">
+                          <span className="name">{team.team_name}</span>
+                          <span className="score">{team.score}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <>
+                    <DragDropContext onDragEnd={onDragEnd}>
+                      <Droppable droppableId={`droppable-${activeRound}`} key={`droppable-${activeRound}-${dragKey}`}>
+                        {(provided) => (
+                          <div className="matches-table" {...provided.droppableProps} ref={provided.innerRef}>
+                            <ul className="fixed-positions">
+                              {(updatedPlacements[activeRound] || matches[activeRound].AllAgainstAllPlacement).map((_, idx) => (
+                                <li key={`position-${idx}`} className="position-item">
+                                  {`${idx + 1}º`}
+                                </li>
+                              ))}
+                            </ul>
+                            <ul className="matches-list">
+                              {(updatedPlacements[activeRound] || matches[activeRound].AllAgainstAllPlacement).map((team, idx) => (
+                                <Draggable key={`draggable-${team.team_id}`} draggableId={`team-${team.team_id}`} index={idx}>
+                                  {(provided) => (
+                                    <li
+                                      ref={provided.innerRef}
+                                      {...provided.draggableProps}
+                                      {...provided.dragHandleProps}
+                                      className="draggable-item"
+                                    >
+                                      <span className="name">{team.team_name}</span>
+                                      <span className="score">{team.score}</span>
+                                    </li>
+                                  )}
+                                </Draggable>
+                              ))}
+                              {provided.placeholder}
+                            </ul>
+                          </div>
+                        )}
+                      </Droppable>
+                    </DragDropContext>
+                    <div className="save-button-container">
+                      <button
+                        onClick={handleSavePlacements}
+                        className="save-results-button"
+                        disabled={!isModified}
+                      >
+                        Salvar Resultados
+                      </button>
                     </div>
-                  )}
-                </Droppable>
-              </DragDropContext>
-            )}
-          </div>
+                  </>
+                )}
+              </div>
+            </>
+          )}
         </>
       )}
     </div>

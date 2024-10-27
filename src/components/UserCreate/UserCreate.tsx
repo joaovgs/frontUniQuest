@@ -41,7 +41,7 @@ const UserCreate: React.FC<UserCreateProps> = ({ onClose, onSave, initialUser })
   return (
     <div className="user-create-container">
       <div className="create-user-modal">
-        <h2>{isEditing ? 'Editar Usuário' : 'Cadastro de Usuário'}</h2>
+        <h2>{isEditing ? 'Editar Organizador' : 'Cadastro de Organizador'}</h2>
         <form>
           <input
             type="text"

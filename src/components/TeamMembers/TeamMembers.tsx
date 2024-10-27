@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './TeamMembers.css';
 import { TeamMemberService } from '../../services/TeamMember'; 
 import { useSnackbar } from '../../context/SnackbarContext';
 import { TeamMemberPayload } from '../../models/TeamMember';
+import Spinner from '../Spinner/Spinner'; // Import Spinner
 
 interface TeamMembersProps {
   teamId: number; 
@@ -19,9 +20,11 @@ const TeamMembers: React.FC<TeamMembersProps> = ({ teamId, teamName, status, mem
   const [members, setMembers] = useState<string[]>([]); 
   const [password, setPassword] = useState<string>('');
   const [isUserMember, setIsUserMember] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true); // Add loading state
   const { showSnackbar } = useSnackbar(); 
   
-  const fetchTeamMembers = async () => {
+  const fetchTeamMembers = useCallback(async () => {
+    setLoading(true); // Start loading
     try {
       const response = await TeamMemberService.getTeamMembers(teamId); 
       const teamMembers = response.teamMembers.map(member => member.user_name); 
@@ -33,8 +36,14 @@ const TeamMembers: React.FC<TeamMembersProps> = ({ teamId, teamName, status, mem
     } catch (error) {
       console.error('Erro ao buscar membros da equipe:', error);
       showSnackbar('Erro ao carregar os membros da equipe. Tente novamente.', 'error');
+    } finally {
+      setLoading(false); // End loading
     }
-  };
+  }, [teamId, competitionId, showSnackbar]);
+
+  useEffect(() => {
+    fetchTeamMembers();
+  }, [fetchTeamMembers]); 
 
   const handleJoin = async () => {
     if (userTeamId !== null && userTeamId !== teamId) {
@@ -78,49 +87,51 @@ const TeamMembers: React.FC<TeamMembersProps> = ({ teamId, teamName, status, mem
     }
   };
 
-  useEffect(() => {
-    fetchTeamMembers();
-  }, [teamId]); 
-
   return (
     <div className="team-member-modal">
       <div className="modal-content">
-        <div className={`team-status ${status === 'Privada' ? 'closed' : 'opened'}`}>
-          {status} ({memberCount})
-        </div>
-        <h2>{teamName}</h2>
-        
-        <ul className="members-list">
-          {members.length > 0 ? (
-            members.map((member, index) => (
-              <li key={index} className="member-item">
-                {member}
-              </li>
-            ))
-          ) : (
-            <p>Nenhum membro encontrado.</p>
-          )}
-        </ul>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <>
+            <div className={`team-status ${status === 'Privada' ? 'closed' : 'opened'}`}>
+              {status} ({memberCount})
+            </div>
+            <h2>{teamName}</h2>
+            
+            <ul className="members-list">
+              {members.length > 0 ? (
+                members.map((member, index) => (
+                  <li key={index} className="member-item">
+                    {member}
+                  </li>
+                ))
+              ) : (
+                <p>Nenhum membro encontrado.</p>
+              )}
+            </ul>
 
-        {status === 'Privada' && !isUserMember && (
-          <div className="password-input">
-            <input
-              type="password"
-              placeholder="Senha da equipe"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
+            {status === 'Privada' && !isUserMember && (
+              <div className="password-input">
+                <input
+                  type="password"
+                  placeholder="Senha da equipe"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+            )}
+            
+            <div className="members-actions">
+              <button className="cancelbutton" onClick={onCancel}>Cancelar</button>
+              {isUserMember ? (
+                <button className="leavebutton" onClick={handleLeave}>Sair</button>
+              ) : (
+                <button className="joinbutton" onClick={handleJoin}>Entrar</button>
+              )}
+            </div>
+          </>
         )}
-        
-        <div className="members-actions">
-          <button className="cancelbutton" onClick={onCancel}>Cancelar</button>
-          {isUserMember ? (
-            <button className="leavebutton" onClick={handleLeave}>Sair</button>
-          ) : (
-            <button className="joinbutton" onClick={handleJoin}>Entrar</button>
-          )}
-        </div>
       </div>
     </div>
   );

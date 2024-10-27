@@ -14,7 +14,7 @@ import CompetitonList from './components/CompetitionList/CompetitionList';
 import RankingPage from './components/Ranking/Ranking';
 import TeamList from './components/TeamList/TeamList';
 import TeamOverview from './components/TeamOverview/TeamOverview';
-import DirectConfrontationMatches from './components/DirectConfrontationMatches/DirectConfrontantionMatches';
+import DirectConfrontationMatches from './components/DirectConfrontationMatches/DirectConfrontationMatches';
 import AllAgainstAllMatches from './components/AllAgainstAllMatches/AllAgainstAllMatches';
 
 
@@ -39,7 +39,7 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path="/usuarios"
+            path="/organizadores"
             element={
               <SidebarLayout>
                 <UserList />
@@ -79,7 +79,7 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path="/ranking"
+            path="/gincana/:competitionId/ranking"
             element={
               <SidebarLayout>
                 <RankingPage />

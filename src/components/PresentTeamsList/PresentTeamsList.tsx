@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './PresentTeamsList.css';
 import { TeamService } from '../../services/Team';
 import { Team } from '../../models/Team';
+import Spinner from '../Spinner/Spinner'; 
 
 interface PresentTeamsListProps {
   competitionId: number; 
@@ -15,14 +16,18 @@ interface TeamWithPresence extends Team {
 
 const PresentTeamsList: React.FC<PresentTeamsListProps> = ({ competitionId, onClose, onConfirm }) => {
   const [teams, setTeams] = useState<TeamWithPresence[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchRegisteredTeams = async () => {
+      setLoading(true); 
       try {
         const response = await TeamService.getTeamsRegistered(competitionId);
         setTeams(response.teams.map((team: Team) => ({ ...team, isPresent: true })));
       } catch (error) {
         console.error('Erro ao buscar equipes registradas:', error);
+      } finally {
+        setLoading(false); 
       }
     };
 
@@ -43,7 +48,7 @@ const PresentTeamsList: React.FC<PresentTeamsListProps> = ({ competitionId, onCl
     const presentTeamIds = teams
       .filter((team: TeamWithPresence) => team.isPresent)
       .map((team: TeamWithPresence) => team.id);
-      console.log(presentTeamIds)
+    console.log(presentTeamIds)
     onConfirm(presentTeamIds); 
   };
 
@@ -51,22 +56,26 @@ const PresentTeamsList: React.FC<PresentTeamsListProps> = ({ competitionId, onCl
     <div className="modal-overlay">
       <div className="modal">
         <h2>Equipes Presentes</h2>
-        <ul className="team-list">
-          {teams.map((team) => (
-            <li key={team.id} className="present-team-item">
-              <div className="team-row">
-                <span className="team-name">{team.name}</span>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={team.isPresent}
-                    onChange={() => toggleTeamPresence(team.id)}
-                  />
-                </label>
-              </div>
-            </li>
-          ))}
-        </ul>
+        {loading ? (
+          <Spinner /> // Conditionally render Spinner
+        ) : (
+          <ul className="team-list">
+            {teams.map((team) => (
+              <li key={team.id} className="present-team-item">
+                <div className="team-row">
+                  <span className="team-name">{team.name}</span>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={team.isPresent}
+                      onChange={() => toggleTeamPresence(team.id)}
+                    />
+                  </label>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
         <div className="modal-actions">
           <button className="cancel-button" onClick={onClose}>Cancelar</button>
           <button 

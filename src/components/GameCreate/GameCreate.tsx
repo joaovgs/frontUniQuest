@@ -127,26 +127,32 @@ const GameCreate: React.FC<GameCreateProps> = ({ onClose, onSave, initialGame })
           <div className="form-group">
             <label>Categoria:</label>
             <div className="category-options">
-              <label>
-                <input
-                  type="radio"
-                  name="category"
-                  value="1"
-                  checked={category === 0}
-                  onChange={() => setCategory(0)}
-                />
-                Confronto Direto
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="category"
-                  value="2"
-                  checked={category === 1}
-                  onChange={() => setCategory(1)}
-                />
-                Todos Contra Todos
-              </label>
+              <div className="category-option-radio">                 
+                <label htmlFor="confronto-direto">
+                  <input
+                    type="radio"
+                    id="confronto-direto"
+                    name="category"
+                    value="1"
+                    checked={category === 0}
+                    onChange={() => setCategory(0)}
+                  />
+                  Confronto Direto
+                </label>
+              </div>
+              <div className="category-option-radio">                
+                <label htmlFor="todos-contra-todos">
+                  <input
+                    type="radio"
+                    id="todos-contra-todos"
+                    name="category"
+                    value="2"
+                    checked={category === 1}
+                    onChange={() => setCategory(1)}
+                  />
+                  Todos Contra Todos
+                </label>
+              </div>
             </div>
           </div>
         </form>

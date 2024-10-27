@@ -5,18 +5,21 @@ import { useSnackbar } from '../../context/SnackbarContext';
 import { Competition, CompetitionPayload } from '../../models/Competition';
 import { CompetitionService } from '../../services/Competition';
 import axios from 'axios';
+import Spinner from '../Spinner/Spinner';
 
 const CompetitionList: React.FC = () => {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedCompetition, setSelectedCompetition] = useState<Competition | null>(null);
+  const [loadingCompetitions, setLoadingCompetitions] = useState(true);
   const { showSnackbar } = useSnackbar();
 
   const actionsRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
   const fetchCompetitions = async (filter: string = '') => {
+    setLoadingCompetitions(true);
     try {
       const response = await CompetitionService.getCompetitions(filter);
 
@@ -37,6 +40,8 @@ const CompetitionList: React.FC = () => {
           showSnackbar('Erro interno do servidor. Tente novamente mais tarde.', 'error');
         }
       }
+    } finally {
+      setLoadingCompetitions(false);
     }
   };
 
@@ -124,21 +129,27 @@ const CompetitionList: React.FC = () => {
         />
       </div>
 
-      <div className="competition-list">
-        {competitions.length === 0 ? (
-          <p>Nenhuma gincana encontrada.</p>
-        ) : (
-          competitions.map((competition, index) => (
-            <div
-              key={index}
-              className={`competition-item ${selectedCompetition === competition ? 'selected' : ''}`}
-              onClick={() => setSelectedCompetition(competition)}
-            >
-              {competition.title}
-            </div>
-          ))
-        )}
-      </div>
+      {loadingCompetitions ? (
+        <div className="spinner-container">
+          <Spinner />
+        </div>
+      ) : (
+        <div className="competition-list">
+          {competitions.length === 0 ? (
+            <p>Nenhuma gincana encontrada.</p>
+          ) : (
+            competitions.map((competition, index) => (
+              <div
+                key={index}
+                className={`competition-item ${selectedCompetition === competition ? 'selected' : ''}`}
+                onClick={() => setSelectedCompetition(competition)}
+              >
+                {competition.title}
+              </div>
+            ))
+          )}
+        </div>
+      )}
 
       <div className="actions" ref={actionsRef}>
         <button

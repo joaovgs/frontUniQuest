@@ -1,24 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './UserList.css';
 import UserCreate from '../UserCreate/UserCreate';
-import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from '../../context/SnackbarContext';
 import { User, UserPayload } from '../../models/User';
 import { UserService } from '../../services/User';
 import axios from 'axios';
+import Spinner from '../Spinner/Spinner';
 
 const UserList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const navigate = useNavigate();
+  const [loadingUsers, setLoadingUsers] = useState(true);
   const { showSnackbar } = useSnackbar();
 
   const actionsRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
   const fetchUsers = async (filter: string = '') => {
+    setLoadingUsers(true);
     try {
       const response = await UserService.getUsers(filter);
 
@@ -39,6 +40,8 @@ const UserList: React.FC = () => {
           showSnackbar('Erro interno do servidor. Tente novamente mais tarde.', 'error');
         }
       }
+    } finally {
+      setLoadingUsers(false);
     }
   };
 
@@ -50,18 +53,18 @@ const UserList: React.FC = () => {
     try {
       if (selectedUser) {
         await UserService.updateUser(selectedUser.id, userPayload);
-        showSnackbar('Usuário atualizado com sucesso!', 'success');
+        showSnackbar('Organizador atualizado com sucesso!', 'success');
       } else {
         await UserService.createUser(userPayload);
-        showSnackbar('Usuário criado com sucesso!', 'success');
+        showSnackbar('Organizador criado com sucesso!', 'success');
       }
       setSearchTerm('');
       await fetchUsers('');
       setIsCreateModalOpen(false);
       setSelectedUser(null);
     } catch (error) {
-      showSnackbar('Erro ao salvar usuário. Tente novamente.', 'error');
-      console.error('Erro ao salvar usuário:', error);
+      showSnackbar('Erro ao salvar organizador. Tente novamente.', 'error');
+      console.error('Erro ao salvar organizador:', error);
     }
   };
 
@@ -71,10 +74,10 @@ const UserList: React.FC = () => {
         await UserService.deleteUser(selectedUser.id);
         setUsers((prevUsers) => prevUsers.filter((u) => u.id !== selectedUser.id));
         setSelectedUser(null);
-        showSnackbar('Usuário excluído com sucesso!', 'success');
+        showSnackbar('Organizador excluído com sucesso!', 'success');
       } catch (error) {
-        showSnackbar('Erro ao deletar usuário. Tente novamente.', 'error');
-        console.error('Erro ao deletar usuário:', error);
+        showSnackbar('Erro ao deletar organizador. Tente novamente.', 'error');
+        console.error('Erro ao deletar organizador:', error);
       }
     }
   };
@@ -113,7 +116,11 @@ const UserList: React.FC = () => {
   return (
     <div className="user-list-container">
       <div className="user-list-header">
-        <h1>Usuários</h1>
+        <h1>Organizadores</h1>
+        <div className="subheader">
+          <p>Esta tela permite gerenciar os organizadores do sistema. Utilize o campo de busca para encontrar organizadores específicos ou crie, edite e exclua organizadores conforme necessário.</p>
+        </div>
+
         <input
           type="text"
           placeholder="Pesquisar"
@@ -123,21 +130,27 @@ const UserList: React.FC = () => {
         />
       </div>
 
-      <div className="user-list">
-        {users.length === 0 ? (
-          <p>Nenhum organizador encontrado.</p>
-        ) : (
-          users.map((user, index) => (
-            <div
-              key={index}
-              className={`user-item ${selectedUser === user ? 'selected' : ''}`}
-              onClick={() => setSelectedUser(user)}
-            >
-              {user.name ? user.name : 'Usuário sem nome'}
-            </div>
-          ))
-        )}
-      </div>
+      {loadingUsers ? (
+        <div className="spinner-container">
+          <Spinner />
+        </div>
+      ) : (
+        <div className="user-list">
+          {users.length === 0 ? (
+            <p>Nenhum organizador encontrado.</p>
+          ) : (
+            users.map((user, index) => (
+              <div
+                key={index}
+                className={`user-item ${selectedUser === user ? 'selected' : ''}`}
+                onClick={() => setSelectedUser(user)}
+              >
+                {user.name ? user.name : 'Organizador sem nome'}
+              </div>
+            ))
+          )}
+        </div>
+      )}
 
       <div className="actions" ref={actionsRef}>
         <button

@@ -14,6 +14,16 @@ export const GameService = {
     }
   },
 
+  async getGameById(gameId: number): Promise<{ game: Game }> {
+    try {
+      const response = await api.get<{ game: Game }>(`/games/${gameId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar prova:', error);
+      throw error;
+    }
+  },
+
   createGame: async (game: GamePayload): Promise<Game> => {
     try {
       const response = await api.post('/games', game);

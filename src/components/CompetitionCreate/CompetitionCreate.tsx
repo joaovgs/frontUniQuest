@@ -4,6 +4,7 @@ import { CompetitionPayload, CompetitionGame } from '../../models/Competition';
 import { Game } from '../../models/Game'; 
 import { GameService } from '../../services/Game';
 import { createPortal } from 'react-dom';
+import Spinner from '../Spinner/Spinner';
 
 interface CompetitionCreateProps {
   onClose: () => void;
@@ -27,6 +28,7 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
   const [isEditing, setIsEditing] = useState<boolean>(!!initialCompetition);
   const [imageName, setImageName] = useState<string | null>(initialCompetition?.image_name || null);
   const [regulationName, setRegulationName] = useState<string | null>(initialCompetition?.regulation_name || null);
+  const [loadingGames, setLoadingGames] = useState<boolean>(true);
 
   useEffect(() => {
     if (initialCompetition) {
@@ -55,11 +57,14 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
 
   useEffect(() => {
     const fetchGames = async () => {
+      setLoadingGames(true); 
       try {
-        const response = await GameService.getGames(''); 
+        const response = await GameService.getGames('');
         setAvailableGames(response.games);
       } catch (error) {
         console.error('Erro ao buscar as provas:', error);
+      } finally {
+        setLoadingGames(false); 
       }
     };
 
@@ -224,60 +229,64 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
 
             <div className="section-container">
               <label>Provas</label>
-              <div className="games-container" ref={gamesContainerRef}>
-                {competitionGames.map((game, index) => ( 
-                  <div key={index} className="competition-game-item">
-                    <select
-                      value={game.game_id || ''} 
-                      onChange={(e) => {
-                        const selectedValue = Number(e.target.value);
-                        const updatedGames = [...competitionGames]; 
-                        updatedGames[index] = {
-                          ...updatedGames[index],
-                          game_id: selectedValue, 
-                        };
-                        setCompetitionGames(updatedGames); 
-                      }}
-                    >
-                      <option value="" disabled>Selecione uma prova</option>
-                      {availableGames.map((availableGame) => (
-                        <option key={availableGame.id} value={availableGame.id}>
-                          {availableGame.name}
-                        </option>
-                      ))}
-                    </select>
+              {loadingGames ? (
+                <Spinner /> 
+              ) : (
+                <div className="games-container" ref={gamesContainerRef}>
+                  {competitionGames.map((game, index) => ( 
+                    <div key={index} className="competition-game-item">
+                      <select
+                        value={game.game_id || ''} 
+                        onChange={(e) => {
+                          const selectedValue = Number(e.target.value);
+                          const updatedGames = [...competitionGames]; 
+                          updatedGames[index] = {
+                            ...updatedGames[index],
+                            game_id: selectedValue, 
+                          };
+                          setCompetitionGames(updatedGames); 
+                        }}
+                      >
+                        <option value="" disabled>Selecione uma prova</option>
+                        {availableGames.map((availableGame) => (
+                          <option key={availableGame.id} value={availableGame.id}>
+                            {availableGame.name}
+                          </option>
+                        ))}
+                      </select>
 
-                    <input
-                      type="datetime-local"
-                      value={game.date_game instanceof Date ? game.date_game.toISOString().substring(0, 16) : ""}
-                      onChange={(e) => {
-                        const localDate = e.target.value ? new Date(e.target.value + 'Z') : undefined; 
-                        const updatedGames = [...competitionGames]; 
-                        updatedGames[index] = {
-                          ...updatedGames[index],
-                          date_game: localDate, 
-                        };
-                        setCompetitionGames(updatedGames); 
-                      }}
-                    />
+                      <input
+                        type="datetime-local"
+                        value={game.date_game instanceof Date ? game.date_game.toISOString().substring(0, 16) : ""}
+                        onChange={(e) => {
+                          const localDate = e.target.value ? new Date(e.target.value + 'Z') : undefined; 
+                          const updatedGames = [...competitionGames]; 
+                          updatedGames[index] = {
+                            ...updatedGames[index],
+                            date_game: localDate, 
+                          };
+                          setCompetitionGames(updatedGames); 
+                        }}
+                      />
 
-                    <input
-                      type="text"
-                      placeholder="Local da Prova"
-                      value={game.local}
-                      onChange={(e) => {
-                        const updatedGames = [...competitionGames]; 
-                        updatedGames[index] = {
-                          ...updatedGames[index],
-                          local: e.target.value, 
-                        };
-                        setCompetitionGames(updatedGames); 
-                      }}
-                    />
-                    <button type="button" onClick={() => handleRemoveGame(index)}>🗑</button>
-                  </div>
-                ))}
-              </div>
+                      <input
+                        type="text"
+                        placeholder="Local da Prova"
+                        value={game.local}
+                        onChange={(e) => {
+                          const updatedGames = [...competitionGames]; 
+                          updatedGames[index] = {
+                            ...updatedGames[index],
+                            local: e.target.value, 
+                          };
+                          setCompetitionGames(updatedGames); 
+                        }}
+                      />
+                      <button type="button" onClick={() => handleRemoveGame(index)}>🗑</button>
+                    </div>
+                  ))}
+                </div>
+              )}
               <button type="button" onClick={handleAddGame} className="add-game-button">
                 Adicionar Prova
               </button>

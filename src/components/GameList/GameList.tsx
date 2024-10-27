@@ -5,18 +5,21 @@ import { useSnackbar } from '../../context/SnackbarContext';
 import { Game, GamePayload } from '../../models/Game';
 import { GameService } from '../../services/Game';
 import axios from 'axios';
+import Spinner from '../Spinner/Spinner';
 
 const GameList: React.FC = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [loadingGames, setLoadingGames] = useState(true);
   const { showSnackbar } = useSnackbar();
 
   const actionsRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
   const fetchGames = async (filter: string = '') => {
+    setLoadingGames(true);
     try {
       const response = await GameService.getGames(filter);
 
@@ -37,6 +40,8 @@ const GameList: React.FC = () => {
           showSnackbar('Erro interno do servidor. Tente novamente mais tarde.', 'error');
         }
       }
+    } finally {
+      setLoadingGames(false);
     }
   };
 
@@ -136,21 +141,27 @@ const GameList: React.FC = () => {
         />
       </div>
 
-      <div className="game-list">
-        {games.length === 0 ? (
-          <p>Nenhuma prova encontrada.</p>
-        ) : (
-          games.map((game, index) => (
-            <div
-              key={index}
-              className={`game-item ${selectedGame === game ? 'selected' : ''}`}
-              onClick={() => setSelectedGame(game)}
-            >
-              {game.name}
-            </div>
-          ))
-        )}
-      </div>
+      {loadingGames ? (
+        <div className="spinner-container">
+          <Spinner />
+        </div>
+      ) : (
+        <div className="game-list">
+          {games.length === 0 ? (
+            <p>Nenhuma prova encontrada.</p>
+          ) : (
+            games.map((game, index) => (
+              <div
+                key={index}
+                className={`game-item ${selectedGame === game ? 'selected' : ''}`}
+                onClick={() => setSelectedGame(game)}
+              >
+                {game.name}
+              </div>
+            ))
+          )}
+        </div>
+      )}
 
       <div className="actions" ref={actionsRef}>
         <button
