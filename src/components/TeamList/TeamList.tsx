@@ -1,126 +1,127 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import './TeamList.css';
-import TeamCreate from '../TeamCreate/TeamCreate';
-import TeamParticipants from '../TeamMembers/TeamMembers'; 
-import { useSnackbar } from '../../context/SnackbarContext';
-import { Team, TeamPayload } from '../../models/Team';
 import { TeamService } from '../../services/Team';
-import axios from 'axios';
-import Spinner from '../Spinner/Spinner'; 
-import { TeamMemberService } from '../../services/TeamMember';
+import { CompetitionService } from '../../services/Competition';
+import Spinner from '../Spinner/Spinner';
+import { Team } from '../../models/Team';
+import { Competition } from '../../models/Competition';
+import ApprovalModal from '../TeamApproval/TeamApproval'; 
 
 const TeamList: React.FC = () => {
-  const { competitionId } = useParams<{ competitionId: string }>(); 
+  const { competitionId } = useParams<{ competitionId: string }>();
   const [teams, setTeams] = useState<Team[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isParticipantsModalOpen, setIsParticipantsModalOpen] = useState(false); 
-  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
-  const [userTeamId, setUserTeamId] = useState<number | null>(null);
+  const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loadingTeams, setLoadingTeams] = useState(true);
-  const { showSnackbar } = useSnackbar();
+  const [filterStatus, setFilterStatus] = useState<'Todos' | 'Pendente' | 'Aprovada' | 'Rejeitada'>('Todos');
+  const [selectedCompetitionId, setSelectedCompetitionId] = useState<number>(Number(competitionId));
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
 
-  const actionsRef = useRef<HTMLDivElement>(null);
-  const modalRef = useRef<HTMLDivElement>(null);
-
-  const fetchTeams = async (filter: string = '') => {
-    setLoadingTeams(true); 
-    try {
-      const response = await TeamService.getTeams(Number(competitionId), filter);
-
-      if (response && Array.isArray(response.teams)) {
-        const sortedTeams = response.teams.sort((a, b) => {
-          if (a.id === userTeamId) return -1;
-          if (b.id === userTeamId) return 1;
-          return 0;
-        });
-        setTeams(sortedTeams);
-      } else {
-        setTeams([]);
-        console.error('Erro: Resposta de equipes não é um array válido.');
-      }
-    } catch (error) {
-      console.error('Erro ao buscar equipes:', error);
-      setTeams([]);
-
-      if (axios.isAxiosError(error)) {
-        if (error.response?.status === 401) {
-          console.log('Erro de autenticação. Redirecionando para login...');
-        } else if (error.response?.status === 500) {
-          showSnackbar('Erro interno do servidor. Tente novamente mais tarde.', 'error');
-        }
-      }
-    } finally {
-      setLoadingTeams(false); 
+  const mapStatusToText = (status: number | null | undefined): string => {
+    switch (status) {
+      case 1:
+        return 'Aprovada';
+      case -1:
+        return 'Rejeitada';
+      case 0:
+      default:
+        return 'Pendente';
     }
   };
 
+  const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilterStatus(event.target.value as 'Todos' | 'Pendente' | 'Aprovada' | 'Rejeitada');
+  };
+
+  const handleCompetitionIdChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCompetitionId(Number(event.target.value));
+  };
+
+  const filteredTeams = teams.filter((team) => {
+    if (filterStatus === 'Todos') return true;
+    return mapStatusToText(team.status) === filterStatus;
+  });
+
   useEffect(() => {
-    const fetchUserTeamId = async () => {
+    const fetchCompetitions = async () => {
       try {
-        const { team_id } = await TeamMemberService.getUserInCompetition(Number(competitionId));
-        setUserTeamId(team_id);
+        const { competitions } = await CompetitionService.getCompetitions();
+        setCompetitions(competitions);
+        if (competitions.length > 0) {
+          setSelectedCompetitionId(competitions[0].id);
+        }
       } catch (error) {
-        console.error('Erro ao buscar equipe do usuário:', error);
+        console.error('Erro ao buscar gincanas:', error);
       }
     };
 
-    fetchUserTeamId();
-    fetchTeams('');
-  }, [competitionId]);
+    fetchCompetitions();
+  }, []);
 
-  const handleSaveTeam = async (teamPayload: TeamPayload) => {
+  const fetchTeamsForApproval = useCallback(async () => {
+    if (!selectedCompetitionId) {
+      setLoadingTeams(false);
+      return;
+    }
+    setLoadingTeams(true);
     try {
-      await TeamService.createTeam(teamPayload);
-      showSnackbar('Equipe criada com sucesso!', 'success');
-      setSearchTerm('');
-      await fetchTeams('');
-      setIsCreateModalOpen(false);
-      setSelectedTeam(null);
+      const { teams } = await TeamService.getTeamsForApproval(selectedCompetitionId);
+      console.log('Fetched teams:', teams); 
+      setTeams(teams);
     } catch (error) {
-      showSnackbar('Erro ao salvar equipe. Tente novamente.', 'error');
-      console.error('Erro ao salvar equipe:', error);
+      console.error('Erro ao buscar equipes para aprovação:', error);
+    } finally {
+      setLoadingTeams(false);
     }
-  };
+  }, [selectedCompetitionId]);
 
-  const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      fetchTeams(searchTerm);
-    }
-  };
+  useEffect(() => {
+    fetchTeamsForApproval();
+  }, [fetchTeamsForApproval]);
 
-  const handleCreateButtonClick = () => {
-    if (userTeamId !== null) {
-      showSnackbar('Você já está em uma equipe!', 'error');
-    } else {
-      setIsCreateModalOpen(true);
-    }
-  };
-
-  const handleTeamClick = (team: Team) => {
+  const openModal = (team: Team) => {
     setSelectedTeam(team);
-    setIsParticipantsModalOpen(true);
+    setIsModalOpen(true);
   };
 
-  const handleCloseParticipantsModal = async () => {
-    setIsParticipantsModalOpen(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
     setSelectedTeam(null);
-    await fetchTeams(''); 
+    fetchTeamsForApproval();
   };
 
   return (
-    <div className="team-list-container">
-      <div className="team-list-header">
-        <h1>Equipes</h1>
-        <input
-          type="text"
-          placeholder="Pesquisar"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyDown={handleSearchKeyDown}
-          className="search-input"
-        />
+    <div className="team-overview-container">
+      <h1>Inscrições das Equipes</h1>
+
+      <div className="filter-container">
+        <label htmlFor="competitionIdSelect">Selecionar Gincana:</label>
+        <select
+          id="competitionIdSelect"
+          value={selectedCompetitionId}
+          onChange={handleCompetitionIdChange}
+          className="competition-id-select"
+        >
+          {competitions.map((competition) => (
+            <option key={competition.id} value={competition.id}>
+              {competition.title}
+            </option>
+          ))}
+        </select>
+
+        <label htmlFor="statusFilter">Filtrar por status:</label>
+        <select
+          id="statusFilter"
+          value={filterStatus}
+          onChange={handleFilterChange}
+          className="status-filter"
+        >
+          <option value="Todos">Todos</option>
+          <option value="Pendente">Pendente</option>
+          <option value="Aprovada">Aprovada</option>
+          <option value="Rejeitada">Rejeitada</option>
+        </select>
       </div>
 
       {loadingTeams ? (
@@ -129,63 +130,38 @@ const TeamList: React.FC = () => {
         </div>
       ) : (
         <div className="teams-grid">
-          {teams.length === 0 ? (
+          {filteredTeams.length === 0 ? (
             <p>Nenhuma equipe encontrada.</p>
           ) : (
-            teams.map((team, index) => (
-              <div
-                key={index}
-                className={"team-card"}
-                onClick={() => handleTeamClick(team)}
-              >
-                <div className={`team-status ${team.is_private === 1 ? 'private' : 'public'}`}>
-                  {team.is_private === 1 ? 'Privada' : 'Pública'}
+            filteredTeams.map((team, index) => (
+              <div key={index} className="team-card" onClick={() => openModal(team)}>
+                <div className={`team-status ${mapStatusToText(team.status).toLowerCase()}`}>
+                  {mapStatusToText(team.status)}
                 </div>
                 <h3>{team.name}</h3>
                 <p>{team.members_count}/{team.max_participant}</p>
-                {userTeamId === team.id && <span className="your-team">Sua equipe</span>}
               </div>
             ))
           )}
         </div>
       )}
 
-      <div className="actions" ref={actionsRef}>
-        <button
-          className="create-button"
-          onClick={handleCreateButtonClick}
-        >
-          Criar
-        </button>
-      </div>
-
-      {isCreateModalOpen && (
-        <div className="modal-overlay">
-          <div ref={modalRef}>
-            <TeamCreate
-              onClose={() => setIsCreateModalOpen(false)}
-              onSave={handleSaveTeam}
-              competitionId={Number(competitionId)}
-            />
-          </div>
-        </div>
-      )}
-
-      {isParticipantsModalOpen && selectedTeam && (
-        <div className="modal-overlay">
-          <div ref={modalRef}>
-            <TeamParticipants
-              teamId={selectedTeam.id}
-              teamName={selectedTeam.name}
-              status={selectedTeam.is_private === 1 ? 'Privada' : 'Pública'}
-              memberCount={`${selectedTeam.members_count}/${selectedTeam.max_participant}`}
-              onJoin={() => console.log('Entrar na equipe')}
-              onCancel={handleCloseParticipantsModal}
-              competitionId={Number(competitionId)}
-              userTeamId={userTeamId}
-            />
-          </div>
-        </div>
+      {isModalOpen && selectedTeam && (
+        <ApprovalModal
+          teamId={selectedTeam.id}
+          teamName={selectedTeam.name}
+          status={mapStatusToText(selectedTeam.status)}
+          memberCount={`${selectedTeam.members_count}/${selectedTeam.max_participant}`}
+          competitionId={selectedCompetitionId}
+          userTeamId={null}
+          onApprove={() => {
+            closeModal();
+          }}
+          onReject={(message) => {
+            closeModal();
+          }}
+          onClose={closeModal}
+        />
       )}
     </div>
   );

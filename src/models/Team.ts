@@ -11,10 +11,17 @@ export interface Team {
   system_date_deleted?: Date | null;
   members_count?: number;
   max_participant?: number;
+  message?: string;
 }
 
 export type TeamPayload = Omit<
   Team,
-  'id' | 'members_count' | 'max_participant' | 'created_at' | 'system_deleted' | 'system_date_deleted'
+  'id' | 'leader_user_id' | 'members_count' | 'max_participant' | 'created_at' | 'system_deleted' | 'system_date_deleted' | 'message'
 >;
+
+export type TeamStatusPayload = {
+  status: number;
+  message?: string;
+};
+
 

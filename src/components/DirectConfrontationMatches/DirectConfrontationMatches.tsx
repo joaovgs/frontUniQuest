@@ -204,7 +204,7 @@ const DirectConfrontationMatches: React.FC = () => {
   return (
     <div className="container">
       {loading ? (
-        <Spinner /> // Conditionally render Spinner
+        <Spinner /> 
       ) : (
         <>
           <h1>{gameName}</h1>

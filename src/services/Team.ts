@@ -1,5 +1,5 @@
 import api from './api';
-import { Team, TeamPayload } from '../models/Team';
+import { Team, TeamPayload, TeamStatusPayload } from '../models/Team';
 
 export const TeamService = {
   async getTeams(competitionId: number, filter: string = ''): Promise<{ teams: Team[] }> {
@@ -24,6 +24,16 @@ export const TeamService = {
     }
   },
 
+  async getTeamsForApproval(competitionId: number): Promise<{ teams: Team[] }> {
+    try {
+      const response = await api.get<{ teams: Team[] }>(`/${competitionId}/teams-for-approval`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar equipes para aprovação:', error);
+      throw error;
+    }
+  },
+
   createTeam: async (team: TeamPayload): Promise<Team> => {
     try {
       const response = await api.post('/teams', team);
@@ -34,9 +44,9 @@ export const TeamService = {
     }
   },
 
-  updateTeam: async (teamId: number, team: TeamPayload): Promise<Team> => {
+  updateStatus: async (teamId: number, team: TeamStatusPayload): Promise<Team> => {
     try {
-      const response = await api.put(`/teams/${teamId}`, team);
+      const response = await api.patch(`/teams/${teamId}/status`, team);
       return response.data;
     } catch (error) {
       console.error('Erro ao atualizar equipe:', error);

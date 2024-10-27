@@ -18,7 +18,6 @@ const TeamCreate: React.FC<TeamCreateProps> = ({ onClose, onSave, competitionId 
       name,
       is_private: isPrivate, 
       competition_id: competitionId,
-      leader_user_id: 1, // Ajuste conforme necessário
       password: isPrivate === 1 ? password : undefined,
     };
     onSave(newTeam);

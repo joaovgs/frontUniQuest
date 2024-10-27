@@ -32,7 +32,7 @@ header {
 }
 
 .ranking-table th, .ranking-table td {
-  border: 2px solid #ddd;
+  border: 2px solid #ccc;
   padding: 8px;
   text-align: center;
   background-color: white;

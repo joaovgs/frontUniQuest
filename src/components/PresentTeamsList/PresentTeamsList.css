@@ -30,7 +30,7 @@
   display: flex;
   align-items: center;
   width: 100%;
-  border-bottom: 1px solid #ddd; 
+  border-bottom: 1px solid #ccc; 
 }
 
 .present-team-item:last-child {

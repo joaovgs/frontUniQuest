@@ -12,8 +12,8 @@ import { SnackbarProvider } from './context/SnackbarContext';
 import GameList from './components/GameList/GameList';
 import CompetitonList from './components/CompetitionList/CompetitionList';
 import RankingPage from './components/Ranking/Ranking';
+import TeamRegistration from './components/TeamRegistration/TeamRegistration';
 import TeamList from './components/TeamList/TeamList';
-import TeamOverview from './components/TeamOverview/TeamOverview';
 import DirectConfrontationMatches from './components/DirectConfrontationMatches/DirectConfrontationMatches';
 import AllAgainstAllMatches from './components/AllAgainstAllMatches/AllAgainstAllMatches';
 
@@ -74,7 +74,7 @@ const App: React.FC = () => {
             path="gincana/:competitionId/equipes"
             element={
               <SidebarLayout>
-                <TeamList />
+                <TeamRegistration />
               </SidebarLayout>
             }
           />
@@ -103,10 +103,10 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path="/teamoverview"
+            path="/inscrições-equipes"
             element={
               <SidebarLayout>
-                <TeamOverview />
+                <TeamList />
               </SidebarLayout>
             }
           />

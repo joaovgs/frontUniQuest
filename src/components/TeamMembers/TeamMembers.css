@@ -12,6 +12,7 @@
 }
   
 .modal-content {
+  position: relative;
   width: 400px;
   max-width: 90%;
   padding: 20px;
@@ -46,7 +47,7 @@
 }
 
 .member-item {
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px;
   margin-bottom: 10px;

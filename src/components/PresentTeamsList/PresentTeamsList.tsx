@@ -57,7 +57,7 @@ const PresentTeamsList: React.FC<PresentTeamsListProps> = ({ competitionId, onCl
       <div className="modal">
         <h2>Equipes Presentes</h2>
         {loading ? (
-          <Spinner /> // Conditionally render Spinner
+          <Spinner />
         ) : (
           <ul className="team-list">
             {teams.map((team) => (

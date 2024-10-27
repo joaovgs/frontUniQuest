@@ -3,7 +3,7 @@ import './TeamMembers.css';
 import { TeamMemberService } from '../../services/TeamMember'; 
 import { useSnackbar } from '../../context/SnackbarContext';
 import { TeamMemberPayload } from '../../models/TeamMember';
-import Spinner from '../Spinner/Spinner'; // Import Spinner
+import Spinner from '../Spinner/Spinner'; 
 
 interface TeamMembersProps {
   teamId: number; 
@@ -20,11 +20,11 @@ const TeamMembers: React.FC<TeamMembersProps> = ({ teamId, teamName, status, mem
   const [members, setMembers] = useState<string[]>([]); 
   const [password, setPassword] = useState<string>('');
   const [isUserMember, setIsUserMember] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true); // Add loading state
+  const [loading, setLoading] = useState<boolean>(true); 
   const { showSnackbar } = useSnackbar(); 
   
   const fetchTeamMembers = useCallback(async () => {
-    setLoading(true); // Start loading
+    setLoading(true); 
     try {
       const response = await TeamMemberService.getTeamMembers(teamId); 
       const teamMembers = response.teamMembers.map(member => member.user_name); 
@@ -37,7 +37,7 @@ const TeamMembers: React.FC<TeamMembersProps> = ({ teamId, teamName, status, mem
       console.error('Erro ao buscar membros da equipe:', error);
       showSnackbar('Erro ao carregar os membros da equipe. Tente novamente.', 'error');
     } finally {
-      setLoading(false); // End loading
+      setLoading(false); 
     }
   }, [teamId, competitionId, showSnackbar]);
 

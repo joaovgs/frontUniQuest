@@ -45,9 +45,6 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
         <nav className="sidebar-nav">
           <ul>
             <li>
-              <Link to="/" onClick={toggleSidebar}>Home</Link>
-            </li>
-            <li>
               <Link to="/organizadores" onClick={toggleSidebar}>Cadastro de Organizadores</Link>
             </li>
             <li>
@@ -57,7 +54,7 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
               <Link to="/provas" onClick={toggleSidebar}>Cadastro de Provas</Link>
             </li>
             <li>
-              <Link to="/teamoverview" onClick={toggleSidebar}>Lista de Equipes</Link>
+              <Link to="/inscrições-equipes" onClick={toggleSidebar}>Inscrições das Equipes</Link>
             </li>
           </ul>
         </nav>

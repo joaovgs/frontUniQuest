@@ -1,4 +1,4 @@
-.team-list-container {
+.team-overview-container {
   max-width: 800px;
   margin: auto;
   padding: 20px;
@@ -9,70 +9,59 @@
   overflow: hidden;
 }
 
-.team-list-header {
-  display: flex;
-  flex-direction: column; 
-  align-items: center; 
+.team-overview-container label {
+  font-weight: bold;
 }
 
-.search-input {
-  padding: 10px;
+.filter-container {
+  display: flex;
+  align-items: center;
   margin-bottom: 20px;
-  width: 100%; 
-  box-sizing: border-box;
+  margin-top: 10px;
+}
+
+.filter-container label {
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+.status-filter,
+.competition-id-select {
+  padding: 8px;
+  font-size: 14px;
   border-radius: 4px;
   border: 1px solid #ccc;
-}
-
-.team-list {
-  flex: 1; 
-  overflow-y: auto; 
-  max-height: calc(100vh - 200px); 
-}
-
-.team-item {
-  padding: 10px;
-  border: 1px solid #ddd;
-  margin-bottom: 10px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.team-item.selected {
-  background-color: #007bff; 
-  color: white; 
-  border: 1px solid #0056b3;
+  width: 244px;
+  margin-right: 20px;
 }
 
 .teams-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); 
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   width: 100%;
   overflow-y: auto;
-  height: calc(100% - 180px);
-  align-content: start;
 }
 
 .team-card {
   background-color: white;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   border-radius: 8px;
   padding: 20px;
   text-align: center;
-  transition: box-shadow 0.3s;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   position: relative;
-  cursor: pointer;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); 
+  transition: box-shadow 0.3s;
+  overflow: hidden;
+}
+
+.team-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .team-status {
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: 10px;
+  right: 10px;
   padding: 5px 10px;
   border-radius: 12px;
   font-size: 12px;
@@ -80,80 +69,36 @@
   color: white;
 }
 
-.private {
-  background-color: red;
+.pendente {
+  background-color: orange;
 }
 
-.public {
+.aprovada {
   background-color: green;
 }
 
+.rejeitada {
+  background-color: red;
+}
+
 .team-card h3 {
-  margin: 0;
   font-size: 18px;
-  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .team-card p {
   font-size: 14px;
   color: #666;
-  margin: 5px 0 0;
 }
 
-.team-card:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.members-list {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 10px;
 }
 
-
-.actions {
-  display: flex;
-  justify-content: right;
-  gap: 30px;
-  padding: 10px 0;
-  position: relative;
-  bottom: 0;
-}
-
-.create-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: white;
-  color: black;
-  border: 2px solid #007bff;
-  border-radius: 25px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.create-button:hover {
-  background-color: #007bff;
-  color: white;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9998;
-}
-
-.your-team {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  background-color: #007bff;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+.member-item {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
 }
