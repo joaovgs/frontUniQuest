@@ -49,12 +49,12 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
             </li>
             <li>
             <li>
-              <Link to="/gincanas" onClick={toggleSidebar}>Cadastro de Gincana</Link>
+              <Link to="/gincanas" onClick={toggleSidebar}>Cadastro de Gincanas</Link>
             </li>
               <Link to="/provas" onClick={toggleSidebar}>Cadastro de Provas</Link>
             </li>
             <li>
-              <Link to="/inscrições-equipes" onClick={toggleSidebar}>Inscrições das Equipes</Link>
+              <Link to="/inscrições-equipes" onClick={toggleSidebar}>Gerenciar Inscrições</Link>
             </li>
           </ul>
         </nav>

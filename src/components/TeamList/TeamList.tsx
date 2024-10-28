@@ -97,7 +97,7 @@ const TeamList: React.FC = () => {
 
   return (
     <div className="team-overview-container">
-      <h1>Inscrições das Equipes</h1>
+      <h1>Gerenciar Inscrições</h1>
 
       {loadingCompetitions ? (
         <div className="spinner-container">

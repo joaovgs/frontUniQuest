@@ -200,7 +200,7 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
             <div className="form-group participants-inputs">
               <input
                 type="number"
-                placeholder="Min. Participantes por Equipe"
+                placeholder="Mín. Participantes por Equipe"
                 value={minParticipant} 
                 onChange={(e) => setMinParticipant(e.target.value)}
               />
