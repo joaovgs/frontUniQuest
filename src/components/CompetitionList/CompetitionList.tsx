@@ -4,8 +4,10 @@ import CompetitionCreate from '../CompetitionCreate/CompetitionCreate';
 import { useSnackbar } from '../../context/SnackbarContext';
 import { Competition, CompetitionPayload } from '../../models/Competition';
 import { CompetitionService } from '../../services/Competition';
+import { TeamService } from '../../services/Team';
 import axios from 'axios';
 import Spinner from '../Spinner/Spinner';
+import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
 
 const CompetitionList: React.FC = () => {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
@@ -13,12 +15,19 @@ const CompetitionList: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedCompetition, setSelectedCompetition] = useState<Competition | null>(null);
   const [loadingCompetitions, setLoadingCompetitions] = useState(true);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState('Tem certeza de que deseja excluir esta gincana?');
   const { showSnackbar } = useSnackbar();
 
   const actionsRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const fetchCompetitions = useCallback(async (filter: string = '') => {
+    if (isCreateModalOpen) {
+      return;
+    }
     setLoadingCompetitions(true);
     try {
       const response = await CompetitionService.getCompetitions(filter);
@@ -71,6 +80,23 @@ const CompetitionList: React.FC = () => {
   const handleDeleteCompetition = async () => {
     if (selectedCompetition) {
       try {
+        const { teams } = await TeamService.getTeams(selectedCompetition.id);
+        if (teams.length > 0) {
+          setConfirmationMessage('Já existem equipes para esta gincana. Deseja continuar com a exclusão desta gincana?');
+        } else {
+          setConfirmationMessage('Tem certeza de que deseja excluir esta gincana?');
+        }
+        setIsConfirmationModalOpen(true);
+      } catch (error) {
+        showSnackbar('Erro ao verificar equipes. Tente novamente.', 'error');
+        console.error('Erro ao verificar equipes:', error);
+      }
+    }
+  };
+
+  const confirmDeleteCompetition = async () => {
+    if (selectedCompetition) {
+      try {
         await CompetitionService.deleteCompetition(selectedCompetition.id);
         setCompetitions((prevCompetitions) =>
           prevCompetitions.filter((competition) => competition.id !== selectedCompetition.id)
@@ -84,8 +110,23 @@ const CompetitionList: React.FC = () => {
     }
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(() => {
+      fetchCompetitions(event.target.value);
+    }, 1000);
+  };
+
   const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
       fetchCompetitions(searchTerm);
     }
   };
@@ -94,7 +135,7 @@ const CompetitionList: React.FC = () => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
 
-      if (isCreateModalOpen) {
+      if (isCreateModalOpen || isConfirmationModalOpen) {
         if (modalRef.current && !modalRef.current.contains(target)) {
           return;
         }
@@ -113,17 +154,20 @@ const CompetitionList: React.FC = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isCreateModalOpen]);
+  }, [isCreateModalOpen, isConfirmationModalOpen]);
 
   return (
     <div className="competition-list-container">
       <div className="competition-list-header">
         <h1>Gincanas</h1>
+        <div className="subheader">
+          <p>Esta tela permite gerenciar as gincanas do sistema. Utilize o campo de busca para encontrar gincanas específicas ou crie, edite e exclua gincanas conforme necessário.</p>
+        </div>
         <input
           type="text"
           placeholder="Pesquisar"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearchChange}
           onKeyDown={handleSearchKeyDown}
           className="search-input"
         />
@@ -188,6 +232,16 @@ const CompetitionList: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        message={confirmationMessage}
+        onConfirm={() => {
+          confirmDeleteCompetition();
+          setIsConfirmationModalOpen(false);
+        }}
+        onCancel={() => setIsConfirmationModalOpen(false)}
+      />
     </div>
   );
 };

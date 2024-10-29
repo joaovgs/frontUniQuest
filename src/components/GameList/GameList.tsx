@@ -6,6 +6,7 @@ import { Game, GamePayload } from '../../models/Game';
 import { GameService } from '../../services/Game';
 import axios from 'axios';
 import Spinner from '../Spinner/Spinner';
+import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
 
 const GameList: React.FC = () => {
   const [games, setGames] = useState<Game[]>([]);
@@ -13,12 +14,19 @@ const GameList: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [loadingGames, setLoadingGames] = useState(true);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState('Tem certeza de que deseja excluir esta prova?');
   const { showSnackbar } = useSnackbar();
 
   const actionsRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const fetchGames = useCallback(async (filter: string = '') => {
+    if (isCreateModalOpen) {
+      return;
+    }
     setLoadingGames(true);
     try {
       const response = await GameService.getGames(filter);
@@ -71,6 +79,23 @@ const GameList: React.FC = () => {
   const handleDeleteGame = async () => {
     if (selectedGame) {
       try {
+        const { exists } = await GameService.getGamesInCompetition(selectedGame.id);
+        if (exists) {
+          setConfirmationMessage('Esta prova está em uma gincana ativa. Deseja continuar com a exclusão desta prova?');
+        } else {
+          setConfirmationMessage('Tem certeza de que deseja excluir esta prova?');
+        }
+        setIsConfirmationModalOpen(true);
+      } catch (error) {
+        showSnackbar('Erro ao verificar gincanas. Tente novamente.', 'error');
+        console.error('Erro ao verificar gincanas:', error);
+      }
+    }
+  };
+
+  const confirmDeleteGame = async () => {
+    if (selectedGame) {
+      try {
         await GameService.deleteGame(selectedGame.id);
         setGames((prevGames) => prevGames.filter((g) => g.id !== selectedGame.id));
         setSelectedGame(null);
@@ -82,8 +107,23 @@ const GameList: React.FC = () => {
     }
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(() => {
+      fetchGames(event.target.value);
+    }, 1000);
+  };
+
   const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
       fetchGames(searchTerm);
     }
   };
@@ -92,7 +132,7 @@ const GameList: React.FC = () => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
 
-      if (isCreateModalOpen) {
+      if (isCreateModalOpen || isConfirmationModalOpen) {
         if (modalRef.current && !modalRef.current.contains(target)) {
           return;
         }
@@ -111,31 +151,20 @@ const GameList: React.FC = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isCreateModalOpen]);
-
-  const handleOpenCreateModal = (game?: Game) => {
-    if (game) {
-      setSelectedGame(game);
-    } else {
-      setSelectedGame(null);
-    }
-    setIsCreateModalOpen(true);
-  };
-
-  const handleCloseCreateModal = () => {
-    setIsCreateModalOpen(false);
-    setSelectedGame(null);
-  };
+  }, [isCreateModalOpen, isConfirmationModalOpen]);
 
   return (
     <div className="game-list-container">
       <div className="game-list-header">
         <h1>Provas</h1>
+        <div className="subheader">
+          <p>Esta tela permite gerenciar as provas do sistema. Utilize o campo de busca para encontrar provas específicas ou crie, edite e exclua provas conforme necessário.</p>
+        </div>
         <input
           type="text"
           placeholder="Pesquisar"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearchChange}
           onKeyDown={handleSearchKeyDown}
           className="search-input"
         />
@@ -166,13 +195,16 @@ const GameList: React.FC = () => {
       <div className="actions" ref={actionsRef}>
         <button
           className="create-button"
-          onClick={() => handleOpenCreateModal()}
+          onClick={() => {
+            setSelectedGame(null);
+            setIsCreateModalOpen(true);
+          }}
         >
           Criar
         </button>
         <button
           className="edit-button"
-          onClick={() => handleOpenCreateModal(selectedGame || undefined)}
+          onClick={() => setIsCreateModalOpen(true)}
           disabled={!selectedGame}
         >
           Editar
@@ -190,13 +222,23 @@ const GameList: React.FC = () => {
         <div className="modal-overlay">
           <div ref={modalRef}>
             <GameCreate
-              onClose={handleCloseCreateModal}
+              onClose={() => setIsCreateModalOpen(false)}
               onSave={handleSaveGame}
               initialGame={selectedGame || undefined}
             />
           </div>
         </div>
       )}
+
+      <ConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        message={confirmationMessage}
+        onConfirm={() => {
+          confirmDeleteGame();
+          setIsConfirmationModalOpen(false);
+        }}
+        onCancel={() => setIsConfirmationModalOpen(false)}
+      />
     </div>
   );
 };

@@ -138,5 +138,5 @@ h1 {
 .save-results-button:disabled {
   background-color: #ccc;
   color: #666;
-  border-color: #666;
+  border-color: #aaa;
 }

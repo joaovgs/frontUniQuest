@@ -7,7 +7,13 @@
   flex-direction: column;
   height: 90vh;
   overflow: hidden;
+  align-items: center;
 }
+
+.team-overview-container p {
+  margin: 0;
+}
+
 
 .team-overview-container label {
   font-weight: bold;

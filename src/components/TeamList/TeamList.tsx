@@ -36,7 +36,12 @@ const TeamList: React.FC = () => {
   };
 
   const handleCompetitionIdChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedCompetitionId(Number(event.target.value));
+    const newCompetitionId = Number(event.target.value);
+    if (newCompetitionId !== selectedCompetitionId) {
+      setSelectedCompetitionId(newCompetitionId);
+    } else {
+      fetchTeamsForApproval();
+    }
   };
 
   const filteredTeams = teams.filter((team) => {
@@ -98,6 +103,9 @@ const TeamList: React.FC = () => {
   return (
     <div className="team-overview-container">
       <h1>Gerenciar Inscrições</h1>
+      <div className="subheader">
+        <p>Esta tela permite gerenciar as inscrições das equipes. Utilize os filtros para visualizar as equipes e clique nelas para aprovar ou rejeitar as inscrições.</p>
+      </div>
 
       {loadingCompetitions ? (
         <div className="spinner-container">

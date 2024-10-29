@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './GameCreate.css';
 import { Game, GamePayload } from '../../models/Game';
+import { useSnackbar } from '../../context/SnackbarContext';
 
 interface GameCreateProps {
   onClose: () => void;
@@ -8,16 +9,17 @@ interface GameCreateProps {
   initialGame?: Game;
 }
 
-const GameCreate: React.FC<GameCreateProps> = ({ onClose, onSave, initialGame }) => {
-  const [name, setName] = useState<string>(''); 
-  const [minParticipant, setMinParticipant] = useState<number | ''>(''); 
-  const [maxParticipant, setMaxParticipant] = useState<number | ''>(''); 
-  const [firstScore, setFirstScore] = useState<number | ''>(''); 
-  const [secondScore, setSecondScore] = useState<number | ''>(''); 
-  const [thirdScore, setThirdScore] = useState<number | ''>(''); 
-  const [generalScore, setGeneralScore] = useState<number | ''>(''); 
-  const [category, setCategory] = useState<number>(0); 
+const GameCreate: React.FC<GameCreateProps> = ({ onClose, onSave, initialGame }) => { 
+  const [name, setName] = useState<string>(initialGame?.name || '');
+  const [minParticipant, setMinParticipant] = useState<number | ''>(initialGame?.min_participant || '');
+  const [maxParticipant, setMaxParticipant] = useState<number | ''>(initialGame?.max_participant || '');
+  const [firstScore, setFirstScore] = useState<number | ''>(initialGame?.first_score || '');
+  const [secondScore, setSecondScore] = useState<number | ''>(initialGame?.second_score || '');
+  const [thirdScore, setThirdScore] = useState<number | ''>(initialGame?.third_score || '');
+  const [generalScore, setGeneralScore] = useState<number | ''>(initialGame?.general_score || '');
+  const [category, setCategory] = useState<number>(initialGame?.category || 0);
   const [isEditing, setIsEditing] = useState<boolean>(!!initialGame);
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (initialGame) {
@@ -43,7 +45,41 @@ const GameCreate: React.FC<GameCreateProps> = ({ onClose, onSave, initialGame })
     }
   }, [initialGame]);
 
+  const validateFields = () => {
+    if (!name) {
+      showSnackbar('Nome da prova é obrigatório.', 'error');
+      return false;
+    }
+    if (minParticipant === '') {
+      showSnackbar('Mínimo de participantes é obrigatório.', 'error');
+      return false;
+    }
+    if (maxParticipant === '') {
+      showSnackbar('Máximo de participantes é obrigatório.', 'error');
+      return false;
+    }
+    if (firstScore === '') {
+      showSnackbar('Pontuação do primeiro lugar é obrigatória.', 'error');
+      return false;
+    }
+    if (secondScore === '') {
+      showSnackbar('Pontuação do segundo lugar é obrigatória.', 'error');
+      return false;
+    }
+    if (thirdScore === '') {
+      showSnackbar('Pontuação do terceiro lugar é obrigatória.', 'error');
+      return false;
+    }
+    if (generalScore === '') {
+      showSnackbar('Pontuação geral é obrigatória.', 'error');
+      return false;
+    }
+    return true;
+  };
+
   const handleSave = () => {
+    if (!validateFields()) return;
+
     const newGame: GamePayload = {
       name,
       min_participant: minParticipant as number,
@@ -52,8 +88,9 @@ const GameCreate: React.FC<GameCreateProps> = ({ onClose, onSave, initialGame })
       second_score: secondScore as number,
       third_score: thirdScore as number,
       general_score: generalScore as number,
-      category
+      category,
     };
+
     onSave(newGame);
   };
 
@@ -127,7 +164,7 @@ const GameCreate: React.FC<GameCreateProps> = ({ onClose, onSave, initialGame })
           <div className="form-group">
             <label>Categoria:</label>
             <div className="category-options">
-              <div className="category-option-radio">                 
+              <div className="category-option-radio">
                 <label htmlFor="confronto-direto">
                   <input
                     type="radio"
@@ -140,7 +177,7 @@ const GameCreate: React.FC<GameCreateProps> = ({ onClose, onSave, initialGame })
                   Confronto Direto
                 </label>
               </div>
-              <div className="category-option-radio">                
+              <div className="category-option-radio">
                 <label htmlFor="todos-contra-todos">
                   <input
                     type="radio"

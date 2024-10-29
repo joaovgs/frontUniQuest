@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import './TeamRegistration.css';
 import TeamCreate from '../TeamCreate/TeamCreate';
@@ -24,7 +24,13 @@ const TeamRegistration: React.FC = () => {
   const actionsRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  const fetchTeams = async (filter: string = '') => {
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);  
+
+  const fetchTeams = useCallback(async (filter: string = '') => {
+
+    if (isCreateModalOpen) {
+      return;
+    }
     setLoadingTeams(true);
     try {
       const { team_id } = await TeamMemberService.getUserInCompetition(Number(competitionId));
@@ -57,53 +63,20 @@ const TeamRegistration: React.FC = () => {
     } finally {
       setLoadingTeams(false); 
     }
-  };
+  }, []);
 
   useEffect(() => {
-    const fetchUserTeamIdAndTeams = async () => {
-      setLoadingTeams(true);
-      try {
-        const { team_id } = await TeamMemberService.getUserInCompetition(Number(competitionId));
-        setUserTeamId(team_id);
-
-        const response = await TeamService.getTeams(Number(competitionId), '');
-        if (response && Array.isArray(response.teams)) {
-          const sortedTeams = response.teams.sort((a, b) => {
-            if (a.id === team_id) return -1;
-            if (b.id === team_id) return 1;
-            return 0;
-          });
-          setTeams(sortedTeams);
-        } else {
-          setTeams([]);
-          console.error('Erro: Resposta de equipes não é um array válido.');
-        }
-      } catch (error) {
-        console.error('Erro ao buscar equipe do usuário ou equipes:', error);
-        setTeams([]);
-        if (axios.isAxiosError(error)) {
-          if (error.response?.status === 401) {
-            console.log('Erro de autenticação. Redirecionando para login...');
-          } else if (error.response?.status === 500) {
-            showSnackbar('Erro interno do servidor. Tente novamente mais tarde.', 'error');
-          }
-        }
-      } finally {
-        setLoadingTeams(false);
-      }
-    };
-
-    fetchUserTeamIdAndTeams();
-  }, [competitionId, showSnackbar]);
+    fetchTeams();
+  }, [competitionId, fetchTeams]);
 
   const handleSaveTeam = async (teamPayload: TeamPayload) => {
     try {
       await TeamService.createTeam(teamPayload);
       showSnackbar('Equipe criada com sucesso!', 'success');
-      setSearchTerm('');
-      await fetchTeams('');
       setIsCreateModalOpen(false);
+      setSearchTerm('');
       setSelectedTeam(null);
+      await fetchTeams('');
     } catch (error) {
       showSnackbar('Erro ao salvar equipe. Tente novamente.', 'error');
       console.error('Erro ao salvar equipe:', error);
@@ -129,21 +102,41 @@ const TeamRegistration: React.FC = () => {
     setIsParticipantsModalOpen(true);
   };
 
-  const handleCloseParticipantsModal = async () => {
+  const handleCloseParticipantsModal = () => {
     setIsParticipantsModalOpen(false);
     setSelectedTeam(null);
-    await fetchTeams(''); 
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(() => {
+      fetchTeams(event.target.value);
+    }, 1000);
+  };
+
+  const handleJoinOrLeave = async () => {
+    console.log('handleJoinOrLeave');
+    await fetchTeams();
+    handleCloseParticipantsModal();    
   };
 
   return (
     <div className="team-list-container">
       <div className="team-list-header">
         <h1>Equipes</h1>
+        <div className="subheader">          
+          <p>Esta tela permite gerenciar as equipes da gincana. Utilize o campo de busca para encontrar equipes específicas e você poderá entrar ou sair, ou então criar a sua própria equipe.</p>
+        </div>
         <input
           type="text"
           placeholder="Pesquisar"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearchChange}
           onKeyDown={handleSearchKeyDown}
           className="search-input"
         />
@@ -161,7 +154,7 @@ const TeamRegistration: React.FC = () => {
             teams.map((team, index) => (
               <div
                 key={index}
-                className={"team-card"}
+                className={"team-registration-card"}
                 onClick={() => handleTeamClick(team)}
               >
                 <div className={`team-status ${team.is_private === 1 ? 'private' : 'public'}`}>
@@ -180,6 +173,8 @@ const TeamRegistration: React.FC = () => {
         <button
           className="create-button"
           onClick={handleCreateButtonClick}
+          disabled={userTeamId !== null}
+          title={userTeamId !== null ? 'Você já está em uma equipe!' : ''}
         >
           Criar
         </button>
@@ -205,10 +200,11 @@ const TeamRegistration: React.FC = () => {
               teamName={selectedTeam.name}
               status={selectedTeam.is_private === 1 ? 'Privada' : 'Pública'}
               memberCount={`${selectedTeam.members_count}/${selectedTeam.max_participant}`}
-              onJoin={() => console.log('Entrar na equipe')}
+              onJoinOrLeave={handleJoinOrLeave}
               onCancel={handleCloseParticipantsModal}
               competitionId={Number(competitionId)}
               userTeamId={userTeamId}
+              minParticipant={selectedTeam.min_participant ?? 0}
             />
           </div>
         </div>

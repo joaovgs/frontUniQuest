@@ -5,6 +5,7 @@ import { Game } from '../../models/Game';
 import { GameService } from '../../services/Game';
 import { createPortal } from 'react-dom';
 import Spinner from '../Spinner/Spinner';
+import { useSnackbar } from '../../context/SnackbarContext';
 
 interface CompetitionCreateProps {
   onClose: () => void;
@@ -29,6 +30,7 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
   const [imageName, setImageName] = useState<string | null>(initialCompetition?.image_name || null);
   const [regulationName, setRegulationName] = useState<string | null>(initialCompetition?.regulation_name || null);
   const [loadingGames, setLoadingGames] = useState<boolean>(true);
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (initialCompetition) {
@@ -63,6 +65,7 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
         setAvailableGames(response.games);
       } catch (error) {
         console.error('Erro ao buscar as provas:', error);
+        showSnackbar('Erro ao buscar as provas.', 'error');
       } finally {
         setLoadingGames(false); 
       }
@@ -112,45 +115,111 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
     };
   };
 
+  const validateFields = () => {
+    if (!title) {
+      showSnackbar('Título é obrigatório.', 'error');
+      return false;
+    }
+    if (!dateEvent) {
+      showSnackbar('Data do evento é obrigatória.', 'error');
+      return false;
+    }
+    if (!startRegistration) {
+      showSnackbar('Início das inscrições é obrigatório.', 'error');
+      return false;
+    }
+    if (!endRegistration) {
+      showSnackbar('Fim das inscrições é obrigatório.', 'error');
+      return false;
+    }
+    if (!minParticipant) {
+      showSnackbar('Mínimo de participantes é obrigatório.', 'error');
+      return false;
+    }
+    if (!maxParticipant) {
+      showSnackbar('Máximo de participantes é obrigatório.', 'error');
+      return false;
+    }
+    if (!local) {
+      showSnackbar('Local do evento é obrigatório.', 'error');
+      return false;
+    }
+    if (!description) {
+      showSnackbar('Descrição é obrigatória.', 'error');
+      return false;
+    }
+    if (competitionGames.length === 0 || !competitionGames[0].game_id) {
+      showSnackbar('Pelo menos uma prova é obrigatória.', 'error');
+      return false;
+    }
+    for (const game of competitionGames) {
+      if (!game.date_game) {
+        showSnackbar('Data e hora da prova são obrigatórias.', 'error');
+        return false;
+      }
+      if (!game.local) {
+        showSnackbar('Local da prova é obrigatório.', 'error');
+        return false;
+      }
+    }
+    if (!imageName) {
+      showSnackbar('Imagem é obrigatório.', 'error');
+      return false;
+    }
+    if (!regulationName) {
+      showSnackbar('Regulamento é obrigatório.', 'error');
+      return false;
+    }
+    return true;
+  };
+
   const handleSave = () => {
+    if (!validateFields()) return;
+
     const newCompetition: CompetitionPayload = {
       title,
       date_event: dateEvent || new Date(),
       start_registration: startRegistration || new Date(),
-      end_registration: endRegistration || new Date(), 
-      min_participant: minParticipant ? parseInt(minParticipant) : 0, 
-      max_participant: maxParticipant ? parseInt(maxParticipant) : 0, 
+      end_registration: endRegistration || new Date(),
+      min_participant: minParticipant ? parseInt(minParticipant) : 0,
+      max_participant: maxParticipant ? parseInt(maxParticipant) : 0,
       local,
       description,
-      image, 
-      regulation,
-      image_name: imageName, 
-      regulation_name: regulationName, 
+      image_name: imageName,
+      regulation_name: regulationName,
       CompetitionGames: competitionGames.map((game) => ({
         ...game,
         date_game: game.date_game || new Date(),
-      })), 
+      })),
     };
 
-    if (image === null) {
-      delete newCompetition.image;
-    } else {
+    if (image) {
       newCompetition.image = image;
     }
-  
-    if (regulation === null) {
-      delete newCompetition.regulation;
-    } else {
+    if (regulation) {
       newCompetition.regulation = regulation;
     }
-    
-    console.log(newCompetition)
+
     onSave(newCompetition);
+    showSnackbar('Gincana salva com sucesso!', 'success');
   };
 
   const handleDateChange = (setter: React.Dispatch<React.SetStateAction<Date | undefined>>, event: React.ChangeEvent<HTMLInputElement>) => {
     const localDate = event.target.value ? new Date(event.target.value + 'Z') : undefined;
     setter(localDate);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    if (file) {
+      const validTypes = ['image/png', 'image/jpeg'];
+      if (!validTypes.includes(file.type)) {
+        showSnackbar('Apenas arquivos PNG ou JPG são permitidos.', 'error');
+        return;
+      }
+      setImageName(file.name);
+      handleFileToBase64(file, setImage);
+    }
   };
 
   return createPortal(
@@ -301,12 +370,8 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
                     <input
                       id="image-upload"
                       type="file"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0] || null;
-                        setImageName(file ? file.name : null);
-                        handleFileToBase64(file, setImage);
-                      }}
-                      accept="image/*"
+                      onChange={handleFileChange}
+                      accept=".png, .jpg, .jpeg"
                     />
                     <label htmlFor="image-upload" className="file-input-label">
                       <span>{imageName || "Selecione uma imagem ou arraste o arquivo"}</span>
@@ -322,10 +387,14 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
                       type="file"
                       onChange={(e) => {
                         const file = e.target.files?.[0] || null;
+                        if (file && file.type !== 'application/pdf') {
+                          showSnackbar('Apenas arquivos PDF são permitidos para o regulamento.', 'error');
+                          return;
+                        }
                         setRegulationName(file ? file.name : null);
                         handleFileToBase64(file, setRegulation);
                       }}
-                      accept=".pdf,.doc,.docx"
+                      accept=".pdf"
                     />
                     <label htmlFor="regulation-upload" className="file-input-label">
                       <span>{regulationName || "Selecione um arquivo ou arraste o arquivo"}</span>

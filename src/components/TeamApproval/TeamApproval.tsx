@@ -4,6 +4,7 @@ import { TeamMemberService } from '../../services/TeamMember';
 import { useSnackbar } from '../../context/SnackbarContext';
 import Spinner from '../Spinner/Spinner'; 
 import { TeamService } from '../../services/Team';
+import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
 
 interface ApprovalModalProps {
   teamId: number; 
@@ -23,6 +24,8 @@ const ApprovalModal: React.FC<ApprovalModalProps> = ({ teamId, teamName, status,
   const [members, setMembers] = useState<string[]>([]); 
   const [loading, setLoading] = useState<boolean>(true); 
   const { showSnackbar } = useSnackbar(); 
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [actionToConfirm, setActionToConfirm] = useState<'approve' | 'reject' | null>(null);
 
   const fetchTeamMembers = useCallback(async () => {
     setLoading(true); 
@@ -36,25 +39,39 @@ const ApprovalModal: React.FC<ApprovalModalProps> = ({ teamId, teamName, status,
     } finally {
       setLoading(false); 
     }
-  }, [teamId, showSnackbar]);
+  }, [teamId]);
 
   useEffect(() => {
     fetchTeamMembers();
   }, [fetchTeamMembers]); 
 
-  const handleApprove = async () => {
-    try {
-      await TeamService.updateStatus(teamId, { status: 1 });
-      showSnackbar('Equipe aprovada com sucesso!', 'success');
-      onApprove();
-    } catch (error) {
-      console.error('Erro ao aprovar equipe:', error);
-      showSnackbar('Erro ao aprovar a equipe. Tente novamente.', 'error');
+  const handleApprove = () => {
+    setActionToConfirm('approve');
+    setIsConfirmationModalOpen(true);
+  };
+
+  const handleReject = () => {
+    if (!showRejectReason) {
+      setShowRejectReason(true);
+    } else if (rejectReason.trim() === '') {
+      showSnackbar('O motivo da rejeição é obrigatório.', 'error');
+    } else {
+      setActionToConfirm('reject');
+      setIsConfirmationModalOpen(true);
     }
   };
 
-  const handleReject = async () => {
-    if (showRejectReason) {
+  const confirmAction = async () => {
+    if (actionToConfirm === 'approve') {
+      try {
+        await TeamService.updateStatus(teamId, { status: 1 });
+        showSnackbar('Equipe aprovada com sucesso!', 'success');
+        onApprove();
+      } catch (error) {
+        console.error('Erro ao aprovar equipe:', error);
+        showSnackbar('Erro ao aprovar a equipe. Tente novamente.', 'error');
+      }
+    } else if (actionToConfirm === 'reject') {
       try {
         await TeamService.updateStatus(teamId, { status: -1, message: rejectReason });
         showSnackbar('Equipe rejeitada com sucesso!', 'success');
@@ -63,9 +80,9 @@ const ApprovalModal: React.FC<ApprovalModalProps> = ({ teamId, teamName, status,
         console.error('Erro ao rejeitar equipe:', error);
         showSnackbar('Erro ao rejeitar a equipe. Tente novamente.', 'error');
       }
-    } else {
-      setShowRejectReason(true);
     }
+    setIsConfirmationModalOpen(false);
+    setActionToConfirm(null);
   };
 
   return (
@@ -108,6 +125,12 @@ const ApprovalModal: React.FC<ApprovalModalProps> = ({ teamId, teamName, status,
                 {showRejectReason ? 'Confirmar' : 'Rejeitar'}
               </button>              
             </div>
+            <ConfirmationModal
+              isOpen={isConfirmationModalOpen}
+              message={`Tem certeza de que deseja ${actionToConfirm === 'approve' ? 'aprovar' : 'rejeitar'} esta equipe?`}
+              onConfirm={confirmAction}
+              onCancel={() => setIsConfirmationModalOpen(false)}
+            />
           </>
         )}
       </div>

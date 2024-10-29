@@ -10,6 +10,7 @@ export interface Team {
   system_deleted?: boolean | null;
   system_date_deleted?: Date | null;
   members_count?: number;
+  min_participant?: number;
   max_participant?: number;
   message?: string;
 }

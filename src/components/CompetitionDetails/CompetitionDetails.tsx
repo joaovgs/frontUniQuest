@@ -46,12 +46,15 @@ const CompetitionDetails: React.FC = () => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const day = String(date.getUTCDate()).padStart(2, '0');
-    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-    const year = date.getUTCFullYear();
-    const timePart = dateString.split('T')[1].split('.')[0];
-
-    return `${day}/${month}/${year} ${timePart.substring(0, 5)}`;
+    date.setHours(date.getHours() + 3);
+    return date.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
   };
 
   const handleDownloadRegulation = async () => {
@@ -82,6 +85,20 @@ const CompetitionDetails: React.FC = () => {
     }
   };
 
+  const isRegistrationOpen = () => {
+    if (!competition?.start_registration || !competition?.end_registration) {
+      return false;
+    }
+    const now = new Date();
+    const start = new Date(competition.start_registration);
+    const end = new Date(competition.end_registration);
+
+    start.setHours(start.getHours() + 3);
+    end.setHours(end.getHours() + 3);
+    
+    return now >= start && now <= end;
+  };
+
   return (
     <div className="competition-details-container">
       {loading ? (
@@ -98,9 +115,6 @@ const CompetitionDetails: React.FC = () => {
             <div className="competition-details">
               <p>
                 <strong>Data:</strong> {competition?.date_event ? formatDate(competition.date_event) : 'Data não informada'}
-              </p>
-              <p>
-                <strong>Horário:</strong> {competition?.date_event ? formatDate(competition.date_event).split(' ')[1] : 'Horário não informado'}
               </p>
               <p>
                 <strong>Inscrições:</strong>&nbsp;
@@ -141,7 +155,12 @@ const CompetitionDetails: React.FC = () => {
             <button className="action-button" onClick={handleRankingClick}>
               Ranking 🏆
             </button>
-            <button className="action-button" onClick={handleTeamSignupClick}>
+            <button
+              className="action-button"
+              onClick={handleTeamSignupClick}
+              disabled={!isRegistrationOpen()}
+              title={!isRegistrationOpen() ? "Inscrições encerradas" : ""}
+            >
               Inscrever-se ➡
             </button>
           </div>

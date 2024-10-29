@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSnackbar } from '../../context/SnackbarContext';
 import './UserCreate.css';
 import { User, UserPayload } from '../../models/User';
 
@@ -13,6 +14,7 @@ const UserCreate: React.FC<UserCreateProps> = ({ onClose, onSave, initialUser })
   const [email, setEmail] = useState<string>(''); 
   const [password, setPassword] = useState<string>(''); 
   const [isEditing, setIsEditing] = useState<boolean>(!!initialUser);
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (initialUser) {
@@ -28,7 +30,31 @@ const UserCreate: React.FC<UserCreateProps> = ({ onClose, onSave, initialUser })
     }
   }, [initialUser]);
 
+  const validateFields = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!name) {
+      showSnackbar('Nome é obrigatório.', 'error');
+      return false;
+    }
+    if (!isEditing && !email) {
+      showSnackbar('Email é obrigatório.', 'error');
+      return false;
+    }
+    if (!isEditing && email && !emailRegex.test(email)) {
+      showSnackbar('Email inválido.', 'error');
+      return false;
+    }
+    if (!isEditing && !password) {
+      showSnackbar('Senha é obrigatória.', 'error');
+      return false;
+    }
+    return true;
+  };
+
   const handleSave = () => {
+    if (!validateFields()) return;
+
     const newUser = {
       name,
       email,
@@ -56,6 +82,8 @@ const UserCreate: React.FC<UserCreateProps> = ({ onClose, onSave, initialUser })
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="user-input"
+            disabled={isEditing}
+            title={isEditing ? 'Não é possível alterar o email.' : ''}
           />
           <input
             type="password"

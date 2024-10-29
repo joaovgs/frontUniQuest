@@ -6,6 +6,7 @@ import { User, UserPayload } from '../../models/User';
 import { UserService } from '../../services/User';
 import axios from 'axios';
 import Spinner from '../Spinner/Spinner';
+import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
 
 const UserList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -13,12 +14,18 @@ const UserList: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [loadingUsers, setLoadingUsers] = useState(true);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const { showSnackbar } = useSnackbar();
 
   const actionsRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const fetchUsers = useCallback(async (filter: string = '') => {
+    if (isCreateModalOpen) {
+      return;
+    }
     setLoadingUsers(true);
     try {
       const response = await UserService.getUsers(filter);
@@ -58,13 +65,17 @@ const UserList: React.FC = () => {
         await UserService.createUser(userPayload);
         showSnackbar('Organizador criado com sucesso!', 'success');
       }
-      setSearchTerm('');
-      await fetchUsers('');
       setIsCreateModalOpen(false);
       setSelectedUser(null);
+      setSearchTerm('');
+      await fetchUsers('');
     } catch (error) {
-      showSnackbar('Erro ao salvar organizador. Tente novamente.', 'error');
-      console.error('Erro ao salvar organizador:', error);
+      if (axios.isAxiosError(error) && error.response?.status === 409) {
+        showSnackbar('Email já cadastrado no sistema.', 'error');
+      } else {
+        showSnackbar('Erro ao salvar organizador. Tente novamente.', 'error');
+        console.error('Erro ao salvar organizador:', error);
+      }
     }
   };
 
@@ -84,15 +95,30 @@ const UserList: React.FC = () => {
 
   const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
       fetchUsers(searchTerm);
     }
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(() => {
+      fetchUsers(event.target.value);
+    }, 1000);
   };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
 
-      if (isCreateModalOpen) {
+      if (isCreateModalOpen || isConfirmationModalOpen) {
         if (modalRef.current && !modalRef.current.contains(target)) {
           return;
         }
@@ -111,7 +137,7 @@ const UserList: React.FC = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isCreateModalOpen]);
+  }, [isCreateModalOpen, isConfirmationModalOpen]);
 
   return (
     <div className="user-list-container">
@@ -125,7 +151,7 @@ const UserList: React.FC = () => {
           type="text"
           placeholder="Pesquisar"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearchChange}
           onKeyDown={handleSearchKeyDown}
         />
       </div>
@@ -171,7 +197,7 @@ const UserList: React.FC = () => {
         </button>
         <button
           className="delete-button"
-          onClick={handleDeleteUser}
+          onClick={() => setIsConfirmationModalOpen(true)}
           disabled={!selectedUser}
         >
           Excluir
@@ -189,6 +215,16 @@ const UserList: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        message="Tem certeza de que deseja excluir este organizador?"
+        onConfirm={() => {
+          handleDeleteUser();
+          setIsConfirmationModalOpen(false);
+        }}
+        onCancel={() => setIsConfirmationModalOpen(false)}
+      />
     </div>
   );
 };

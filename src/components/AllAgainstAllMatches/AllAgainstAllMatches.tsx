@@ -12,7 +12,7 @@ import Spinner from '../Spinner/Spinner';
 const AllAgainstAllMatches: React.FC = () => {
   const { competitionId, gameId } = useParams<{ competitionId: string; gameId: string }>();
   const [matches, setMatches] = useState<AllAgainstAllMatch[]>([]);
-  const [numRounds, setNumRounds] = useState(1);
+  const [numRounds, setNumRounds] = useState<number | ''>();
   const { showSnackbar } = useSnackbar();
   const [showTeamsList, setShowTeamsList] = useState(false);
   const [activeRound, setActiveRound] = useState(0);
@@ -58,7 +58,16 @@ const AllAgainstAllMatches: React.FC = () => {
   }, [matches]);
 
   const handleGenerateMatches = () => {
-    setShowTeamsList(true);
+    if ((numRounds || 0) <= 0) {
+      showSnackbar('Número de partidas é obrigatório.', 'error');
+      return;
+    }
+
+    if (matches.length > 0) {
+      setShowTeamsList(true);
+    } else {
+      setShowTeamsList(true);
+    }
   };
 
   const handleCloseTeamsList = () => {
@@ -73,7 +82,7 @@ const AllAgainstAllMatches: React.FC = () => {
         const payload: AllAgainstAllMatchPayload = {
           competition_id: Number(competitionId),
           game_id: Number(gameId),
-          number_of_rounds: numRounds,
+          number_of_rounds: Number(numRounds),
           teams: presentTeams,
         };
 
@@ -196,10 +205,9 @@ const AllAgainstAllMatches: React.FC = () => {
             <h3>Todos Contra Todos</h3>
             <input
               type="number"
+              placeholder=''
               value={numRounds}
               onChange={(e) => setNumRounds(Number(e.target.value))}
-              min={1}
-              max={10}
               className="input-num-matches"
             />
             <button className="generate-matches-button" onClick={handleGenerateMatches}>

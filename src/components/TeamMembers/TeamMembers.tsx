@@ -4,26 +4,34 @@ import { TeamMemberService } from '../../services/TeamMember';
 import { useSnackbar } from '../../context/SnackbarContext';
 import { TeamMemberPayload } from '../../models/TeamMember';
 import Spinner from '../Spinner/Spinner'; 
+import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
 
 interface TeamMembersProps {
   teamId: number; 
   teamName: string;
   status: 'Pública' | 'Privada';
   memberCount: string;
-  onJoin: () => void;
+  onJoinOrLeave: () => void;
   onCancel: () => void;
   competitionId: number;
   userTeamId: number | null;
+  minParticipant: number;
 }
 
-const TeamMembers: React.FC<TeamMembersProps> = ({ teamId, teamName, status, memberCount, onJoin, onCancel, competitionId, userTeamId }) => {
+const TeamMembers: React.FC<TeamMembersProps> = ({ teamId, teamName, status, memberCount, onJoinOrLeave, onCancel, competitionId, userTeamId, minParticipant }) => {
   const [members, setMembers] = useState<string[]>([]); 
   const [password, setPassword] = useState<string>('');
   const [isUserMember, setIsUserMember] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true); 
   const { showSnackbar } = useSnackbar(); 
-  
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState('');
+  const [confirmAction, setConfirmAction] = useState<() => void>(() => {});
+
   const fetchTeamMembers = useCallback(async () => {
+    if (isConfirmationModalOpen) {
+      return;
+    }
     setLoading(true); 
     try {
       const response = await TeamMemberService.getTeamMembers(teamId); 
@@ -39,7 +47,7 @@ const TeamMembers: React.FC<TeamMembersProps> = ({ teamId, teamName, status, mem
     } finally {
       setLoading(false); 
     }
-  }, [teamId, competitionId, showSnackbar]);
+  }, [teamId, competitionId]);
 
   useEffect(() => {
     fetchTeamMembers();
@@ -64,8 +72,7 @@ const TeamMembers: React.FC<TeamMembersProps> = ({ teamId, teamName, status, mem
       }
       await TeamMemberService.createTeamMember(payload);
       showSnackbar('Você entrou na equipe com sucesso!', 'success');
-      onJoin();
-      onCancel(); 
+      onJoinOrLeave();
     } catch (error: any) {
       if (error.response && error.response.status === 403) {
         showSnackbar('Senha incorreta. Tente novamente.', 'error');
@@ -80,11 +87,17 @@ const TeamMembers: React.FC<TeamMembersProps> = ({ teamId, teamName, status, mem
     try {
       await TeamMemberService.deleteTeamMember(teamId); 
       showSnackbar('Você saiu da equipe com sucesso!', 'success');
-      onCancel();
+      onJoinOrLeave();
     } catch (error) {
       console.error('Erro ao sair da equipe:', error);
       showSnackbar('Erro ao sair da equipe. Tente novamente.', 'error');
     }
+  };
+
+  const openConfirmationModal = (message: string, action: () => void) => {
+    setConfirmationMessage(message);
+    setConfirmAction(() => action);
+    setIsConfirmationModalOpen(true);
   };
 
   return (
@@ -99,6 +112,10 @@ const TeamMembers: React.FC<TeamMembersProps> = ({ teamId, teamName, status, mem
             </div>
             <h2>{teamName}</h2>
             
+            {members.length >= minParticipant && (
+              <p className="min-participant-message">Já atingiu o n° mínimo de integrantes. Já é possível participar da gincana!</p>
+            )}
+
             <ul className="members-list">
               {members.length > 0 ? (
                 members.map((member, index) => (
@@ -125,14 +142,20 @@ const TeamMembers: React.FC<TeamMembersProps> = ({ teamId, teamName, status, mem
             <div className="members-actions">
               <button className="cancelbutton" onClick={onCancel}>Cancelar</button>
               {isUserMember ? (
-                <button className="leavebutton" onClick={handleLeave}>Sair</button>
+                <button className="leavebutton" onClick={() => openConfirmationModal('Tem certeza de que deseja sair da equipe?', handleLeave)}>Sair</button>
               ) : (
-                <button className="joinbutton" onClick={handleJoin}>Entrar</button>
+                <button className="joinbutton" onClick={() => openConfirmationModal('Tem certeza de que deseja entrar na equipe?', handleJoin)}>Entrar</button>
               )}
             </div>
           </>
         )}
       </div>
+      <ConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        onCancel={() => setIsConfirmationModalOpen(false)}
+        onConfirm={confirmAction}
+        message={confirmationMessage}
+      />
     </div>
   );
 };

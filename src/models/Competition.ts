@@ -16,9 +16,9 @@ export interface Competition {
   local: string;
   description?: string | null;  
   CompetitionGames?: CompetitionGame[];
-  image?: string | null;
+  image?: string;
   image_name?: string | null;
-  regulation?: string | null;
+  regulation?: string;
   regulation_name?: string | null;
   created_at: string;
   system_deleted?: boolean | null;

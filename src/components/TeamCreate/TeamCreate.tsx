@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './TeamCreate.css';
 import { TeamPayload } from '../../models/Team';
+import { useSnackbar } from '../../context/SnackbarContext';
 
 interface TeamCreateProps {
   onClose: () => void;
@@ -12,8 +13,23 @@ const TeamCreate: React.FC<TeamCreateProps> = ({ onClose, onSave, competitionId 
   const [name, setName] = useState<string>(''); 
   const [isPrivate, setIsPrivate] = useState<number>(0); 
   const [password, setPassword] = useState<string>(''); 
+  const { showSnackbar } = useSnackbar();
+
+  const validateFields = () => {
+    if (!name) {
+      showSnackbar('Nome é obrigatório.', 'error');
+      return false;
+    }
+    if (isPrivate === 1 && !password) {
+      showSnackbar('Senha é obrigatória para equipes privadas.', 'error');
+      return false;
+    }
+    return true;
+  };
 
   const handleSave = () => {
+    if (!validateFields()) return;
+
     const newTeam: TeamPayload = {
       name,
       is_private: isPrivate, 

@@ -92,3 +92,9 @@
   align-items: center;
   height: 100%;
 }
+
+.min-participant-message {
+  font-size: 12px; 
+  color: orange;
+  margin-top: 0px;
+}

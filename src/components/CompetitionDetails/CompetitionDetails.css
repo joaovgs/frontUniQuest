@@ -105,3 +105,10 @@
   background-color: #007bff;
   color: white;
 }
+
+.action-button:disabled, .competition-regulamento-button:disabled {
+  background-color: #ccc;
+  color: #666;
+  border: 2px solid black;
+  cursor: not-allowed;
+}

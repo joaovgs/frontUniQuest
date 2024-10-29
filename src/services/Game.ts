@@ -24,6 +24,16 @@ export const GameService = {
     }
   },
 
+  async getGamesInCompetition(gameId: number): Promise<{ exists: Boolean }> {
+    try {
+      const response = await api.get<{ exists: Boolean }>(`/games-in-competition/${gameId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar provas em gincanas ativas:', error);
+      throw error;
+    }
+  },
+
   createGame: async (game: GamePayload): Promise<Game> => {
     try {
       const response = await api.post('/games', game);

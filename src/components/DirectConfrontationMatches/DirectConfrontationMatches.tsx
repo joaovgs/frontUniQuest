@@ -8,6 +8,7 @@ import { DirectConfrontationMatch, DirectConfrontationMatchPayload } from '../..
 import { useSnackbar } from '../../context/SnackbarContext';
 import { GameService } from '../../services/Game';
 import Spinner from '../Spinner/Spinner';
+import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
 
 const DirectConfrontationMatches: React.FC = () => {
   const { competitionId, gameId } = useParams<{ competitionId: string; gameId: string }>();
@@ -17,6 +18,7 @@ const DirectConfrontationMatches: React.FC = () => {
   const { showSnackbar } = useSnackbar();
   const [gameName, setGameName] = useState('Prova');
   const [loading, setLoading] = useState(true);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
   const fetchGameName = useCallback(async () => {
     if (gameId) {
@@ -81,7 +83,16 @@ const DirectConfrontationMatches: React.FC = () => {
   };
 
   const handleGenerateMatches = () => {
+    if (matches.length > 0) {
+      setIsConfirmationModalOpen(true);
+    } else {
+      setShowTeamsList(true);
+    }
+  };
+
+  const confirmGenerateMatches = () => {
     setShowTeamsList(true);
+    setIsConfirmationModalOpen(false);
   };
 
   const handleCloseTeamsList = () => {
@@ -235,6 +246,12 @@ const DirectConfrontationMatches: React.FC = () => {
               onSaveWinner={handleSaveWinner}
             />
           )}
+          <ConfirmationModal
+            isOpen={isConfirmationModalOpen}
+            message="Já existe partidas criadas para esta prova. Caso prossiga, as partidas atuais serão deletadas e novas serão criadas. Deseja continuar?"
+            onConfirm={confirmGenerateMatches}
+            onCancel={() => setIsConfirmationModalOpen(false)}
+          />
         </>
       )}
     </div>

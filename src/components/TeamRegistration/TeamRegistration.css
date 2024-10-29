@@ -9,6 +9,11 @@
   overflow: hidden;
 }
 
+.team-list-container p {
+  margin: 0;
+  margin-bottom: 10px;
+}
+
 .team-list-header {
   display: flex;
   flex-direction: column; 
@@ -45,16 +50,17 @@
 }
 
 .teams-grid {
+  flex: 1;
   display: grid;
-  grid-template-columns: repeat(2, 1fr); 
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   width: 100%;
   overflow-y: auto;
-  height: calc(100% - 180px);
+  max-height: calc(100vh - 200px);
   align-content: start;
 }
 
-.team-card {
+.team-registration-card {
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -130,6 +136,13 @@
 .create-button:hover {
   background-color: #007bff;
   color: white;
+}
+
+.create-button:disabled {
+  background-color: #ccc;
+  color: #666;
+  border-color: #aaa; 
+  cursor: not-allowed;
 }
 
 .modal-overlay {
