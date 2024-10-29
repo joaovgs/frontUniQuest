@@ -79,42 +79,44 @@ const RankingPage: React.FC = () => {
 
   return (
     <>
-      {loading ? (
-        <Spinner />
-      ) : (
-        <div className="ranking-container">
-          <h1>Ranking</h1>
-          <table className="ranking-table">
-            <thead>
-              <tr>
-                <th>Ranking</th>
-                <th>Equipe</th>
-                {gameNames.map((gameName, index) => (
-                  <th key={index} onClick={() => requestSort(gameName)}>
-                    {gameName} {getSortIcon(gameName)}
+      <div className="ranking-container">
+        {loading ? (
+          <Spinner />
+        ) : (
+          <>
+            <h1>Ranking</h1>
+            <table className="ranking-table">
+              <thead>
+                <tr>
+                  <th>Ranking</th>
+                  <th>Equipe</th>
+                  {gameNames.map((gameName, index) => (
+                    <th key={index} onClick={() => requestSort(gameName)}>
+                      {gameName} {getSortIcon(gameName)}
+                    </th>
+                  ))}
+                  <th onClick={() => requestSort('total_score')}>
+                    Geral {getSortIcon('total_score')}
                   </th>
-                ))}
-                <th onClick={() => requestSort('total_score')}>
-                  Geral {getSortIcon('total_score')}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedTeams.map((team, index) => (
-                <tr key={team.team_id}>
-                  <td>{index + 1}º</td>
-                  <td>{team.team_name}</td>
-                  {gameNames.map((gameName, i) => {
-                    const score = team.scores.find(score => score.game_name === gameName);
-                    return <td key={i}>{score ? score.score : '-'}</td>;
-                  })}
-                  <td>{team.total_score}</td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {sortedTeams.map((team, index) => (
+                  <tr key={team.team_id}>
+                    <td>{index + 1}º</td>
+                    <td>{team.team_name}</td>
+                    {gameNames.map((gameName, i) => {
+                      const score = team.scores.find(score => score.game_name === gameName);
+                      return <td key={i}>{score ? score.score : '-'}</td>;
+                    })}
+                    <td>{team.total_score}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        )}
+      </div>
     </>
   );
 };

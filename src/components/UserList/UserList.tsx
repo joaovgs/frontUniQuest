@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './UserList.css';
 import UserCreate from '../UserCreate/UserCreate';
 import { useSnackbar } from '../../context/SnackbarContext';
@@ -18,7 +18,7 @@ const UserList: React.FC = () => {
   const actionsRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  const fetchUsers = async (filter: string = '') => {
+  const fetchUsers = useCallback(async (filter: string = '') => {
     setLoadingUsers(true);
     try {
       const response = await UserService.getUsers(filter);
@@ -43,11 +43,11 @@ const UserList: React.FC = () => {
     } finally {
       setLoadingUsers(false);
     }
-  };
+  }, [showSnackbar]);
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   const handleSaveUser = async (userPayload: UserPayload) => {
     try {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './GameList.css';
 import GameCreate from '../GameCreate/GameCreate';
 import { useSnackbar } from '../../context/SnackbarContext';
@@ -18,7 +18,7 @@ const GameList: React.FC = () => {
   const actionsRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  const fetchGames = async (filter: string = '') => {
+  const fetchGames = useCallback(async (filter: string = '') => {
     setLoadingGames(true);
     try {
       const response = await GameService.getGames(filter);
@@ -43,11 +43,11 @@ const GameList: React.FC = () => {
     } finally {
       setLoadingGames(false);
     }
-  };
+  }, [showSnackbar]);
 
   useEffect(() => {
     fetchGames();
-  }, []);
+  }, [fetchGames]);
 
   const handleSaveGame = async (gamePayload: GamePayload) => {
     try {

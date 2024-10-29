@@ -55,7 +55,7 @@ const TeamRegistration: React.FC = () => {
         }
       }
     } finally {
-      setLoadingTeams(false); // Stop loading after fetching data
+      setLoadingTeams(false); 
     }
   };
 
@@ -94,7 +94,7 @@ const TeamRegistration: React.FC = () => {
     };
 
     fetchUserTeamIdAndTeams();
-  }, [competitionId]);
+  }, [competitionId, showSnackbar]);
 
   const handleSaveTeam = async (teamPayload: TeamPayload) => {
     try {

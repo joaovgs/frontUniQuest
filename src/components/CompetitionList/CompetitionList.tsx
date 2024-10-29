@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './CompetitionList.css';
 import CompetitionCreate from '../CompetitionCreate/CompetitionCreate';
 import { useSnackbar } from '../../context/SnackbarContext';
@@ -18,7 +18,7 @@ const CompetitionList: React.FC = () => {
   const actionsRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  const fetchCompetitions = async (filter: string = '') => {
+  const fetchCompetitions = useCallback(async (filter: string = '') => {
     setLoadingCompetitions(true);
     try {
       const response = await CompetitionService.getCompetitions(filter);
@@ -43,11 +43,11 @@ const CompetitionList: React.FC = () => {
     } finally {
       setLoadingCompetitions(false);
     }
-  };
+  }, [showSnackbar]);
 
   useEffect(() => {
     fetchCompetitions();
-  }, []);
+  }, [fetchCompetitions]);
 
   const handleSaveCompetition = async (competitionPayload: CompetitionPayload) => {
     try {

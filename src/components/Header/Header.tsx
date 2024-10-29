@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import './Header.css';
 
 const Header: React.FC = () => {
-  const { isLoggedIn, userName, login, logout } = useAuth(); 
+  const { isLoggedIn, userName, logout } = useAuth(); 
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement>(null);
