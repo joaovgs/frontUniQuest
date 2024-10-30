@@ -22,17 +22,11 @@ const Login: React.FC = () => {
 
       if (response.status === 200) {
         console.log('Login bem-sucedido, status:', response.status);
-        localStorage.setItem('authToken', response.data.token);
-
-        const userResponse = await api.get('/users/me', {
-          params: { email: email },
-        });
-
-        console.log('Informações do usuário obtidas:', userResponse.data);
-        login(userResponse.data.user.name);
+        
+        const token = response.data.token;
+        login(token); 
 
         showSnackbar('Login realizado com sucesso!', 'success');
-
         navigate('/');
       }
     } catch (error: any) {

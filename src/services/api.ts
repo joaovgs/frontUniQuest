@@ -1,8 +1,10 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
+type CustomAxiosRequestConfig = AxiosRequestConfig & { _retry?: boolean };
+
 const api = axios.create({
   baseURL: 'https://uniquest-production.up.railway.app',
-  //baseURL: 'http://localhost:3333',
+  // baseURL: 'http://localhost:3333',
   withCredentials: true,
 });
 
@@ -17,7 +19,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
+    const originalRequest = error.config as CustomAxiosRequestConfig;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true; 
@@ -42,7 +44,11 @@ api.interceptors.response.use(
       } catch (refreshError) {
         console.error('Erro ao renovar o token:', refreshError);
         localStorage.removeItem('authToken');
-        window.location.href = '/login';
+        
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
+        
         return Promise.reject(refreshError);
       }
     }

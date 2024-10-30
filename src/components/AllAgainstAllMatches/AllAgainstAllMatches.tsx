@@ -8,9 +8,11 @@ import { useSnackbar } from '../../context/SnackbarContext';
 import PresentTeamsList from '../PresentTeamsList/PresentTeamsList';
 import { GameService } from '../../services/Game';
 import Spinner from '../Spinner/Spinner';
+import { useAuth } from '../../context/AuthContext';
 
 const AllAgainstAllMatches: React.FC = () => {
   const { competitionId, gameId } = useParams<{ competitionId: string; gameId: string }>();
+  const { role } = useAuth();
   const [matches, setMatches] = useState<AllAgainstAllMatch[]>([]);
   const [numRounds, setNumRounds] = useState<number | ''>();
   const { showSnackbar } = useSnackbar();
@@ -127,6 +129,8 @@ const AllAgainstAllMatches: React.FC = () => {
   };
 
   const onDragEnd = (result: any) => {
+    if (role !== 1) return;
+
     const { source, destination } = result;
 
     if (!destination) return;
@@ -196,30 +200,32 @@ const AllAgainstAllMatches: React.FC = () => {
   return (
     <div className="container">
       {loading ? (
-        <Spinner /> 
+        <Spinner />
       ) : (
         <>
           <h1>{gameName}</h1>
-          
-          <div className="generate-matches-container">
-            <h3>Todos Contra Todos</h3>
-            <input
-              type="number"
-              placeholder=''
-              value={numRounds}
-              onChange={(e) => setNumRounds(Number(e.target.value))}
-              className="input-num-matches"
-            />
-            <button className="generate-matches-button" onClick={handleGenerateMatches}>
-              Gerar Partidas ⚙️
-            </button>
-          </div>
+
+          {role === 1 && (
+            <div className="generate-matches-container">
+              <h3>Todos Contra Todos</h3>
+              <input
+                type="number"
+                placeholder=""
+                value={numRounds}
+                onChange={(e) => setNumRounds(Number(e.target.value))}
+                className="input-num-matches"
+              />
+              <button className="generate-matches-button" onClick={handleGenerateMatches}>
+                Gerar Partidas ⚙️
+              </button>
+            </div>
+          )}
 
           {showTeamsList && (
-            <PresentTeamsList 
-              competitionId={Number(competitionId)} 
-              onClose={handleCloseTeamsList} 
-              onConfirm={handleConfirmTeamsList} 
+            <PresentTeamsList
+              competitionId={Number(competitionId)}
+              onClose={handleCloseTeamsList}
+              onConfirm={handleConfirmTeamsList}
             />
           )}
 
@@ -268,7 +274,7 @@ const AllAgainstAllMatches: React.FC = () => {
                   </div>
                 ) : (
                   <>
-                    <DragDropContext onDragEnd={onDragEnd}>
+                    <DragDropContext onDragEnd={role === 1 ? onDragEnd : () => {}}>
                       <Droppable droppableId={`droppable-${activeRound}`} key={`droppable-${activeRound}-${dragKey}`}>
                         {(provided) => (
                           <div className="matches-table" {...provided.droppableProps} ref={provided.innerRef}>
@@ -281,19 +287,26 @@ const AllAgainstAllMatches: React.FC = () => {
                             </ul>
                             <ul className="matches-list">
                               {(updatedPlacements[activeRound] || matches[activeRound].AllAgainstAllPlacement).map((team, idx) => (
-                                <Draggable key={`draggable-${team.team_id}`} draggableId={`team-${team.team_id}`} index={idx}>
-                                  {(provided) => (
-                                    <li
-                                      ref={provided.innerRef}
-                                      {...provided.draggableProps}
-                                      {...provided.dragHandleProps}
-                                      className="draggable-item"
-                                    >
-                                      <span className="name">{team.team_name}</span>
-                                      <span className="score">{team.score}</span>
-                                    </li>
-                                  )}
-                                </Draggable>
+                                role === 1 ? (
+                                  <Draggable key={`draggable-${team.team_id}`} draggableId={`team-${team.team_id}`} index={idx}>
+                                    {(provided) => (
+                                      <li
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                        className="draggable-item"
+                                      >
+                                        <span className="name">{team.team_name}</span>
+                                        <span className="score">{team.score}</span>
+                                      </li>
+                                    )}
+                                  </Draggable>
+                                ) : (
+                                  <li key={`non-draggable-${team.team_id}`} className="draggable-item non-draggable-item-cursor">
+                                    <span className="name">{team.team_name}</span>
+                                    <span className="score">{team.score}</span>
+                                  </li>
+                                )
                               ))}
                               {provided.placeholder}
                             </ul>
@@ -301,15 +314,17 @@ const AllAgainstAllMatches: React.FC = () => {
                         )}
                       </Droppable>
                     </DragDropContext>
-                    <div className="save-button-container">
-                      <button
-                        onClick={handleSavePlacements}
-                        className="save-results-button"
-                        disabled={!isModified}
-                      >
-                        Salvar Resultados
-                      </button>
-                    </div>
+                    {role === 1 && (
+                      <div className="save-button-container">
+                        <button
+                          onClick={handleSavePlacements}
+                          className="save-results-button"
+                          disabled={!isModified}
+                        >
+                          Salvar Resultados
+                        </button>
+                      </div>
+                    )}
                   </>
                 )}
               </div>

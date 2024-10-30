@@ -2,12 +2,14 @@ import React, { useState, useRef, useEffect, ReactNode } from 'react';
 import { FaBars } from 'react-icons/fa';
 import { Link } from 'react-router-dom'; 
 import './SidebarLayout.css';
+import { useAuth } from '../../context/AuthContext';
 
 interface SidebarLayoutProps {
   children: ReactNode;
 }
 
 const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
+  const { isLoggedIn, role } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
 
@@ -33,6 +35,10 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
     };
   }, [isSidebarOpen]);
 
+  if (!isLoggedIn || role !== 1) {
+    return <div className="content">{children}</div>;
+  }
+
   return (
     <div className="layout-container">
       <button
@@ -48,9 +54,9 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
               <Link to="/organizadores" onClick={toggleSidebar}>Cadastro de Organizadores</Link>
             </li>
             <li>
-            <li>
               <Link to="/gincanas" onClick={toggleSidebar}>Cadastro de Gincanas</Link>
             </li>
+            <li>
               <Link to="/provas" onClick={toggleSidebar}>Cadastro de Provas</Link>
             </li>
             <li>

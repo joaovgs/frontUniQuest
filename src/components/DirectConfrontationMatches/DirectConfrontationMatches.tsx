@@ -9,9 +9,11 @@ import { useSnackbar } from '../../context/SnackbarContext';
 import { GameService } from '../../services/Game';
 import Spinner from '../Spinner/Spinner';
 import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
+import { useAuth } from '../../context/AuthContext';
 
 const DirectConfrontationMatches: React.FC = () => {
   const { competitionId, gameId } = useParams<{ competitionId: string; gameId: string }>();
+  const { role } = useAuth();
   const [matches, setMatches] = useState<DirectConfrontationMatch[]>([]);
   const [selectedMatch, setSelectedMatch] = useState<DirectConfrontationMatch | null>(null);
   const [showTeamsList, setShowTeamsList] = useState(false);
@@ -189,7 +191,7 @@ const DirectConfrontationMatches: React.FC = () => {
                           key={match.id}
                           className="match"
                           style={{ top: `${topValue}px` }}
-                          onClick={() => openModal(match)}
+                          onClick={role === 1 ? () => openModal(match) : undefined}
                         >
                           <div className={`team ${team1Class}`}>{match.team1_name || (round === 1 ? 'BYE' : 'A definir')}</div>
                           <div className="vs">x</div>
@@ -219,12 +221,14 @@ const DirectConfrontationMatches: React.FC = () => {
       ) : (
         <>
           <h1>{gameName}</h1>
-          <div className="generate-matches-container">
-            <h3>Confronto Direto</h3>
+          {role === 1 && (
+            <div className="generate-matches-container">
+              <h3>Confronto Direto</h3>
             <button className="generate-matches-button" onClick={handleGenerateMatches}>
               Gerar Partidas ⚙️
-            </button>
-          </div>
+              </button>
+            </div>
+          )}
           {showTeamsList && (
             <PresentTeamsList 
               competitionId={Number(competitionId)} 

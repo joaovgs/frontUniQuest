@@ -4,12 +4,17 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { CompetitionService } from '../../services/Competition';
 import Spinner from '../Spinner/Spinner';
 import { GameDetails } from '../../models/Game'; 
+import { useAuth } from '../../context/AuthContext';
+import { useSnackbar } from '../../context/SnackbarContext';
 
 const CompetitionDetails: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const { isLoggedIn } = useAuth();
+  const { showSnackbar } = useSnackbar();
   const [competition, setCompetition] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const fetchCompetition = async () => {
@@ -39,6 +44,10 @@ const CompetitionDetails: React.FC = () => {
   };
 
   const handleTeamSignupClick = () => {
+    if (!isLoggedIn) {
+      showSnackbar('Você precisa estar logado para se inscrever em uma gincana', 'error');
+      return;
+    }
     if (id) {
       navigate(`/gincana/${id}/equipes`);
     }

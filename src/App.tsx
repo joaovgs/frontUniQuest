@@ -1,127 +1,33 @@
+// App.tsx
 import React from 'react';
-import { BrowserRouter, Route, Routes, useLocation, Navigate } from 'react-router-dom';
-import Login from './components/Login/Login';
-import Register from './components/Register/Register';
-import Home from './components/Home/Home';
-import UserList from './components/UserList/UserList';
-import CompetitionDetails from './components/CompetitionDetails/CompetitionDetails';
-import SidebarLayout from './components/SidebarLayout/SidebarLayout';
-import Header from './components/Header/Header';
+import { BrowserRouter, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { SnackbarProvider } from './context/SnackbarContext';
-import GameList from './components/GameList/GameList';
-import CompetitonList from './components/CompetitionList/CompetitionList';
-import RankingPage from './components/Ranking/Ranking';
-import TeamRegistration from './components/TeamRegistration/TeamRegistration';
-import TeamList from './components/TeamList/TeamList';
-import DirectConfrontationMatches from './components/DirectConfrontationMatches/DirectConfrontationMatches';
-import AllAgainstAllMatches from './components/AllAgainstAllMatches/AllAgainstAllMatches';
-import ForgotPassword from './components/ForgotPassword/ForgotPassword';
-
+import AppRoutes from './routes/AppRoutes';
+import Header from './components/Header/Header';
 
 const App: React.FC = () => {
-  const location = useLocation();
-  const isAuthRoute = location.pathname === '/login' || location.pathname === '/registro';
-
   return (
     <AuthProvider>
       <SnackbarProvider>
-        {!isAuthRoute && <Header />}
-        <Routes>
-          <Route path="/home" element={<Navigate to="/" />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/registro" element={<Register />} />
-          <Route path="/recuperar-senha" element={<ForgotPassword />} />
-          <Route
-            path="/"
-            element={
-              <SidebarLayout>
-                <Home />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/organizadores"
-            element={
-              <SidebarLayout>
-                <UserList />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/gincana/:id/detalhes"
-            element={
-              <SidebarLayout>
-                <CompetitionDetails />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/gincanas"
-            element={
-              <SidebarLayout>
-                <CompetitonList />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/provas"
-            element={
-              <SidebarLayout>
-                <GameList />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="gincana/:competitionId/equipes"
-            element={
-              <SidebarLayout>
-                <TeamRegistration />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/gincana/:competitionId/ranking"
-            element={
-              <SidebarLayout>
-                <RankingPage />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/gincana/:competitionId/confronto-direto/:gameId"
-            element={
-              <SidebarLayout>
-                <DirectConfrontationMatches />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/gincana/:competitionId/todos-contra-todos/:gameId"
-            element={
-              <SidebarLayout>
-                <AllAgainstAllMatches/>
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/inscrições-equipes"
-            element={
-              <SidebarLayout>
-                <TeamList />
-              </SidebarLayout>
-            }
-          />
-        </Routes>
+        <BrowserRouter>
+          <Main />
+        </BrowserRouter>
       </SnackbarProvider>
     </AuthProvider>
   );
 };
 
-const WrappedApp: React.FC = () => (
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
-);
+const Main: React.FC = () => {
+  const location = useLocation();
+  const isAuthRoute = location.pathname === '/login' || location.pathname === '/registro' || location.pathname === '/redefinir-senha' || location.pathname === '/recuperar-senha';
 
-export default WrappedApp;
+  return (
+    <>
+      {!isAuthRoute && <Header />}
+      <AppRoutes />
+    </>
+  );
+};
+
+export default App;

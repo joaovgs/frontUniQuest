@@ -7,6 +7,7 @@
     "@types/react-dom": "^18.3.0",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.7.7",
+    "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.3.1",
@@ -41,6 +42,7 @@
     ]
   },
   "devDependencies": {
+    "@types/jwt-decode": "^3.1.0",
     "@types/react-beautiful-dnd": "^13.1.8"
   }
 }
