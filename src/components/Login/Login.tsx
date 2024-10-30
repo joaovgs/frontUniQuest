@@ -70,9 +70,12 @@ const Login: React.FC = () => {
           </div>
           <button type="submit" className="login-button">
             Entrar
-          </button>
+          </button>          
         </form>
-        <div className="register-link">
+        <div className="link">
+          <a href="/recuperar-senha">Esqueceu sua senha?</a>
+        </div>
+        <div className="link">
           <a href="/registro">Cadastre-se</a>
         </div>
       </div>

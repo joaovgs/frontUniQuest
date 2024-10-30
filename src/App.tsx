@@ -16,6 +16,7 @@ import TeamRegistration from './components/TeamRegistration/TeamRegistration';
 import TeamList from './components/TeamList/TeamList';
 import DirectConfrontationMatches from './components/DirectConfrontationMatches/DirectConfrontationMatches';
 import AllAgainstAllMatches from './components/AllAgainstAllMatches/AllAgainstAllMatches';
+import ForgotPassword from './components/ForgotPassword/ForgotPassword';
 
 
 const App: React.FC = () => {
@@ -30,6 +31,7 @@ const App: React.FC = () => {
           <Route path="/home" element={<Navigate to="/" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Register />} />
+          <Route path="/recuperar-senha" element={<ForgotPassword />} />
           <Route
             path="/"
             element={
