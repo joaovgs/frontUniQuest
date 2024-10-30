@@ -50,8 +50,9 @@ h1 {
 }
 
 .match:hover {
-  cursor: pointer; 
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); 
+  background-color: #f3f3f3;
+  color: black;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .team {
@@ -123,28 +124,29 @@ h1 {
 }
 
 .generate-matches-container {
-  border: 1px solid #ccc; 
-  padding: 15px; 
-  border-radius: 10px; 
-  background-color: white; 
-  max-width: 300px; 
-  text-align: center; 
-  margin: 10px 0;
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #fff;
+  max-width: 300px;
+  text-align: center;
+  margin: 10px; 
 }
 
 .generate-matches-button {
   padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
+  background-color: white;
+  color: black;
+  border: 1px solid #ccc;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s ease;
+  display: flex;
 }
 
 .generate-matches-button:hover {
-  background-color: #0056b3;
+  background-color: #f3f3f3;
 }
 
 .no-matches {

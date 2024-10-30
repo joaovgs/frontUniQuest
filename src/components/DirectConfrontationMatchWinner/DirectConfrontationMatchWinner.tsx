@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './DirectConfrontationMatchWinner.css';
 import { DirectConfrontationMatchService } from '../../services/DirectConfrontationMatch';
+import { FaTimes, FaCheck } from 'react-icons/fa';
 
 interface DirectConfrontationMatchWinnerProps {
   onClose: () => void;
@@ -52,9 +53,11 @@ const DirectConfrontationMatchWinner: React.FC<DirectConfrontationMatchWinnerPro
 
         <div className="modal-actions">
           <button className="cancel-button" onClick={onClose}>
+            <FaTimes style={{ marginRight: '8px' }} />
             Cancelar
           </button>
           <button className="save-button" onClick={handleSave} disabled={selectedWinner === null}>
+            <FaCheck style={{ marginRight: '8px' }} />
             Confirmar
           </button>
         </div>

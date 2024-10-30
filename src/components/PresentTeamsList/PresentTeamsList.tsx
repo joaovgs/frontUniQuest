@@ -3,6 +3,7 @@ import './PresentTeamsList.css';
 import { TeamService } from '../../services/Team';
 import { Team } from '../../models/Team';
 import Spinner from '../Spinner/Spinner'; 
+import { FaTimes, FaCheck } from 'react-icons/fa';
 
 interface PresentTeamsListProps {
   competitionId: number; 
@@ -77,12 +78,16 @@ const PresentTeamsList: React.FC<PresentTeamsListProps> = ({ competitionId, onCl
           </ul>
         )}
         <div className="modal-actions">
-          <button className="cancel-button" onClick={onClose}>Cancelar</button>
+          <button className="cancel-button" onClick={onClose}>
+            <FaTimes style={{ marginRight: '8px' }} />
+            Cancelar
+          </button>
           <button 
             className="confirm-button" 
             onClick={handleConfirm} 
             disabled={!isAnyTeamPresent} 
           >
+            <FaCheck style={{ marginRight: '8px' }} />
             Confirmar
           </button>
         </div>

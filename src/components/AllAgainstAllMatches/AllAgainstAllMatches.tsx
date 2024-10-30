@@ -9,6 +9,7 @@ import PresentTeamsList from '../PresentTeamsList/PresentTeamsList';
 import { GameService } from '../../services/Game';
 import Spinner from '../Spinner/Spinner';
 import { useAuth } from '../../context/AuthContext';
+import { FaTable, FaSave } from 'react-icons/fa';
 
 const AllAgainstAllMatches: React.FC = () => {
   const { competitionId, gameId } = useParams<{ competitionId: string; gameId: string }>();
@@ -208,16 +209,19 @@ const AllAgainstAllMatches: React.FC = () => {
           {role === 1 && (
             <div className="generate-matches-container">
               <h3>Todos Contra Todos</h3>
-              <input
-                type="number"
-                placeholder=""
-                value={numRounds}
-                onChange={(e) => setNumRounds(Number(e.target.value))}
-                className="input-num-matches"
-              />
-              <button className="generate-matches-button" onClick={handleGenerateMatches}>
-                Gerar Partidas ⚙️
-              </button>
+              <div className="generate-matches-input-container">
+                <input
+                  type="number"
+                  placeholder=""
+                  value={numRounds}
+                  onChange={(e) => setNumRounds(Number(e.target.value))}
+                  className="input-num-matches"
+                />
+                <button className="generate-matches-button" onClick={handleGenerateMatches}>
+                  <FaTable style={{ marginRight: '8px' }} />
+                  Gerar Partidas
+                </button>
+              </div>
             </div>
           )}
 
@@ -321,6 +325,7 @@ const AllAgainstAllMatches: React.FC = () => {
                           className="save-results-button"
                           disabled={!isModified}
                         >
+                          <FaSave style={{ marginRight: '8px' }} />
                           Salvar Resultados
                         </button>
                       </div>

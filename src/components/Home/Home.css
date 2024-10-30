@@ -8,8 +8,12 @@
   height: 90vh;
 }
 
-img {
-  border: 1px solid black;
+.home-content img {
+  border: 1px solid black;  
+}
+
+.home-content img:hover {
+  transform: scale(1.02);
 }
 
 .current-event, .previous-events {
@@ -53,7 +57,7 @@ img {
 }
 
 .prev-button, .next-button {
-  background-color: #007bff;
+  background-color: #47555e;
   color: white;
   border: none; 
   border-radius: 50%;
@@ -68,8 +72,8 @@ img {
 }
 
 .prev-button:hover, .next-button:hover {
-  background-color: #0056b3;
-  transform: scale(1.1); 
+  background-color: #333;
+  transform: scale(1.05); 
 }
 
 .prev-button:disabled, .next-button:disabled {

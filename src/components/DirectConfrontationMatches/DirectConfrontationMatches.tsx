@@ -10,6 +10,7 @@ import { GameService } from '../../services/Game';
 import Spinner from '../Spinner/Spinner';
 import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
 import { useAuth } from '../../context/AuthContext';
+import { FaTable } from 'react-icons/fa';
 
 const DirectConfrontationMatches: React.FC = () => {
   const { competitionId, gameId } = useParams<{ competitionId: string; gameId: string }>();
@@ -224,9 +225,12 @@ const DirectConfrontationMatches: React.FC = () => {
           {role === 1 && (
             <div className="generate-matches-container">
               <h3>Confronto Direto</h3>
-            <button className="generate-matches-button" onClick={handleGenerateMatches}>
-              Gerar Partidas ⚙️
-              </button>
+              <div className="generate-matches-input-container">
+                <button className="generate-matches-button" onClick={handleGenerateMatches}>
+                <FaTable style={{ marginRight: '8px' }} />
+                  Gerar Partidas
+                </button>
+              </div>
             </div>
           )}
           {showTeamsList && (

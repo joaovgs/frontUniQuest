@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { CompetitionService } from '../../services/Competition';
 import { CompetitionImages } from '../../models/Competition';
 import Spinner from '../Spinner/Spinner'; 
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -72,7 +73,7 @@ const Home: React.FC = () => {
                     onClick={handlePrev}
                     disabled={currentIndex === 0}
                   >
-                    &lt;
+                    <FaArrowLeft />
                   </button>
                 )}
 
@@ -95,7 +96,7 @@ const Home: React.FC = () => {
                     onClick={handleNext}
                     disabled={currentIndex >= competitionsImages.length - itemsPerPage}
                   >
-                    &gt;
+                    <FaArrowRight />
                   </button>
                 )}
               </div>

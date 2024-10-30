@@ -65,13 +65,20 @@
   font-size: 16px;
   cursor: pointer;
   border: none;
-  border-radius: 5px;
+  border-radius: 25px;
   transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid #ccc;
+  width: auto;
+  display: flex;
 }
 
 .cancel-button {
-  background-color: #d9534f;
+  background-color: #CCCCCC;
   color: white;
+}
+
+.cancel-button:hover {
+  background-color: #B0B0B0;
 }
 
 .confirm-button {
@@ -84,7 +91,7 @@
 }
 
 .confirm-button:disabled {
-  background-color: #cccccc; 
+  background-color: #666; 
   cursor: not-allowed; 
 }
 

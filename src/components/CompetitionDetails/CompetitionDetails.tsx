@@ -6,6 +6,8 @@ import Spinner from '../Spinner/Spinner';
 import { GameDetails } from '../../models/Game'; 
 import { useAuth } from '../../context/AuthContext';
 import { useSnackbar } from '../../context/SnackbarContext';
+import { FaDownload, FaArrowRight } from 'react-icons/fa';
+import { IoIosPodium } from "react-icons/io";
 
 const CompetitionDetails: React.FC = () => {
   const navigate = useNavigate();
@@ -142,6 +144,7 @@ const CompetitionDetails: React.FC = () => {
                 <strong>Detalhes:</strong> {competition?.description || 'Descrição não informada'}
               </p>
               <button className="competition-regulamento-button" onClick={handleDownloadRegulation}>
+                <FaDownload style={{ marginRight: '8px' }} />
                 Baixar Regulamento
               </button>
             </div>
@@ -162,7 +165,8 @@ const CompetitionDetails: React.FC = () => {
 
           <div className="competition-actions">
             <button className="action-button" onClick={handleRankingClick}>
-              Ranking 🏆
+              <IoIosPodium style={{ marginRight: '8px' }} />
+              Ranking
             </button>
             <button
               className="action-button"
@@ -170,7 +174,7 @@ const CompetitionDetails: React.FC = () => {
               disabled={!isRegistrationOpen()}
               title={!isRegistrationOpen() ? "Inscrições encerradas" : ""}
             >
-              Inscrever-se ➡
+              Inscrever-se <FaArrowRight style={{ marginLeft: '8px' }} />
             </button>
           </div>
         </>

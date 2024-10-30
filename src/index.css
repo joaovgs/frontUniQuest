@@ -10,7 +10,7 @@ body {
   
   /* Adiciona uma cor de fundo padrão */
   html {
-    background-color: #f0f0f0; /* Altere conforme necessário */
+    background-color: #fbfbfb; /* Altere conforme necessário */
   }
   
   /* Estiliza os links */
@@ -31,10 +31,11 @@ body {
     padding: 10px 20px;
     border-radius: 4px;
     cursor: pointer;
+    align-items: center;
   }
   
   button:hover {
-    background-color: #0056b3; /* Altere conforme necessário */
+    background-color: #f3f3f3; /* Altere conforme necessário */
   }
   
   /* Adiciona um estilo básico para cabeçalhos */
@@ -66,7 +67,7 @@ body {
   }
   
   input:focus, textarea:focus {
-    border-color: #007bff; /* Altere conforme necessário */
+    border-color: #47555e; /* Altere conforme necessário */
     outline: none;
   }
   

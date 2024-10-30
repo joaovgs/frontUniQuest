@@ -35,20 +35,6 @@
   max-height: calc(100vh - 200px); 
 }
 
-.team-item {
-  padding: 10px;
-  border: 1px solid #ccc;
-  margin-bottom: 10px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.team-item.selected {
-  background-color: #007bff; 
-  color: white; 
-  border: 1px solid #0056b3;
-}
-
 .teams-grid {
   flex: 1;
   display: grid;
@@ -66,13 +52,19 @@
   border-radius: 8px;
   padding: 20px;
   text-align: center;
-  transition: box-shadow 0.3s;
+  transition: box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
   justify-content: center;
   position: relative;
   cursor: pointer;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.team-registration-card:hover {
+  background-color: #f3f3f3;
+  color: black;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .team-status {
@@ -125,7 +117,7 @@
   font-size: 16px;
   background-color: white;
   color: black;
-  border: 2px solid #007bff;
+  border: 1px solid #ccc;
   border-radius: 25px;
   cursor: pointer;
   display: flex;
@@ -134,8 +126,8 @@
 }
 
 .create-button:hover {
-  background-color: #007bff;
-  color: white;
+  background-color: #f3f3f3;
+  color: black;
 }
 
 .create-button:disabled {

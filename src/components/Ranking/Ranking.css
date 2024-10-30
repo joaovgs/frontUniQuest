@@ -8,13 +8,6 @@
   height: 90vh;
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 20px;
-  width: 100%;
-}
-
 .logo img {
   height: 40px;
   cursor: pointer;

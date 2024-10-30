@@ -1,6 +1,6 @@
 .sidebar {
   width: 250px;
-  background-color: #333;
+  background-color: #47555e;
   color: #fff;
   top: 30px; 
   left: -300px;
@@ -26,21 +26,21 @@
 }
 
 .sidebar-nav ul li a {
-  color: #ffffff;
+  color: #ccc;
   text-decoration: none;
   font-weight: bold;
   font-size: 18px;
 }
 
 .sidebar-nav ul li a:hover {
-  color: #0056b3;
+  color: white;
 }
 
 .menu-button {
   position: fixed;
   top: 60px;
   left: 10px;
-  background-color: #007bff;
+  background-color: #47555e;
   color: white;
   border: none;
   padding: 10px;
@@ -54,6 +54,10 @@
   align-items: center;
   transition: opacity 0.3s ease;
   font-size: 24px;
+}
+
+.menu-button:hover {
+  background-color: #333;
 }
 
 .menu-button.hidden {

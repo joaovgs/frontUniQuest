@@ -9,6 +9,7 @@ import { TeamService } from '../../services/Team';
 import axios from 'axios';
 import Spinner from '../Spinner/Spinner'; 
 import { TeamMemberService } from '../../services/TeamMember';
+import { FaPlus } from 'react-icons/fa';
 
 const TeamRegistration: React.FC = () => {
   const { competitionId } = useParams<{ competitionId: string }>(); 
@@ -176,6 +177,7 @@ const TeamRegistration: React.FC = () => {
           disabled={userTeamId !== null}
           title={userTeamId !== null ? 'Você já está em uma equipe!' : ''}
         >
+          <FaPlus style={{ marginRight: '8px' }} />
           Criar
         </button>
       </div>

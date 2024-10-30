@@ -31,27 +31,31 @@
 
 .no-button,
 .yes-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
+  padding: 10px 20px; 
+  font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  border: none;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid #ccc;
+  width: auto;
+  display: flex;
 }
 
 .no-button {
-  background-color: #f44336;
+  background-color: #CCCCCC;
   color: white;
 }
 
 .no-button:hover {
-  background-color: #d32f2f;
+  background-color: #B0B0B0;
 }
 
 .yes-button {
-  background-color: #4caf50;
+  background-color: #007bff;
   color: white;
 }
 
 .yes-button:hover {
-  background-color: #388e3c;
+  background-color: #0056b3; 
 }
