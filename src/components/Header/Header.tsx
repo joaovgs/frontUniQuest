@@ -31,7 +31,7 @@ const Header: React.FC = () => {
 
   return (
     <header className="header">
-      <div className="logo" onClick={() => navigate('/')}>
+      <div className="logo-header" onClick={() => navigate('/')}>
         <img src="/images/logo.png" alt="Logo" />
       </div>
 

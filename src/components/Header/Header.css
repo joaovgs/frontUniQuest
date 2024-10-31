@@ -10,12 +10,13 @@
   z-index: 1000;
 }
 
-.logo {
+.logo-header {
   cursor: pointer;
 }
 
-.logo-image {
-  width: 200px;
+.logo-header img {
+  width: 180px;
+  height: 40px;
 }
 
 .auth-buttons {

@@ -8,11 +8,6 @@
   height: 90vh;
 }
 
-.logo img {
-  height: 40px;
-  cursor: pointer;
-}
-
 .login-button {
   border: none;
   font-size: 16px;
