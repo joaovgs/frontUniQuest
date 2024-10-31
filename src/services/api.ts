@@ -3,8 +3,7 @@ import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 type CustomAxiosRequestConfig = AxiosRequestConfig & { _retry?: boolean };
 
 const api = axios.create({
-  baseURL: 'https://uniquest-production.up.railway.app',
-  // baseURL: 'http://localhost:3333',
+  baseURL: process.env.REACT_APP_API_BASE_URL,
   withCredentials: true,
 });
 
