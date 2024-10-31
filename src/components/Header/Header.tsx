@@ -47,7 +47,7 @@ const Header: React.FC = () => {
           </div>
         ) : (
           <div className="auth-button" onClick={handleLoginClick}>
-            <FaUser /> Fazer login
+            <FaUser style={{ marginRight: '8px' }} /> Fazer login
           </div>
         )}
       </div>

@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useSnackbar } from '../../context/SnackbarContext';
 import api from '../../services/api';
 import './Register.css';
+import { FaSave, FaTimes } from 'react-icons/fa';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -57,44 +58,44 @@ const Register: React.FC = () => {
         <h2>Cadastro de Usuário</h2>
         <form onSubmit={handleSave}>
           <div className="register-field">
-            <label htmlFor="name">Nome</label>
             <input
               type="text"
               id="name"
               name="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              placeholder="Nome"
               required
             />
           </div>
           <div className="register-field">
-            <label htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
               name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
               required
             />
           </div>
           <div className="register-field">
-            <label htmlFor="password">Senha</label>
             <input
               type="password"
               id="password"
               name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Senha"
               required
             />
           </div>
           <div className="register-actions">
             <button type="button" className="cancel-button" onClick={handleCancel}>
-              Cancelar
+              <FaTimes style={{ marginRight: '8px' }} /> Cancelar
             </button>
             <button type="submit" className="save-button">
-              Salvar
+              <FaSave style={{ marginRight: '8px' }} /> Salvar
             </button>
           </div>
         </form>

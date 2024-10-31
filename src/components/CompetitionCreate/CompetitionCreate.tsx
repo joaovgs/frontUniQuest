@@ -6,7 +6,7 @@ import { GameService } from '../../services/Game';
 import { createPortal } from 'react-dom';
 import Spinner from '../Spinner/Spinner';
 import { useSnackbar } from '../../context/SnackbarContext';
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaSave, FaTimes } from 'react-icons/fa';
 
 interface CompetitionCreateProps {
   onClose: () => void;
@@ -409,8 +409,12 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
           </form>
         </div>
         <div className="modal-actions-buttons">
-          <button className="cancel-button" onClick={onClose}>Cancelar</button>
-          <button className="save-button" onClick={handleSave}>Salvar</button>
+          <button className="cancel-button" onClick={onClose}>
+            <FaTimes style={{ marginRight: '8px' }} /> Cancelar
+          </button>
+          <button className="save-button" onClick={handleSave}>
+            <FaSave style={{ marginRight: '8px' }} /> Salvar
+          </button>
         </div>
       </div>
     </div>,

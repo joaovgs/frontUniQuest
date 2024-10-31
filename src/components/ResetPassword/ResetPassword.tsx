@@ -33,25 +33,26 @@ const ResetPassword: React.FC = () => {
   return (
     <div className="reset-password-modal">
       <div className="reset-password-box">
-        <h2>Redefinir Senha</h2>
+        <img className="logo" src="/images/logo.png" alt="Logo" />
+        <h3>Redefinir Senha</h3>
         <form onSubmit={handleResetPassword}>
           <div className="reset-password-field">
-            <label htmlFor="password">Nova Senha</label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Nova Senha"
               required
             />
           </div>
           <div className="reset-password-field">
-            <label htmlFor="confirmPassword">Confirmar Nova Senha</label>
             <input
               type="password"
               id="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirmar Nova Senha"
               required
             />
           </div>

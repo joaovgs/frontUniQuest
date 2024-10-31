@@ -38,27 +38,27 @@ const Login: React.FC = () => {
   return (
     <div className="login-modal">
       <div className="login-box">
-        <h2>Entrar</h2>
+        <img className="logo" src="/images/logo.png" alt="Logo" />
         <form onSubmit={handleLogin}>
           <div className="login-field">
-            <label htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
               name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
               required
             />
           </div>
           <div className="login-field">
-            <label htmlFor="password">Senha</label>
             <input
               type="password"
               id="password"
               name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Senha"
               required
             />
           </div>

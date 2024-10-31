@@ -25,15 +25,16 @@ const ForgotPassword: React.FC = () => {
   return (
     <div className="forgot-password-modal">
       <div className="forgot-password-box">
-        <h2>Recuperar Senha</h2>
+        <img className="logo" src="/images/logo.png" alt="Logo" />
+        <h3>Recuperar Senha</h3>
         <form onSubmit={handleForgotPassword}>
           <div className="forgot-password-field">
-            <label htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
               required
             />
           </div>
