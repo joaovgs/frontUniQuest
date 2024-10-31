@@ -1,0 +1,115 @@
+.competition-details-container {
+  max-width: 80vw;
+  margin: 0 auto;
+  padding: 20px;
+  padding-top: 60px;
+  display: flex;
+  flex-direction: column;
+  height: 90vh; 
+}
+
+.competition-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.competition-info {
+  display: flex;
+  align-items: center;
+}
+
+.competition-image {
+  width: 30vw;
+  height: 35vh;
+  object-fit: fill;
+  border-radius: 10px;
+  margin-right: 20px;
+}
+
+.competition-details {
+  max-width: 700px;
+  height: 100%;
+}
+
+.competition-games {
+  margin-top: 20px;
+  flex: 1;
+  overflow-y: hidden;
+}
+
+.games-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); 
+  column-gap: 2vw; 
+  row-gap: 1vh;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.games-item {
+  padding: 8px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  text-align: left;
+  cursor: pointer;
+  color: black;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.games-item:hover {
+  background-color: #f3f3f3;
+  color: black;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.games-item strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.games-item .game-name {
+  font-size: 18px; 
+  font-weight: bold;
+  margin-bottom: 8px; 
+}
+
+.games-item .game-info {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.competition-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding: 10px 0;
+}
+
+.action-button, .competition-regulamento-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: white;
+  color: black;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.action-button:hover, .competition-regulamento-button:hover {
+  background-color: #f3f3f3;
+}
+
+.action-button:disabled, .competition-regulamento-button:disabled {
+  background-color: #ccc;
+  color: #666;
+  border: 1px solid black;
+  cursor: not-allowed;
+}

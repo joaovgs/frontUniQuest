@@ -1,0 +1,72 @@
+.user-create-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 95vh; 
+  overflow: hidden; 
+}
+
+.create-user-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 30px 40px; 
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  border-radius: 8px;
+  width: 400px;
+}
+
+.create-user-modal h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.user-input {
+  padding: 8px;
+  width: 100%; 
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 15px; 
+}
+
+.modal-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.cancel-button,
+.save-button {
+  padding: 10px 20px; 
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid #ccc;
+  width: auto;
+  display: flex;
+}
+
+.cancel-button {
+  background-color: #CCCCCC;
+  color: white;
+}
+
+.cancel-button:hover {
+  background-color: #B0B0B0;
+}
+
+.save-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #0056b3; 
+}

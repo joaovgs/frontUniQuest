@@ -1,0 +1,94 @@
+.home-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+  padding-top: 40px;
+  height: 90vh;
+}
+
+.home-content img {
+  border: 1px solid black;  
+}
+
+.home-content img:hover {
+  transform: scale(1.02);
+}
+
+.current-event, .previous-events {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.current-event-image {
+  width: 35vw; 
+  height: 40vh;  
+  object-fit: fill; 
+  border-radius: 10px;
+}
+
+.previous-events-container {
+  display: grid;
+  grid-template-columns: auto 1fr auto; 
+  align-items: center;
+  width: 80vw; 
+  margin: 20px auto;
+}
+
+.previous-events-left, .previous-events-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 2vw;
+}
+
+.previous-event-images {
+  display: flex;
+  gap: 5vw;
+  justify-content: center;
+}
+
+.previous-event-image {
+  width: 20vw;  
+  height: 30vh;
+  object-fit: fill; 
+  border-radius: 8px;
+}
+
+.prev-button, .next-button {
+  background-color: #47555e;
+  color: white;
+  border: none; 
+  border-radius: 50%;
+  width: 50px; 
+  height: 50px; 
+  font-size: 24px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+}
+
+.prev-button:hover, .next-button:hover {
+  background-color: #333;
+  transform: scale(1.05); 
+}
+
+.prev-button:disabled, .next-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.prev-button i, .next-button i {
+  font-size: 20px; 
+}
+
+.prev-button, .next-button {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+.current-event h1 {
+  font-size: 2em;
+}

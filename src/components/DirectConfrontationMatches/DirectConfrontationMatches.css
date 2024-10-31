@@ -1,0 +1,163 @@
+.container {
+  padding: 20px;
+  padding-top: 60px;
+  font-family: Arial, sans-serif;
+  height: 90vh; 
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+.bracket-container {
+  padding-top: 20px;
+}
+
+.bracket {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.rounds {
+  display: flex;
+}
+
+.round {
+  position: relative;
+  margin: 0 20px;
+  text-align: center;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.matches {
+  position: relative;
+  width: 150px;
+  height: 100%;
+}
+
+.match {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: white;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.match:hover {
+  background-color: #f3f3f3;
+  color: black;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.team {
+  font-weight: bold;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis;
+}
+
+.winner {
+  color: green;
+}
+
+.loser {
+  color: red;
+}
+
+.vs {
+  margin: 5px 0;
+}
+
+.line-vertical {
+  position: absolute;
+  left: 100%;
+  width: 2px;
+  background-color: black;
+}
+
+.line-horizontal {
+  position: absolute;
+  left: 100%;
+  width: 40px; 
+  height: 2px;
+  background-color: black;
+}
+
+.exit.down {
+  position: absolute;
+  top: calc(50% - 1px);
+  right: -7px;
+  width: 6px;
+  border-top: 1px solid rgba(0, 0, 0, 0.65);
+  border-right: 1px solid rgba(0, 0, 0, 0.65);
+}
+
+.exit.up {
+  position: absolute;
+  bottom: 50%;
+  right: -7px;
+  width: 6px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.65);
+  border-right: 1px solid rgba(0, 0, 0, 0.65);
+}
+
+.entry.down {
+  position: absolute;
+  bottom: 0;
+  right: -16px;
+  width: 15px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.65);
+}
+
+.entry.up {
+  position: absolute;
+  top: 0;
+  right: -16px;
+  width: 15px;
+  border-top: 1px solid rgba(0, 0, 0, 0.65);
+}
+
+.generate-matches-container {
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #fff;
+  max-width: 300px;
+  text-align: center;
+  margin: 10px; 
+}
+
+.generate-matches-button {
+  padding: 10px 20px;
+  background-color: white;
+  color: black;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  display: flex;
+}
+
+.generate-matches-button:hover {
+  background-color: #f3f3f3;
+}
+
+.no-matches {
+  text-align: center;
+  font-size: 28px; 
+  margin-top: 40px; 
+  color: #333; 
+  font-weight: bold;
+  background-color: white; 
+  padding: 20px;
+  border-radius: 10px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  border: 1px solid #ccc;
+}

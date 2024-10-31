@@ -1,0 +1,48 @@
+.ranking-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  padding-top: 60px;
+  text-align: center;
+  height: 90vh;
+}
+
+.logo img {
+  height: 40px;
+  cursor: pointer;
+}
+
+.login-button {
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.ranking-table {
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.ranking-table th, .ranking-table td {
+  border: 2px solid #ccc;
+  padding: 8px;
+  text-align: center;
+  background-color: white;
+}
+
+.ranking-table th {
+  background-color: white;
+  text-align: center;
+  cursor: pointer;
+}
+
+.ranking-table th:nth-child(1), .ranking-table td:nth-child(1) {
+  width: 100px; 
+}
+.ranking-table th:nth-child(2), .ranking-table td:nth-child(2) {
+  width: 200px; 
+}
+.ranking-table th:nth-child(n+3), .ranking-table td:nth-child(n+3) {
+  width: 150px; 
+}

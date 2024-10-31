@@ -1,0 +1,379 @@
+.competition-create-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+}
+
+.create-competition-modal {
+  background-color: white;
+  padding: 30px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  border-radius: 8px;
+  width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.create-competition-modal h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.form-group {
+  font-size: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.date-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.date-group label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.participants-inputs {
+  display: flex;
+  justify-content: space-between;
+}
+
+.participants-inputs input {
+  width: calc(50% - 10px);
+}
+
+.points-inputs {
+  display: flex;
+  justify-content: space-between;
+}
+
+.points-inputs input {
+  width: calc(25% - 10px);
+}
+
+.category-options {
+  display: flex;
+  justify-content: space-between;
+}
+
+.competition-game-item:last-child {
+  margin-bottom: 0;
+}
+
+.competition-game-item select,
+.competition-game-item input[type="datetime-local"],
+.competition-game-item input[type="text"] {
+  flex: 1;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.attachment-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.modal-actions-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  gap: 15vw; 
+}
+
+.cancel-button, .save-button {
+  padding: 10px 20px; 
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid #ccc;
+  width: auto;
+  display: flex;
+}
+
+.cancel-button {
+  background-color: #CCCCCC;
+  color: white;
+}
+
+.cancel-button:hover {
+  background-color: #B0B0B0;
+}
+
+.save-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #0056b3; 
+}
+
+.add-game-button {
+  padding: 10px 20px; 
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid #ccc;
+  width: auto;
+  display: flex;
+  background-color: #007bff;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.add-game-button:hover {
+  background-color: #0056b3;
+}
+
+.competition-input-location,
+.competition-input-description {
+  margin-bottom: 10px;
+}
+
+.prova-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+  margin-bottom: 5px;
+  border: none;
+}
+
+.prova-item:last-child {
+  margin-bottom: 0;
+}
+
+.prova-item select,
+.prova-item input[type="datetime-local"],
+.prova-item input[type="text"] {
+  flex: 1;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.prova-item button {
+  padding: 10px 20px; 
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid #ccc;
+  width: auto;
+  display: flex;
+  background-color: #007bff;
+  color: white;
+}
+
+.games-container {
+  max-height: 26vh;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  padding-bottom: 20px;
+}
+
+.competition-game-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px; 
+  border: none;
+}
+
+.competition-game-item select,
+.competition-game-item input[type="datetime-local"],
+.competition-game-item input[type="text"] {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.competition-game-item button {
+  padding: 9px 19px; 
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid #ccc;
+  width: auto;
+  display: flex;
+  background-color: #007bff;
+  color: white;
+}
+
+.competition-game-item button:hover {
+  background-color: #0056b3;
+}
+
+.attachments-section {
+  margin-top: 20px;
+}
+
+.attachments-section h3 {
+  margin-bottom: 10px;
+}
+
+.attachments-container {
+  display: flex;
+  gap: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 15px;
+}
+
+.attachment-item {
+  flex: 1;
+}
+
+.attachment-item label {
+  display: block;
+}
+
+.file-input-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+.file-input-wrapper input[type="file"] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.file-input-text {
+  display: block;
+  padding: 8px 12px;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-input-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.section-container > label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.games-container,
+.attachments-container {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.attachment-item input[type="file"] {
+  display: none;
+}
+
+.file-input-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  background-color: #fff;
+}
+
+.file-input-label:hover {
+  background-color: #f8f8f8;
+}
+
+.file-input-icon {
+  font-size: 18px;
+}
+
+.attachments-container {
+  display: flex;
+  gap: 20px;
+}
+
+.attachment-item {
+  flex: 1;
+}
+
+.attachment-label {
+  display: block;
+  text-align: center;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.file-input-wrapper {
+  position: relative;
+}
+
+.file-input-wrapper input[type="file"] {
+  display: none;
+}
+
+.file-input-label:hover {
+  background-color: #f8f8f8;
+}
+
+.file-input-icon {
+  font-size: 14px;
+}
+
+.attachments-container {
+  margin-bottom: 15px;
+}

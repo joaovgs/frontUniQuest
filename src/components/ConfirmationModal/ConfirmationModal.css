@@ -1,0 +1,61 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.confirmation-modal {
+  width: 400px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.confirmation-modal p {
+  word-wrap: break-word;
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-around;
+}
+
+.no-button,
+.yes-button {
+  padding: 10px 20px; 
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid #ccc;
+  width: auto;
+  display: flex;
+}
+
+.no-button {
+  background-color: #CCCCCC;
+  color: white;
+}
+
+.no-button:hover {
+  background-color: #B0B0B0;
+}
+
+.yes-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.yes-button:hover {
+  background-color: #0056b3; 
+}
