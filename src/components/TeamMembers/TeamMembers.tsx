@@ -5,6 +5,7 @@ import { useSnackbar } from '../../context/SnackbarContext';
 import { TeamMemberPayload } from '../../models/TeamMember';
 import Spinner from '../Spinner/Spinner'; 
 import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
+import { FaTimes, FaSignOutAlt, FaSignInAlt } from 'react-icons/fa'; // Importando ícones
 
 interface TeamMembersProps {
   teamId: number; 
@@ -140,11 +141,17 @@ const TeamMembers: React.FC<TeamMembersProps> = ({ teamId, teamName, status, mem
             )}
             
             <div className="members-actions">
-              <button className="cancelbutton" onClick={onCancel}>Cancelar</button>
+              <button className="cancelbutton" onClick={onCancel}>
+                <FaTimes style={{ marginRight: '8px' }} /> Cancelar
+              </button>
               {isUserMember ? (
-                <button className="leavebutton" onClick={() => openConfirmationModal('Tem certeza de que deseja sair da equipe?', handleLeave)}>Sair</button>
+                <button className="leavebutton" onClick={() => openConfirmationModal('Tem certeza de que deseja sair da equipe?', handleLeave)}>
+                  <FaSignOutAlt style={{ marginRight: '8px' }} /> Sair
+                </button>
               ) : (
-                <button className="joinbutton" onClick={() => openConfirmationModal('Tem certeza de que deseja entrar na equipe?', handleJoin)}>Entrar</button>
+                <button className="joinbutton" onClick={() => openConfirmationModal('Tem certeza de que deseja entrar na equipe?', handleJoin)}>
+                  <FaSignInAlt style={{ marginRight: '8px' }} /> Entrar
+                </button>
               )}
             </div>
           </>

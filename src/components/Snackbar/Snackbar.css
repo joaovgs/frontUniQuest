@@ -1,15 +1,19 @@
 .snackbar {
   position: fixed;
-  top: 20px;
+  top: 60px;
   right: 20px;
   padding: 10px 20px;
   border-radius: 5px;
-  color: white;
+  background-color: white;
+  color: black;
   font-size: 14px;
   z-index: 10001;
   opacity: 0;
-  transform: translateY(-100%);
+  transform: translateY(-2000%);
   transition: opacity 0.3s ease, transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .snackbar.show {
@@ -17,15 +21,15 @@
   transform: translateY(0);
 }
 
-.snackbar.hide {
-  opacity: 0;
-  transform: translateY(-100%);
+.snackbar .icon {
+  margin-right: 10px;
+  font-size: 18px;
 }
 
-.snackbar.success {
-  background-color: #4caf50;
+.snackbar.success .icon {
+  color: #4caf50;
 }
 
-.snackbar.error {
-  background-color: #f44336;
+.snackbar.error .icon {
+  color: #f44336;
 }

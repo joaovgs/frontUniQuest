@@ -42,14 +42,24 @@
 
 .cancel-button,
 .save-button {
-  padding: 10px 20px;
+  padding: 10px 20px; 
   font-size: 16px;
   cursor: pointer;
+  border: none;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid #ccc;
+  width: auto;
+  display: flex;
 }
 
 .cancel-button {
-  background-color: #d9534f;
+  background-color: #CCCCCC;
   color: white;
+}
+
+.cancel-button:hover {
+  background-color: #B0B0B0;
 }
 
 .save-button {
@@ -58,5 +68,5 @@
 }
 
 .save-button:hover {
-  background-color: #0056b3;
+  background-color: #0056b3; 
 }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSnackbar } from '../../context/SnackbarContext';
 import './UserCreate.css';
 import { User, UserPayload } from '../../models/User';
+import { FaTimes, FaSave } from 'react-icons/fa';
 
 interface UserCreateProps {
   onClose: () => void;
@@ -96,9 +97,11 @@ const UserCreate: React.FC<UserCreateProps> = ({ onClose, onSave, initialUser })
 
         <div className="modal-actions">
           <button className="cancel-button" onClick={onClose}>
+            <FaTimes style={{ marginRight: '8px' }} />
             Cancelar
           </button>
           <button className="save-button" onClick={handleSave}>
+            <FaSave style={{ marginRight: '8px' }} />
             Salvar
           </button>
         </div>

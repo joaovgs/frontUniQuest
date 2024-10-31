@@ -7,6 +7,7 @@ import { GameService } from '../../services/Game';
 import axios from 'axios';
 import Spinner from '../Spinner/Spinner';
 import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
+import { FaSearch, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 
 const GameList: React.FC = () => {
   const [games, setGames] = useState<Game[]>([]);
@@ -22,6 +23,8 @@ const GameList: React.FC = () => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const fetchGames = useCallback(async (filter: string = '') => {
     if (isCreateModalOpen) {
@@ -51,7 +54,7 @@ const GameList: React.FC = () => {
     } finally {
       setLoadingGames(false);
     }
-  }, [showSnackbar]);
+  }, []);
 
   useEffect(() => {
     fetchGames();
@@ -66,10 +69,10 @@ const GameList: React.FC = () => {
         await GameService.createGame(gamePayload);
         showSnackbar('Prova criada com sucesso!', 'success');
       }
-      setSearchTerm('');
-      await fetchGames('');
+      setSearchTerm('');      
       setIsCreateModalOpen(false);
       setSelectedGame(null);
+      await fetchGames('');
     } catch (error) {
       showSnackbar('Erro ao salvar prova. Tente novamente.', 'error');
       console.error('Erro ao salvar prova:', error);
@@ -128,6 +131,10 @@ const GameList: React.FC = () => {
     }
   };
 
+  const handleSearchContainerClick = () => {
+    searchInputRef.current?.focus();
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
@@ -160,14 +167,18 @@ const GameList: React.FC = () => {
         <div className="subheader">
           <p>Esta tela permite gerenciar as provas do sistema. Utilize o campo de busca para encontrar provas específicas ou crie, edite e exclua provas conforme necessário.</p>
         </div>
-        <input
-          type="text"
-          placeholder="Pesquisar"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          onKeyDown={handleSearchKeyDown}
-          className="search-input"
-        />
+        <div className="search-container" onClick={handleSearchContainerClick}>
+          <FaSearch className="search-icon" />
+          <input
+            ref={searchInputRef}
+            type="text"
+            placeholder="Pesquisar"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            onKeyDown={handleSearchKeyDown}
+            className="search-input"
+          />
+        </div>
       </div>
 
       {loadingGames ? (
@@ -200,21 +211,21 @@ const GameList: React.FC = () => {
             setIsCreateModalOpen(true);
           }}
         >
-          Criar
+          <FaPlus style={{ marginRight: '8px' }} /> Criar
         </button>
         <button
           className="edit-button"
           onClick={() => setIsCreateModalOpen(true)}
           disabled={!selectedGame}
         >
-          Editar
+          <FaEdit style={{ marginRight: '8px' }} /> Editar
         </button>
         <button
           className="delete-button"
           onClick={handleDeleteGame}
           disabled={!selectedGame}
         >
-          Excluir
+          <FaTrash style={{ marginRight: '8px' }} /> Excluir
         </button>
       </div>
 
@@ -233,9 +244,11 @@ const GameList: React.FC = () => {
       <ConfirmationModal
         isOpen={isConfirmationModalOpen}
         message={confirmationMessage}
-        onConfirm={() => {
+        onConfirm={async () => {
           confirmDeleteGame();
           setIsConfirmationModalOpen(false);
+          setSearchTerm('');
+          await fetchGames('');
         }}
         onCancel={() => setIsConfirmationModalOpen(false)}
       />

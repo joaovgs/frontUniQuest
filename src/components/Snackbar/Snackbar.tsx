@@ -30,8 +30,11 @@ const Snackbar: React.FC<SnackbarProps> = ({ message, type, isVisible, onClose }
     }
   }, [visible, onClose]);
 
+  const icon = type === 'success' ? '✔️' : '❌';
+
   return (
     <div className={`snackbar ${type} ${visible ? 'show' : ''}`}>
+      <span className="icon">{icon}</span>
       {message}
     </div>
   );

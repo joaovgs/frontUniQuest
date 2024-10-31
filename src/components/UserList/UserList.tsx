@@ -7,6 +7,7 @@ import { UserService } from '../../services/User';
 import axios from 'axios';
 import Spinner from '../Spinner/Spinner';
 import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
+import { FaSearch, FaPlus, FaEdit, FaTrash } from 'react-icons/fa'; 
 
 const UserList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -21,6 +22,8 @@ const UserList: React.FC = () => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const fetchUsers = useCallback(async (filter: string = '') => {
     if (isCreateModalOpen) {
@@ -50,7 +53,7 @@ const UserList: React.FC = () => {
     } finally {
       setLoadingUsers(false);
     }
-  }, [showSnackbar]);
+  }, []);
 
   useEffect(() => {
     fetchUsers();
@@ -85,6 +88,8 @@ const UserList: React.FC = () => {
         await UserService.deleteUser(selectedUser.id);
         setUsers((prevUsers) => prevUsers.filter((u) => u.id !== selectedUser.id));
         setSelectedUser(null);
+        setSearchTerm('');
+        await fetchUsers('');
         showSnackbar('Organizador excluído com sucesso!', 'success');
       } catch (error) {
         showSnackbar('Erro ao deletar organizador. Tente novamente.', 'error');
@@ -112,6 +117,10 @@ const UserList: React.FC = () => {
     typingTimeoutRef.current = setTimeout(() => {
       fetchUsers(event.target.value);
     }, 1000);
+  };
+
+  const handleSearchContainerClick = () => {
+    searchInputRef.current?.focus();
   };
 
   useEffect(() => {
@@ -146,14 +155,18 @@ const UserList: React.FC = () => {
         <div className="subheader">
           <p>Esta tela permite gerenciar os organizadores do sistema. Utilize o campo de busca para encontrar organizadores específicos ou crie, edite e exclua organizadores conforme necessário.</p>
         </div>
-
-        <input
-          type="text"
-          placeholder="Pesquisar"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          onKeyDown={handleSearchKeyDown}
-        />
+        <div className="search-container" onClick={handleSearchContainerClick}>
+          <FaSearch className="search-icon" />
+          <input
+            ref={searchInputRef}
+            type="text"
+            placeholder="Pesquisar"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            onKeyDown={handleSearchKeyDown}
+            className="search-input"
+          />
+        </div>
       </div>
 
       {loadingUsers ? (
@@ -186,6 +199,7 @@ const UserList: React.FC = () => {
             setIsCreateModalOpen(true);
           }}
         >
+          <FaPlus style={{ marginRight: '8px' }} />
           Criar
         </button>
         <button
@@ -193,6 +207,7 @@ const UserList: React.FC = () => {
           onClick={() => setIsCreateModalOpen(true)}
           disabled={!selectedUser}
         >
+          <FaEdit style={{ marginRight: '8px' }} />
           Editar
         </button>
         <button
@@ -200,6 +215,7 @@ const UserList: React.FC = () => {
           onClick={() => setIsConfirmationModalOpen(true)}
           disabled={!selectedUser}
         >
+          <FaTrash style={{ marginRight: '8px' }} />
           Excluir
         </button>
       </div>

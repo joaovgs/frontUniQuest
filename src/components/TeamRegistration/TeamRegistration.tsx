@@ -9,7 +9,7 @@ import { TeamService } from '../../services/Team';
 import axios from 'axios';
 import Spinner from '../Spinner/Spinner'; 
 import { TeamMemberService } from '../../services/TeamMember';
-import { FaPlus } from 'react-icons/fa';
+import { FaPlus, FaSearch } from 'react-icons/fa';
 
 const TeamRegistration: React.FC = () => {
   const { competitionId } = useParams<{ competitionId: string }>(); 
@@ -26,6 +26,8 @@ const TeamRegistration: React.FC = () => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);  
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const fetchTeams = useCallback(async (filter: string = '') => {
 
@@ -126,6 +128,10 @@ const TeamRegistration: React.FC = () => {
     handleCloseParticipantsModal();    
   };
 
+  const handleSearchContainerClick = () => {
+    searchInputRef.current?.focus();
+  };
+
   return (
     <div className="team-list-container">
       <div className="team-list-header">
@@ -133,14 +139,18 @@ const TeamRegistration: React.FC = () => {
         <div className="subheader">          
           <p>Esta tela permite gerenciar as equipes da gincana. Utilize o campo de busca para encontrar equipes específicas e você poderá entrar ou sair, ou então criar a sua própria equipe.</p>
         </div>
-        <input
-          type="text"
-          placeholder="Pesquisar"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          onKeyDown={handleSearchKeyDown}
-          className="search-input"
-        />
+        <div className="search-container" onClick={handleSearchContainerClick}>
+          <FaSearch className="search-icon" />
+          <input
+            ref={searchInputRef}
+            type="text"
+            placeholder="Pesquisar"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            onKeyDown={handleSearchKeyDown}
+            className="search-input"
+          />
+        </div>
       </div>
 
       {loadingTeams ? (

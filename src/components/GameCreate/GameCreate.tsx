@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './GameCreate.css';
 import { Game, GamePayload } from '../../models/Game';
 import { useSnackbar } from '../../context/SnackbarContext';
+import { FaTimes, FaSave } from 'react-icons/fa';
 
 interface GameCreateProps {
   onClose: () => void;
@@ -196,9 +197,11 @@ const GameCreate: React.FC<GameCreateProps> = ({ onClose, onSave, initialGame })
 
         <div className="modal-actions">
           <button className="cancel-button" onClick={onClose}>
+            <FaTimes style={{ marginRight: '8px' }} />
             Cancelar
           </button>
           <button className="save-button" onClick={handleSave}>
+            <FaSave style={{ marginRight: '8px' }} />
             Salvar
           </button>
         </div>

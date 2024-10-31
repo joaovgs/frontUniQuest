@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './TeamCreate.css';
 import { TeamPayload } from '../../models/Team';
 import { useSnackbar } from '../../context/SnackbarContext';
+import { FaSave, FaTimes } from 'react-icons/fa';
 
 interface TeamCreateProps {
   onClose: () => void;
@@ -80,10 +81,10 @@ const TeamCreate: React.FC<TeamCreateProps> = ({ onClose, onSave, competitionId 
 
         <div className="modal-actions">
           <button className="cancel-button" onClick={onClose}>
-            Cancelar
+            <FaTimes style={{ marginRight: '8px' }} /> Cancelar
           </button>
           <button className="save-button" onClick={handleSave}>
-            Salvar
+            <FaSave style={{ marginRight: '8px' }} /> Salvar
           </button>
         </div>
       </div>

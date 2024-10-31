@@ -8,6 +8,7 @@ import { TeamService } from '../../services/Team';
 import axios from 'axios';
 import Spinner from '../Spinner/Spinner';
 import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
+import { FaSearch, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 
 const CompetitionList: React.FC = () => {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
@@ -23,6 +24,8 @@ const CompetitionList: React.FC = () => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const fetchCompetitions = useCallback(async (filter: string = '') => {
     if (isCreateModalOpen) {
@@ -52,7 +55,7 @@ const CompetitionList: React.FC = () => {
     } finally {
       setLoadingCompetitions(false);
     }
-  }, [showSnackbar]);
+  }, []);
 
   useEffect(() => {
     fetchCompetitions();
@@ -66,11 +69,11 @@ const CompetitionList: React.FC = () => {
       } else {
         await CompetitionService.createCompetition(competitionPayload);
         showSnackbar('Gincana criada com sucesso!', 'success');
-      }
-      setSearchTerm('');
-      await fetchCompetitions('');
+      }      
       setIsCreateModalOpen(false);
       setSelectedCompetition(null);
+      setSearchTerm('');
+      await fetchCompetitions('');
     } catch (error) {
       showSnackbar('Erro ao salvar gincana. Tente novamente.', 'error');
       console.error('Erro ao salvar gincana:', error);
@@ -131,6 +134,10 @@ const CompetitionList: React.FC = () => {
     }
   };
 
+  const handleSearchContainerClick = () => {
+    searchInputRef.current?.focus();
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
@@ -163,14 +170,18 @@ const CompetitionList: React.FC = () => {
         <div className="subheader">
           <p>Esta tela permite gerenciar as gincanas do sistema. Utilize o campo de busca para encontrar gincanas específicas ou crie, edite e exclua gincanas conforme necessário.</p>
         </div>
-        <input
-          type="text"
-          placeholder="Pesquisar"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          onKeyDown={handleSearchKeyDown}
-          className="search-input"
-        />
+        <div className="search-container" onClick={handleSearchContainerClick}>
+          <FaSearch className="search-icon" />
+          <input
+            ref={searchInputRef}
+            type="text"
+            placeholder="Pesquisar"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            onKeyDown={handleSearchKeyDown}
+            className="search-input"
+          />
+        </div>
       </div>
 
       {loadingCompetitions ? (
@@ -203,21 +214,21 @@ const CompetitionList: React.FC = () => {
             setIsCreateModalOpen(true);
           }}
         >
-          Criar
+          <FaPlus style={{ marginRight: '8px' }} /> Criar
         </button>
         <button
           className="edit-button"
           onClick={() => setIsCreateModalOpen(true)}
           disabled={!selectedCompetition}
         >
-          Editar
+          <FaEdit style={{ marginRight: '8px' }} /> Editar
         </button>
         <button
           className="delete-button"
           onClick={handleDeleteCompetition}
           disabled={!selectedCompetition}
         >
-          Excluir
+          <FaTrash style={{ marginRight: '8px' }} /> Excluir
         </button>
       </div>
 

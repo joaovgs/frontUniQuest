@@ -6,6 +6,7 @@ import { GameService } from '../../services/Game';
 import { createPortal } from 'react-dom';
 import Spinner from '../Spinner/Spinner';
 import { useSnackbar } from '../../context/SnackbarContext';
+import { FaTrash } from 'react-icons/fa';
 
 interface CompetitionCreateProps {
   onClose: () => void;
@@ -201,7 +202,6 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
     }
 
     onSave(newCompetition);
-    showSnackbar('Gincana salva com sucesso!', 'success');
   };
 
   const handleDateChange = (setter: React.Dispatch<React.SetStateAction<Date | undefined>>, event: React.ChangeEvent<HTMLInputElement>) => {
@@ -351,7 +351,9 @@ const CompetitionCreate: React.FC<CompetitionCreateProps> = ({ onClose, onSave, 
                           setCompetitionGames(updatedGames); 
                         }}
                       />
-                      <button type="button" onClick={() => handleRemoveGame(index)}>🗑</button>
+                      <button type="button" onClick={() => handleRemoveGame(index)} className="delete-button">
+                        <FaTrash />
+                      </button>
                     </div>
                   ))}
                 </div>

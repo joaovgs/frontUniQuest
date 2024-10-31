@@ -94,16 +94,6 @@
   font-size: 14px;
 }
 
-.competition-game-item button {
-  padding: 6px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
 .attachment-row {
   display: flex;
   justify-content: space-between;
@@ -117,20 +107,25 @@
   gap: 15vw; 
 }
 
-.modal-actions-buttons button {
-  width: 120px;
-  border-radius: 4px;
-}
-
 .cancel-button, .save-button {
-  padding: 10px 20px;
+  padding: 10px 20px; 
   font-size: 16px;
   cursor: pointer;
+  border: none;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid #ccc;
+  width: auto;
+  display: flex;
 }
 
 .cancel-button {
-  background-color: #d9534f;
+  background-color: #CCCCCC;
   color: white;
+}
+
+.cancel-button:hover {
+  background-color: #B0B0B0;
 }
 
 .save-button {
@@ -139,33 +134,25 @@
 }
 
 .save-button:hover {
-  background-color: #0056b3;
+  background-color: #0056b3; 
 }
 
 .add-game-button {
-  padding: 8px 15px;
-  font-size: 14px;
+  padding: 10px 20px; 
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid #ccc;
+  width: auto;
+  display: flex;
   background-color: #007bff;
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 10px;
   margin-bottom: 10px;
 }
 
 .add-game-button:hover {
   background-color: #0056b3;
-}
-
-.provas-container {
-  max-height: 300px;
-  overflow-y: auto;
-  margin-bottom: 10px;
-  border: 1px solid #007bff;
-  border-radius: 4px;
-  padding: 5px;
 }
 
 .competition-input-location,
@@ -196,13 +183,17 @@
 }
 
 .prova-item button {
-  padding: 6px;
+  padding: 10px 20px; 
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid #ccc;
+  width: auto;
+  display: flex;
   background-color: #007bff;
   color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
 }
 
 .games-container {
@@ -234,18 +225,17 @@
 }
 
 .competition-game-item button {
-  padding: 8px 12px;
+  padding: 9px 19px; 
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid #ccc;
+  width: auto;
+  display: flex;
   background-color: #007bff;
   color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  min-width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .competition-game-item button:hover {
@@ -349,21 +339,6 @@
 
 .file-input-icon {
   font-size: 18px;
-}
-
-.add-game-button {
-  margin-top: 5px;
-  padding: 8px 16px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.add-game-button:hover {
-  background-color: #0056b3;
 }
 
 .attachments-container {

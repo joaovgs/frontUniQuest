@@ -60,10 +60,15 @@
 }
 
 .cancelbutton, .joinbutton, .leavebutton {
+  padding: 10px 20px; 
   font-size: 16px;
   cursor: pointer;
-  width: 120px;
-  text-align: center;
+  border: none;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid #ccc;
+  width: auto;
+  display: flex;
 }
 
 .joinbutton {
@@ -71,8 +76,12 @@
   color: white;
 }
 
+.joinbutton:hover {
+  background-color: #0056b3; 
+}
+
 .cancelbutton {
-  background-color: #d9534f;
+  background-color: #CCCCCC;
   color: white;
 }
 
