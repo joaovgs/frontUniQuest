@@ -32,7 +32,7 @@
   display: grid;
   grid-template-columns: auto 1fr auto; 
   align-items: center;
-  width: 80vw; 
+  width: 80vw;
   margin: 20px auto;
 }
 
@@ -47,12 +47,13 @@
   display: flex;
   gap: 5vw;
   justify-content: center;
+  transition: transform 0.5s ease-in-out;
 }
 
 .previous-event-image {
   width: 20vw;  
   height: 30vh;
-  object-fit: fill; 
+  object-fit: cover; 
   border-radius: 8px;
 }
 

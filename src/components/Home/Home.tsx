@@ -33,15 +33,28 @@ const Home: React.FC = () => {
   };
 
   const handleNext = () => {
-    if (currentIndex < competitionsImages.length - itemsPerPage) {
-      setCurrentIndex(currentIndex + 1);
-    }
+    setCurrentIndex((prevIndex) => 
+      (prevIndex + 1) % (competitionsImages.length - 1)
+    );
   };
 
   const handlePrev = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
+    setCurrentIndex((prevIndex) => 
+      (prevIndex - 1 + (competitionsImages.length - 1)) % (competitionsImages.length - 1)
+    );
+  };
+
+  const getVisibleImages = () => {
+    if (competitionsImages.length <= itemsPerPage + 1) {
+      return competitionsImages.slice(1);
     }
+    const visibleImages = [];
+    for (let i = 0; i < itemsPerPage; i++) {
+      visibleImages.push(
+        competitionsImages[(currentIndex + 1 + i) % (competitionsImages.length - 1) + 1]
+      );
+    }
+    return visibleImages;
   };
 
   return (
@@ -52,7 +65,7 @@ const Home: React.FC = () => {
         <main>
           <section className="current-event">
             <h1>Gincana em Destaque</h1>
-            {competitionsImages && competitionsImages.length > 0 && competitionsImages[0].image && (
+            {competitionsImages.length > 0 && competitionsImages[0].image && (
               <img
                 src={competitionsImages[0].image}
                 alt="Gincana Atual"
@@ -63,22 +76,19 @@ const Home: React.FC = () => {
             )}
           </section>
 
-          {competitionsImages && competitionsImages.length > 1 && (
+          {competitionsImages.length > 0 && (
             <section className="previous-events">
               <h2>Gincanas Anteriores</h2>
               <div className="previous-events-container">
-                {competitionsImages.length > itemsPerPage && (
-                  <button
-                    className="prev-button"
-                    onClick={handlePrev}
-                    disabled={currentIndex === 0}
-                  >
-                    <FaArrowLeft />
-                  </button>
-                )}
+                <button
+                  className="prev-button"
+                  onClick={handlePrev}
+                >
+                  <FaArrowLeft />
+                </button>
 
                 <div className="previous-event-images">
-                  {competitionsImages.slice(currentIndex + 1, currentIndex + itemsPerPage + 1).map((competition) => (
+                  {getVisibleImages().map((competition) => (
                     <img
                       key={competition.id}
                       src={competition.image || ''}
@@ -90,15 +100,12 @@ const Home: React.FC = () => {
                   ))}
                 </div>
 
-                {competitionsImages.length > itemsPerPage && (
-                  <button
-                    className="next-button"
-                    onClick={handleNext}
-                    disabled={currentIndex >= competitionsImages.length - itemsPerPage}
-                  >
-                    <FaArrowRight />
-                  </button>
-                )}
+                <button
+                  className="next-button"
+                  onClick={handleNext}
+                >
+                  <FaArrowRight />
+                </button>
               </div>
             </section>
           )}
