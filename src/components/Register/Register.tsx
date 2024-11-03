@@ -29,10 +29,10 @@ const Register: React.FC = () => {
         const response = await api.post('/sessions', { email, password });
 
         if (response.status === 200) {
-          localStorage.setItem('authToken', response.data.token);
-          const userResponse = await api.get('/users/me', { params: { email } });
+          const token = response.data.token;
+          localStorage.setItem('authToken', token);
 
-          login(userResponse.data.user.name);
+          login(token);
 
           showSnackbar('Usuário cadastrado e logado com sucesso!', 'success');
 
